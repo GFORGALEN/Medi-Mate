@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		612600832C60A4710007DA3B /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 612600822C60A4710007DA3B /* Login.swift */; };
 		D9C4196E2C6043C700D4AF01 /* MedimateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9C4196D2C6043C700D4AF01 /* MedimateApp.swift */; };
 		D9C419702C6043C700D4AF01 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9C4196F2C6043C700D4AF01 /* ContentView.swift */; };
 		D9C419722C6043C900D4AF01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9C419712C6043C900D4AF01 /* Assets.xcassets */; };
@@ -14,6 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		612600822C60A4710007DA3B /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
 		D9C4196A2C6043C700D4AF01 /* Medimate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Medimate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9C4196D2C6043C700D4AF01 /* MedimateApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedimateApp.swift; sourceTree = "<group>"; };
 		D9C4196F2C6043C700D4AF01 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -53,6 +55,7 @@
 			children = (
 				D9C4196D2C6043C700D4AF01 /* MedimateApp.swift */,
 				D9C4196F2C6043C700D4AF01 /* ContentView.swift */,
+				612600822C60A4710007DA3B /* Login.swift */,
 				D9C419712C6043C900D4AF01 /* Assets.xcassets */,
 				D9C419732C6043C900D4AF01 /* Preview Content */,
 			);
@@ -137,6 +140,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				612600832C60A4710007DA3B /* Login.swift in Sources */,
 				D9C419702C6043C700D4AF01 /* ContentView.swift in Sources */,
 				D9C4196E2C6043C700D4AF01 /* MedimateApp.swift in Sources */,
 			);

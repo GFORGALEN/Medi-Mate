@@ -11,7 +11,7 @@ struct ContentView: View {
     var body: some View {
         TabView{
             
-            Text("Home")
+            Login()
                 .toolbarBackground(.visible, for: .tabBar)
                 .tabItem {
                     Label("Home",
