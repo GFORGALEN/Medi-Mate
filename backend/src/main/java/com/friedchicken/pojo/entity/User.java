@@ -1,9 +1,13 @@
 package com.friedchicken.pojo.entity;
 
+import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class User {
+@Builder
+public class User implements Serializable {
     private Long userId;
     private String username;
     private String email;
