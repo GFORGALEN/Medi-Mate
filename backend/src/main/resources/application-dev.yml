@@ -1,0 +1,8 @@
+friedChicken:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: localhost
+    port: 3306
+    database: medi_mate
+    username: root
+    password: TZQ13558682167
