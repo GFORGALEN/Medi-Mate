@@ -19,13 +19,8 @@ struct Login: View {
     @State private var password = ""
     var body: some View {
         ZStack{
-            Color.black
             
-            RoundedRectangle(cornerRadius: 30, style: .continuous)
-                .foregroundStyle(.linearGradient(colors:[.gray], startPoint: .topLeading, endPoint: .bottomTrailing))
-                .frame(width:1000, height: 400)
-                .rotationEffect(.degrees(135))
-                .offset(y:-350)
+           
 //            background effect
             
             VStack(spacing : 20){
@@ -98,18 +93,11 @@ struct Login: View {
             }
             .padding(.top)
             .offset(y:110)
-
-            
-            
-                
                 
             }.frame(width:350)
-            
-            
-            
-            
 
-        }.ignoresSafeArea()
+        }
+        .ignoresSafeArea()
     }
 }
 
