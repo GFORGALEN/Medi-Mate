@@ -4,7 +4,6 @@ import com.friedchicken.constant.JwtClaimsConstant;
 import com.friedchicken.pojo.dto.UserLoginDTO;
 import com.friedchicken.pojo.entity.User;
 import com.friedchicken.pojo.vo.UserLoginVO;
-import com.friedchicken.properties.JwtProperties;
 import com.friedchicken.result.Result;
 import com.friedchicken.service.UserService;
 import com.friedchicken.utils.JwtUtil;
@@ -27,8 +26,6 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
-    @Autowired
-    private JwtProperties jwtProperties;
     @Autowired
     private JwtUtil jwtUtil;
 
