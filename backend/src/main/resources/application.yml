@@ -7,10 +7,10 @@ spring:
   main:
     allow-circular-references: true
   datasource:
-    driver-class-name: ${friedChicken.datasource.driver-class-name}
-    url: jdbc:mysql://${friedChicken.datasource.host}:${friedChicken.datasource.port}/${friedChicken.datasource.database}
-    username: ${friedChicken.datasource.username}
-    password: ${friedChicken.datasource.password}
+    driver-class-name: ${fc.datasource.driver-class-name}
+    url: jdbc:mysql://${fc.datasource.host}:${fc.datasource.port}/${fc.datasource.database}
+    username: ${fc.datasource.username}
+    password: ${fc.datasource.password}
 mybatis:
   #mapper配置文件
   mapper-locations: classpath:mapper/*.xml
@@ -18,3 +18,14 @@ mybatis:
   configuration:
     #开启驼峰命名
     map-underscore-to-camel-case: true
+fc:
+  jwt:
+    # 设置jwt签名加密时使用的秘钥
+    admin-secret-key: friedChicken
+    # 设置jwt过期时间
+    admin-ttl: 7200000
+    # 设置前端传递过来的令牌名称
+    admin-token-name: token
+    user-secret-key: friedChicken
+    user-ttl: 7200000
+    user-token-name: authentication
