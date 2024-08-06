@@ -20,10 +20,7 @@ import SwiftUI
             var body: some View {
                 ZStack{
                     VStack(spacing : 20){
-                        //Welcome char that line
-//                        Image(.welcome)
-//                            .resizable()
-//                            .scaledToFit()
+                        Text("Welcome to Medimate")
                         
                         
                         TextField("Email" , text:$email)
