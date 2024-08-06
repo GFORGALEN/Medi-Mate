@@ -25,11 +25,7 @@ struct ContentView: View {
                 .tabItem {
                     Label("cart",
                     systemImage: "cart.fill")}
-            LoginView()
-                .toolbarBackground(.visible, for: .tabBar)
-                .tabItem {
-                Label("Account",
-                systemImage: "person.crop.circle")}
+            
             
         }
     }
