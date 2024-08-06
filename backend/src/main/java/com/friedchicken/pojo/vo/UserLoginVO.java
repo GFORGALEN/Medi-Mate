@@ -8,8 +8,9 @@ import java.io.Serializable;
 @Data
 @Builder
 public class UserLoginVO implements Serializable {
-    private Long userId;
+    private String userId;
     private String username;
     private String email;
+    private String userPic;
     private String token;
 }

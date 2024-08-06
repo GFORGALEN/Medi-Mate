@@ -2,6 +2,7 @@ package com.friedchicken.controller.app;
 
 import com.friedchicken.constant.JwtClaimsConstant;
 import com.friedchicken.pojo.dto.UserLoginDTO;
+import com.friedchicken.pojo.dto.UserRegisterDTO;
 import com.friedchicken.pojo.entity.User;
 import com.friedchicken.pojo.vo.UserLoginVO;
 import com.friedchicken.result.Result;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,7 +42,7 @@ public class UserController {
     @Operation(summary = "User Login",
             description = "If the user has been registered, it will return a token to the user.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Login successful",
+            @ApiResponse(responseCode = "200", description = "Login successfully.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserLoginVO.class)))
     })
     public Result<UserLoginVO> login(
@@ -61,5 +63,21 @@ public class UserController {
                 .token(token)
                 .build();
         return Result.success(userLoginVO);
+    }
+
+    @PostMapping("/register")
+    @Operation(summary = "User Register",
+            description = "If the user has not been registered, it will use this API to create a new user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Register successfully.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserLoginVO.class)))
+    })
+    public Result<UserLoginVO> register(
+            @Parameter(description = "User register information", required = true)
+            @Valid @RequestBody UserRegisterDTO userRegisterDTO
+    ) {
+        log.info("A new user want to create:{}", userRegisterDTO.toString());
+        userService.register(userRegisterDTO);
+        return Result.success();
     }
 }

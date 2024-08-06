@@ -1,38 +1,40 @@
 package com.friedchicken.handler;
 
-import com.friedchicken.constant.MessageConstant;
-import com.friedchicken.exception.BaseException;
+import com.friedchicken.exception.LoginFailedException;
+import com.friedchicken.result.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.friedchicken.result.Result;
-
-import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler
-    public Result exceptionHandler(BaseException ex) {
-        log.error("异常信息：{}", ex.getMessage());
-        return Result.error(ex.getMessage());
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Result<?>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((org.springframework.validation.FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return new ResponseEntity<>(Result.error(errors.toString()), HttpStatus.BAD_REQUEST);
     }
 
-    /**
-     * @author TZzzQAQ
-     * @date 2024/8/6
-     **/
-    @ExceptionHandler
-    public Result exceptionHandler(SQLIntegrityConstraintViolationException exception) {
-        log.error("出现数据库重复输入异常");
-        //使用contains函数对于是否存在冗余输入的问题
-        if (exception.getMessage().contains("Duplicate entry")) {
-            //使用split分割以空格为分割的字符串数组
-            String[] s = exception.getMessage().split(" ");
-            return Result.error(s[2] + MessageConstant.ACCOUNT_ALREADY_EXIST);
-        }
-        return Result.error(MessageConstant.UNKNOWN_ERROR);
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Result<?>> handleGlobalException(Exception ex) {
+        return new ResponseEntity<>(Result.error(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(LoginFailedException.class)
+    public ResponseEntity<Result<?>> handleSpecificException(LoginFailedException ex) {
+        return new ResponseEntity<>(Result.error(ex.getMessage()), HttpStatus.UNAUTHORIZED);
+    }
+
 }
