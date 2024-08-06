@@ -11,7 +11,7 @@ struct ContentView: View {
     var body: some View {
         TabView{
             
-            Login()
+            Text("Home")
                 .toolbarBackground(.visible, for: .tabBar)
                 .tabItem {
                     Label("Home",
@@ -26,8 +26,7 @@ struct ContentView: View {
                 .tabItem {
                     Label("cart",
                     systemImage: "cart.fill")}
-           
-            Text("Account")
+            LoginView()
                 .toolbarBackground(.visible, for: .tabBar)
                 .tabItem {
                 Label("Account",
