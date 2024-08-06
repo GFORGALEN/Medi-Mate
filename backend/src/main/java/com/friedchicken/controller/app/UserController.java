@@ -8,6 +8,11 @@ import com.friedchicken.result.Result;
 import com.friedchicken.service.UserService;
 import com.friedchicken.utils.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,25 +26,33 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
-@Tag(name = "JWT Controller", description = "API for JWT operations")
+@Tag(name = "User", description = "API for User corresponding operations")
 @Slf4j
 public class UserController {
+
     @Autowired
     private UserService userService;
+
     @Autowired
     private JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    @Operation(summary = "User Login", description = "Generates a JWT for user login")
-    public Result<UserLoginVO> login(@RequestBody UserLoginDTO userLoginDTO){
-        log.info("A user want to login in:{}",userLoginDTO.toString());
+    @Operation(summary = "User Login",
+            description = "If the user has been registered, it will return a token to the user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Login successful",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserLoginVO.class)))
+    })
+    public Result<UserLoginVO> login(
+            @Parameter(description = "User login credentials", required = true)
+            @RequestBody UserLoginDTO userLoginDTO) {
+        log.info("A user want to login in:{}", userLoginDTO.toString());
 
         User user = userService.login(userLoginDTO);
 
-        Map<String,Object> claims=new HashMap<>();
-
-        claims.put(JwtClaimsConstant.USER_ID,user.getUserId());
-        String token= jwtUtil.generateUserToken(user.getUsername(),claims);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(JwtClaimsConstant.USER_ID, user.getUserId());
+        String token = jwtUtil.generateUserToken(user.getUsername(), claims);
 
         UserLoginVO userLoginVO = UserLoginVO.builder()
                 .userId(user.getUserId())

@@ -12,9 +12,9 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Spring Boot 3 API")
+                        .title("Medi&Mate API documentation")
                         .version("1.0")
-                        .description("This is a sample Spring Boot 3 API using Swagger"));
+                        .description("This is a API documentation using Swagger"));
     }
 }
 
