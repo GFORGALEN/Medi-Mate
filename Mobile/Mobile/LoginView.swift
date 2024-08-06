@@ -14,36 +14,81 @@
 
 import SwiftUI
 
-struct LoginView: View {
-    var body: some View {
-        TabView{
-            
-            Text("Home")
-                .toolbarBackground(.visible, for: .tabBar)
-                .tabItem {
-                    Label("Home",
-                    systemImage: "house")}
-            
-            Text("bag")
-                .toolbarBackground(.visible, for: .tabBar)
-                .tabItem { Label("shop",systemImage: "bag.fill") }
-            
-            Text("Cart")
-                .toolbarBackground(.visible, for: .tabBar)
-                .tabItem {
-                    Label("cart",
-                    systemImage: "cart.fill")}
-           
-            Text("Account")
-                .toolbarBackground(.visible, for: .tabBar)
-                .tabItem {
-                Label("Account",
-                systemImage: "person.crop.circle")}
-            
-        }
-    }
-}
+        struct LoginView: View {
+            @State private var email = ""
+            @State private var password = ""
+            var body: some View {
+                ZStack{
+                    VStack(spacing : 20){
+                        //Welcome char that line
+//                        Image(.welcome)
+//                            .resizable()
+//                            .scaledToFit()
+                        
+                        
+                        TextField("Email" , text:$email)
+                            .textFieldStyle(.plain)
+                            .padding()
+                        
+                        SecureField("Password", text: $password)
+                            .textFieldStyle(.plain)
+                            .padding()
 
+                        
+                        
+                        Button{
+                            //sign up
+                            } label: {
+                                Text("Sign Up")
+                                    .bold()
+                                    .padding()
+                                    .frame(width: 200, height: 40)
+
+                                  .foregroundColor(.black)
+                                  .background(.blue)
+                                  .cornerRadius(10)
+                                  .shadow(radius: 1, y: 5)
+                            }
+                                     
+                        Button{
+                            //login
+                        }label: {
+                            HStack {
+//                                Image(.googleBrandsSolid)
+//                                    .resizable()
+//                                    .aspectRatio(contentMode: .fit)
+//                                    .frame(width: 24, height: 24)
+                                Text("Sign in with Google")
+                                    .foregroundColor(.black)
+                                    .bold()
+                            }
+                            .frame(width: 250, height: 50)
+                            .background(Color.white)
+                            .cornerRadius(8)
+                        }
+                        .padding()
+                        .shadow(radius: 2)
+                        
+                              
+                        Button{
+                            //register
+                        }label:{
+                        Text("Not have account? Register")
+                            .bold()
+                            .foregroundColor(.black)
+                        }
+                    .padding(.top)
+                        
+                    }
+                }
+                .ignoresSafeArea()
+            }
+        }
+
+        #Preview {
+            LoginView()
+        }
+    
 #Preview {
     ContentView()
 }
