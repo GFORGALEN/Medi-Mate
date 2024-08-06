@@ -17,7 +17,7 @@ struct ContentView: View {
                     Label("Home",
                     systemImage: "house")}
             
-            Text("bag")
+            Text("shop")
                 .toolbarBackground(.visible, for: .tabBar)
                 .tabItem { Label("shop",systemImage: "bag.fill") }
             

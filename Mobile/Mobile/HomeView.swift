@@ -11,6 +11,11 @@ struct HomeView: View {
     @State private var text: String = ""
 
     var body: some View {
+        VStack{
+                Text("Medimate")
+                .font(.largeTitle)
+                .bold()
+
         HStack {
             TextField("Type something...", text: $text)
             
@@ -28,11 +33,14 @@ struct HomeView: View {
         }
         .padding()
         .overlay(
-                        RoundedRectangle(cornerRadius: 10)  // 用 RoundedRectangle 来创建边框形状
-                            .stroke(Color.black, lineWidth: 4)  // 设置边框颜色和线宽
+                    RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.black, lineWidth: 4)
                         )
+        .padding(.bottom, 200)
         .padding()
+
     }
+}
 }
 
 
