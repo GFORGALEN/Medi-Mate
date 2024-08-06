@@ -26,8 +26,3 @@ Package.resolved
 
 # CocoaPods
 Pods/
-# Xcode user data
-*.xcuserstate
-xcuserdata/
-*.xcscmblueprint
-
