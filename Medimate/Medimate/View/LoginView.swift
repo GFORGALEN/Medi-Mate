@@ -29,7 +29,7 @@ struct LoginView: View {
                     .textFieldStyle(.plain)
                     .padding()
                 
-                SecureField("Password", text: $password).foregroundColor(.white)
+                SecureField("Password", text: $password)
                     .textFieldStyle(.plain)
                     .padding()
 
@@ -87,4 +87,3 @@ struct LoginView: View {
 #Preview {
     LoginView()
 }
-
