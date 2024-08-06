@@ -11,13 +11,13 @@ struct ContentView: View {
     var body: some View {
         TabView{
             
-            Text("Home")
+            HomeView()
                 .toolbarBackground(.visible, for: .tabBar)
                 .tabItem {
                     Label("Home",
                     systemImage: "house")}
             
-            Text("bag")
+            Text("shop")
                 .toolbarBackground(.visible, for: .tabBar)
                 .tabItem { Label("shop",systemImage: "bag.fill") }
             
@@ -27,7 +27,7 @@ struct ContentView: View {
                     Label("cart",
                     systemImage: "cart.fill")}
            
-            Text("Account")
+            LoginView()
                 .toolbarBackground(.visible, for: .tabBar)
                 .tabItem {
                 Label("Account",
