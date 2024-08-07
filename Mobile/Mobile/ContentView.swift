@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var errorMessage: String = ""
+    //@State private var errorMessage: String = ""
     @State private var isAuthenticated: Bool = false  // Tracks the authentication status
 
     var body: some View {
