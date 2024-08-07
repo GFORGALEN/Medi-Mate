@@ -23,45 +23,14 @@ struct ContentView: View {
                 .tabItem {
                     Label("Cart", systemImage: "cart.fill")
                 }
+            LoginView()
             
-            // Login and Account Management Tab
-            Group {
-                if isAuthenticated {
-                    // Show Logout option
-                    VStack {
-                        Image(systemName: "globe")
-                            .imageScale(.large)
-                            .foregroundStyle(.tint)
-                        Text("Hello, world!")
-                        
-                        Button {
-                            Task {
-                                do {
-                                    try await AuthenticationView().logout()
-                                    isAuthenticated = false  // Update authentication status on logout
-                                } catch let error {
-                                    errorMessage = error.localizedDescription
-                                }
-                            }
-                        } label: {
-                            Text("Log Out").padding(8)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        
-                        Text(errorMessage)
-                            .foregroundColor(.red)
-                            .font(.caption)
-                    }
-                    .padding()
-                } else {
-                    // Show Login View
-                    LoginView(isAuthenticated: $isAuthenticated)  // Pass isAuthenticated as a Binding
+                .tabItem {
+                    Label("Account", systemImage: "person.crop.circle")
                 }
-            }
-            .tabItem {
-                Label("Account", systemImage: "person.crop.circle")
-            }
         }
+            
+//            
         .toolbarBackground(.visible, for: .tabBar)
     }
 }
