@@ -14,7 +14,12 @@ import FirebaseAuth
 class AuthenticationView: ObservableObject{
     
     @Published var isLoginSuccessed = false
-    
+    @Published var currentUser: User?
+
+       init() {
+           self.currentUser = Auth.auth().currentUser
+       }
+
     
     func signInWithGoogle(){
         
@@ -45,17 +50,17 @@ class AuthenticationView: ObservableObject{
                     print(error.localizedDescription)
                     return
                 }
-                guard let user = res?.user else { return }
-                print(user)
+                self.currentUser = res?.user
+                self.isLoginSuccessed = true
             }
         }
         
     }
     
-    func logout() async throws{
-        GIDSignIn.sharedInstance.signOut()
-        try Auth.auth().signOut()
+    func logout() async throws {
+            GIDSignIn.sharedInstance.signOut()
+            try Auth.auth().signOut()
+            isLoginSuccessed = false
+            currentUser = nil
+        }
     }
-   
-}
-

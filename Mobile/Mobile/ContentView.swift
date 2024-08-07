@@ -1,37 +1,53 @@
 import SwiftUI
 
 struct ContentView: View {
-    //@State private var errorMessage: String = ""
-    @State private var isAuthenticated: Bool = false  // Tracks the authentication status
+    @StateObject private var authViewModel = AuthenticationView()
 
     var body: some View {
         TabView {
-            // Home View Tab
             HomeView()
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
-            
-            // Shop View Tab
             Text("Shop")
                 .tabItem {
                     Label("Shop", systemImage: "bag.fill")
                 }
-            
-            // Cart View Tab
             Text("Cart")
                 .tabItem {
                     Label("Cart", systemImage: "cart.fill")
                 }
-            LoginView()
-            
-                .tabItem {
-                    Label("Account", systemImage: "person.crop.circle")
+            Group {
+                if authViewModel.isLoginSuccessed {
+                    AccountView(authViewModel: authViewModel)
+                } else {
+                    LoginView(authViewModel: authViewModel)
                 }
+            }
+            .tabItem {
+                Label("Account", systemImage: "person.crop.circle")
+            }
         }
-            
-//            
         .toolbarBackground(.visible, for: .tabBar)
+    }
+}
+
+struct AccountView: View {
+    @ObservedObject var authViewModel: AuthenticationView
+
+    var body: some View {
+        VStack {
+            Text("Welcome, \(authViewModel.currentUser?.email ?? "User")!")
+            Button("Logout") {
+                Task {
+                    do {
+                        try await authViewModel.logout()
+                    } catch {
+                        print("Error logging out: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
     }
 }
 

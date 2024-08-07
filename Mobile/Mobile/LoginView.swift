@@ -5,11 +5,11 @@ import GoogleSignIn
 import GoogleSignInSwift
 
 struct LoginView: View {
-    
     @State private var email = ""
     @State private var password = ""
     @State private var loginError = ""
-    @State private var showRegister = false // Register page
+    @State private var showRegister = false
+    @ObservedObject var authViewModel: AuthenticationView
     
     var body: some View {
         ZStack {
@@ -31,9 +31,9 @@ struct LoginView: View {
                     .shadow(radius: 5)
                     .padding(.horizontal, 20)
                 
-                Button/*(action: login)*/ {
-                }
-            label:{
+                Button {
+                    // Implement email/password login here
+                } label: {
                     Text("Sign In")
                         .foregroundColor(.white)
                         .frame(width: 200, height: 40)
@@ -43,7 +43,7 @@ struct LoginView: View {
                 }
                 
                 Button {
-                    AuthenticationView().signInWithGoogle()
+                    authViewModel.signInWithGoogle()
                 } label: {
                     HStack {
                         Image(.googleBrandsSolid)
@@ -51,7 +51,6 @@ struct LoginView: View {
                             .scaledToFit()
                             .frame(width: 25)
                         
-                 
                         Text("Sign in with Google")
                             .foregroundColor(.black)
                             .bold()
@@ -84,12 +83,11 @@ struct LoginView: View {
             }
         }
     }
-    
 }
 
 // Preview
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView()  // Use constant for preview
+        LoginView(authViewModel: AuthenticationView())
     }
 }
