@@ -1,13 +1,13 @@
 package com.friedchicken.controller.app;
 
-import com.friedchicken.constant.JwtClaimsConstant;
+import com.friedchicken.constant.MessageConstant;
+import com.friedchicken.exception.AccountNotFoundException;
+import com.friedchicken.pojo.dto.UserGoogleDTO;
 import com.friedchicken.pojo.dto.UserLoginDTO;
 import com.friedchicken.pojo.dto.UserRegisterDTO;
-import com.friedchicken.pojo.entity.User;
 import com.friedchicken.pojo.vo.UserLoginVO;
 import com.friedchicken.result.Result;
 import com.friedchicken.service.UserService;
-import com.friedchicken.utils.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
@@ -34,9 +32,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private JwtUtil jwtUtil;
 
     @PostMapping("/login")
     @Operation(summary = "User Login",
@@ -50,18 +45,38 @@ public class UserController {
             @RequestBody UserLoginDTO userLoginDTO) {
         log.info("A user want to login in:{}", userLoginDTO.toString());
 
-        User user = userService.login(userLoginDTO);
+        String email = userLoginDTO.getEmail();
+        String password = userLoginDTO.getPassword();
 
-        Map<String, Object> claims = new HashMap<>();
-        claims.put(JwtClaimsConstant.USER_ID, user.getUserId());
-        String token = jwtUtil.generateUserToken(user.getUsername(), claims);
+        if (email == null || password == null) {
+            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+        }
 
-        UserLoginVO userLoginVO = UserLoginVO.builder()
-                .userId(user.getUserId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .token(token)
-                .build();
+        UserLoginVO userLoginVO = userService.login(userLoginDTO);
+
+        return Result.success(userLoginVO);
+    }
+
+    @PostMapping("/google-login")
+    @Operation(summary = "Google Register",
+            description = "If the user want to use Google to login, it will use this API.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Google successfully.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserGoogleDTO.class)))
+    })
+    public Result<UserLoginVO> googleLogin(
+            @Parameter(description = "Google information", required = true)
+            @RequestBody UserGoogleDTO userGoogleLoginDTO
+    ) {
+        log.info("A user want to use Google to login:{}", userGoogleLoginDTO);
+
+        String email = userGoogleLoginDTO.getEmail();
+        String googleId = userGoogleLoginDTO.getGoogleId();
+
+        if(email == null || googleId == null) {
+            throw new AccountNotFoundException(MessageConstant.WRONG_INPUT);
+        }
+        UserLoginVO userLoginVO = userService.googleLogin(userGoogleLoginDTO);
         return Result.success(userLoginVO);
     }
 
@@ -80,4 +95,5 @@ public class UserController {
         userService.register(userRegisterDTO);
         return Result.success();
     }
+
 }

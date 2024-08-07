@@ -17,7 +17,6 @@ public class User implements Serializable {
     private String email;
     private String password;
     private String googleId;
-    private String nickname;
     private String userPic;
     private String createdAt;
     private String updatedAt;
