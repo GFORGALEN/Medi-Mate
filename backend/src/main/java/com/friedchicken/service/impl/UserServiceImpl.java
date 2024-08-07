@@ -7,6 +7,7 @@ import com.friedchicken.exception.PasswordErrorException;
 import com.friedchicken.exception.RegisterFailedException;
 import com.friedchicken.mapper.UserMapper;
 import com.friedchicken.pojo.dto.UserGoogleDTO;
+import com.friedchicken.pojo.dto.UserInfoDTO;
 import com.friedchicken.pojo.dto.UserLoginDTO;
 import com.friedchicken.pojo.dto.UserRegisterDTO;
 import com.friedchicken.pojo.entity.User;
@@ -17,6 +18,7 @@ import com.friedchicken.utils.BCryptUtil;
 import com.friedchicken.utils.JwtUtil;
 import com.friedchicken.utils.RandomStringUtil;
 import com.friedchicken.utils.UniqueIdUtil;
+import com.friedchicken.pojo.vo.UserInfoVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -73,6 +75,14 @@ public class UserServiceImpl implements UserService {
         return generateUserLoginVO(userByEmail, claims);
     }
 
+//
+
+    @Override
+    public UserInfoVO getUser(UserInfoDTO userInfoDTO) {
+        User user = userMapper.getUserByUserId(userInfoDTO.getUserId());
+        return UserMapper.toVO(user);
+    }
+
     private UserLoginVO generateUserLoginVO(User user, Map<String, Object> claims) {
         claims.put(JwtClaimsConstant.USER_ID, user.getUserId());
         claims.put(JwtClaimsConstant.USERNAME, user.getUsername());
@@ -101,4 +111,6 @@ public class UserServiceImpl implements UserService {
             userMapper.register(user);
         }
     }
+
+
 }
