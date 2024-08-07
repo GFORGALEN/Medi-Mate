@@ -46,6 +46,12 @@ struct LoginView: View {
                     AuthenticationView().signInWithGoogle()
                 } label: {
                     HStack {
+                        Image(.googleBrandsSolid)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 25)
+                        
+                 
                         Text("Sign in with Google")
                             .foregroundColor(.black)
                             .bold()
