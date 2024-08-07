@@ -9,7 +9,7 @@ import SwiftUI
 
 struct RegisterView: View {
     @StateObject private var viewModel = RegisterViewModel()
-    
+        
     private var showSuccessAlert: Binding<Bool> {
             Binding(
                 get: { viewModel.isRegistered },

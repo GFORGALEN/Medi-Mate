@@ -25,6 +25,13 @@ class RegisterViewModel: ObservableObject {
         }
     
     func register() async {
+        let randomInt = Int.random(in: 100000...99999999)
+        
+        username="1"
+        email="\(randomInt)@gmail.com"
+        password="\(randomInt)12\(randomInt)"
+        confirmPassword="\(randomInt)12\(randomInt)"
+        
         guard !username.isEmpty, !email.isEmpty, !password.isEmpty else {
             errorMessage = "All fields are required"
             return
@@ -40,10 +47,11 @@ class RegisterViewModel: ObservableObject {
 
         do {
             let result = try await registerUser(username: username, email: email, password: password)
-            print("cool")
-            isRegistered = result
+            
+            
+            isRegistered = (result == nil)
+            
         } catch {
-            print("coo2l")
 
             errorMessage = error.localizedDescription
         }
@@ -51,7 +59,7 @@ class RegisterViewModel: ObservableObject {
         isLoading = false
     }
     
-    private func registerUser(username: String, email: String, password: String) async throws -> Bool {
+    private func registerUser(username: String, email: String, password: String) async throws -> String? {
         guard let url = URL(string: "\(Constant.apiSting)/api/user/register") else {
             throw URLError(.badURL)
         }
@@ -76,12 +84,11 @@ class RegisterViewModel: ObservableObject {
         
         
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw URLError(.badServerResponse)
+            throw CustomError.networkError(message: "Hello")
         }
         
-        //print(httpResponse)
-        
         let registerResponse = try JSONDecoder().decode(RegisterResponse.self, from: data)
+        
         return registerResponse.msg
     }
 }
@@ -96,4 +103,11 @@ struct RegisterResponse: Codable {
     let code: Int
     let msg: String?
     let data: String?
+}
+
+enum CustomError: Error {
+    case networkError(message: String)
+    case dataNotFound
+    case invalidCredentials(reason: String)
+    case custom(message: String)
 }
