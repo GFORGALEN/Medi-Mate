@@ -5,33 +5,35 @@ import GoogleSignIn
 import GoogleSignInSwift
 
 struct LoginView: View {
-    @Binding var isAuthenticated: Bool  // Changed to Binding
+    
     @State private var email = ""
     @State private var password = ""
     @State private var loginError = ""
     @State private var showRegister = false // Register page
-
+    
     var body: some View {
         ZStack {
             VStack(spacing: 20) {
                 Text("Welcome to Medimate")
                     .font(.title)
-
+                
                 TextField("Email", text: $email)
                     .padding()
                     .background(Color.white)
                     .cornerRadius(10)
                     .shadow(radius: 5)
                     .padding(.horizontal, 20)
-
+                
                 SecureField("Password", text: $password)
                     .padding()
                     .background(Color.white)
                     .cornerRadius(10)
                     .shadow(radius: 5)
                     .padding(.horizontal, 20)
-
-                Button(action: login) {
+                
+                Button/*(action: login)*/ {
+                }
+            label:{
                     Text("Sign In")
                         .foregroundColor(.white)
                         .frame(width: 200, height: 40)
@@ -39,7 +41,7 @@ struct LoginView: View {
                         .cornerRadius(10)
                         .shadow(radius: 1, y: 5)
                 }
-
+                
                 Button {
                     AuthenticationView().signInWithGoogle()
                 } label: {
@@ -54,13 +56,13 @@ struct LoginView: View {
                 }
                 .padding()
                 .shadow(radius: 2)
-
+                
                 if !loginError.isEmpty {
                     Text(loginError)
                         .foregroundColor(.red)
                         .padding()
                 }
-
+                
                 Button {
                     showRegister.toggle()
                 } label: {
@@ -77,20 +79,11 @@ struct LoginView: View {
         }
     }
     
-    func login() {
-        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
-            if let error = error {
-                loginError = error.localizedDescription
-            } else {
-                isAuthenticated = true  // Set the binding to true on successful login
-            }
-        }
-    }
 }
 
 // Preview
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView(isAuthenticated: .constant(false))  // Use constant for preview
+        LoginView()  // Use constant for preview
     }
 }
