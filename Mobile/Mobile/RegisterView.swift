@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct RegisterView: View {
+    @Environment(\.dismiss) var dismiss
+
     @StateObject private var viewModel = RegisterViewModel()
         
     private var showSuccessAlert: Binding<Bool> {
@@ -26,7 +28,6 @@ struct RegisterView: View {
                 .padding(.top, 50)
             
             VStack(spacing: 15) {
-                CustomTextField(placeholder: "Username", text: $viewModel.username)
                 CustomTextField(placeholder: "Email", text: $viewModel.email)
                 CustomSecureField(placeholder: "Password", text: $viewModel.password)
                 CustomSecureField(placeholder: "Confirm Password", text: $viewModel.confirmPassword)
@@ -60,13 +61,12 @@ struct RegisterView: View {
                     .foregroundColor(.red)
                     .padding()
             }
-            
             Spacer()
         }
         .background(Color.white.edgesIgnoringSafeArea(.all))
         
         .alert("Registration Successful", isPresented: showSuccessAlert) {
-                    Button("OK") {}
+                    Button("OK") {dismiss()}
                 }
     }
 }

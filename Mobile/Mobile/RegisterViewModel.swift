@@ -9,7 +9,6 @@ import SwiftUI
 
 @MainActor //确保所有 UI 更新都在主线程上执行
 class RegisterViewModel: ObservableObject {
-    @Published var username = ""
     @Published var email = ""
     @Published var password = ""
     @Published var confirmPassword = ""
@@ -21,18 +20,17 @@ class RegisterViewModel: ObservableObject {
     @Published private(set) var isRegistered = false
     
     func resetRegistrationStatus() {
-            isRegistered = false
-        }
+        isRegistered = false
+    }
     
     func register() async {
-        let randomInt = Int.random(in: 100000...99999999)
+//        let randomInt = Int.random(in: 100000...99999999)
         
-        username="1"
-        email="\(randomInt)@gmail.com"
-        password="\(randomInt)12\(randomInt)"
-        confirmPassword="\(randomInt)12\(randomInt)"
+//        email="111ss1@gmail.com"
+//        password="\(randomInt)12\(randomInt)"
+//        confirmPassword="\(randomInt)12\(randomInt)"
         
-        guard !username.isEmpty, !email.isEmpty, !password.isEmpty else {
+        guard !email.isEmpty, !password.isEmpty else {
             errorMessage = "All fields are required"
             return
         }
@@ -44,22 +42,21 @@ class RegisterViewModel: ObservableObject {
         
         isLoading = true
         errorMessage = nil
-
+        
         do {
-            let result = try await registerUser(username: username, email: email, password: password)
+            let result = try await registerUser( email: email, password: password)
+            isRegistered = result
             
-            
-            isRegistered = (result == nil)
-            
+        } catch CustomError.custom(let message) {
+            errorMessage = message
         } catch {
-
-            errorMessage = error.localizedDescription
+            errorMessage = "unexpect"
         }
         
         isLoading = false
     }
     
-    private func registerUser(username: String, email: String, password: String) async throws -> String? {
+    private func registerUser(email: String, password: String) async throws -> Bool {
         guard let url = URL(string: "\(Constant.apiSting)/api/user/register") else {
             throw URLError(.badURL)
         }
@@ -67,47 +64,43 @@ class RegisterViewModel: ObservableObject {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let parameters = RegisterParameters(username: username, email: email, password: password)
+        let parameters = RegisterParameters(email: email, password: password)
         request.httpBody = try JSONEncoder().encode(parameters)
         
         let (data, response) = try await URLSession.shared.data(for: request)
         
         //data: 返回的原始数据 json JSON string: {"code":0,"msg":"{password=Password must be between 10 and 100 characters, email=Email should be valid.}","data":null}
         //response：URLResponse 的对象，通常在实际使用中会被转换成更具体的 HTTPURLResponse 类型。
-        
+            
         
         if let rawJSONString = String(data: data, encoding: .utf8) {
             print("Raw response JSON string: \(rawJSONString)")
+            
         }
-   
-        
         
         
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw CustomError.networkError(message: "Hello")
-        }
-        
-        let registerResponse = try JSONDecoder().decode(RegisterResponse.self, from: data)
-        
-        return registerResponse.msg
+                // 如果状态码不是200，尝试解析JSON数据
+                if let jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                   let msg = jsonObject["msg"] as? String {
+                    // 如果可以解析msg字段，则抛出包含此信息的错误
+                    throw CustomError.custom(message: "\(msg)")
+                } else {
+                    // 如果无法找到msg字段，抛出另一个错误
+                    throw CustomError.custom(message: "Error: 'msg' field not found")
+                }
+            }
+        return true
     }
+    
 }
 
 struct RegisterParameters: Codable {
-    let username: String
     let email: String
     let password: String
 }
 
-struct RegisterResponse: Codable {
-    let code: Int
-    let msg: String?
-    let data: String?
-}
 
 enum CustomError: Error {
-    case networkError(message: String)
-    case dataNotFound
-    case invalidCredentials(reason: String)
     case custom(message: String)
 }
