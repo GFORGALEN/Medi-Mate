@@ -92,7 +92,9 @@ public class UserController {
             @Valid @RequestBody UserRegisterDTO userRegisterDTO
     ) {
         log.info("A new user want to create:{}", userRegisterDTO.toString());
+
         userService.register(userRegisterDTO);
+
         return Result.success();
     }
 
