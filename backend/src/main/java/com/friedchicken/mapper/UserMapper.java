@@ -1,15 +1,12 @@
 package com.friedchicken.mapper;
 
 import com.friedchicken.pojo.entity.User;
-import com.friedchicken.pojo.vo.UserInfoVO;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface UserMapper {
-
-
 
     @Select("select * from users where email = #{email}")
     User getUserByEmail(String email);
@@ -18,6 +15,4 @@ public interface UserMapper {
             "VALUES (#{userId},#{username},#{email},#{password},#{googleId},#{createdAt},#{updatedAt})")
     void register(User build);
 
-    @Select("select * from users where user_id = #{userId}")
-    User getUserByUserId(int userId);
 }

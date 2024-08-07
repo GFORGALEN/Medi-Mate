@@ -7,7 +7,6 @@ import com.friedchicken.exception.PasswordErrorException;
 import com.friedchicken.exception.RegisterFailedException;
 import com.friedchicken.mapper.UserMapper;
 import com.friedchicken.pojo.dto.UserGoogleDTO;
-import com.friedchicken.pojo.dto.UserInfoDTO;
 import com.friedchicken.pojo.dto.UserLoginDTO;
 import com.friedchicken.pojo.dto.UserRegisterDTO;
 import com.friedchicken.pojo.entity.User;
@@ -18,7 +17,6 @@ import com.friedchicken.utils.BCryptUtil;
 import com.friedchicken.utils.JwtUtil;
 import com.friedchicken.utils.RandomStringUtil;
 import com.friedchicken.utils.UniqueIdUtil;
-import com.friedchicken.pojo.vo.UserInfoVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -63,7 +61,7 @@ public class UserServiceImpl implements UserService {
         if (userByEmail == null) {
             User user = User.builder()
                     .userId(uniqueIdUtil.generateUniqueId())
-                    .password(BCryptUtil.hashPassword(RandomStringUtil.generateRandomString()))
+                    .password(BCryptUtil.hashPassword(RandomStringUtil.generateRandomString(16)))
                     .build();
             BeanUtils.copyProperties(userGoogleLoginDTO,user);
             userMapper.register(user);
@@ -74,15 +72,6 @@ public class UserServiceImpl implements UserService {
         assert userByEmail != null;
         return generateUserLoginVO(userByEmail, claims);
     }
-
-//
-
-    @Override
-    public UserInfoVO getUser(UserInfoDTO userInfoDTO) {
-        User user = userMapper.getUserByUserId(userInfoDTO.getUserId());
-        return UserMapper.toVO(user);
-    }
-
     private UserLoginVO generateUserLoginVO(User user, Map<String, Object> claims) {
         claims.put(JwtClaimsConstant.USER_ID, user.getUserId());
         claims.put(JwtClaimsConstant.USERNAME, user.getUsername());
@@ -99,7 +88,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void register(UserRegisterDTO userRegisterDTO) {
         String email = userRegisterDTO.getEmail();
-        String password = userRegisterDTO.getPassword();
 
         User userByEmail = userMapper.getUserByEmail(email);
         if (userByEmail != null) {
@@ -108,9 +96,9 @@ public class UserServiceImpl implements UserService {
             User user = new User();
             BeanUtils.copyProperties(userRegisterDTO, user);
             user.setUserId(uniqueIdUtil.generateUniqueId());
+            user.setUsername(RandomStringUtil.generateRandomString(6));
             userMapper.register(user);
         }
     }
-
 
 }

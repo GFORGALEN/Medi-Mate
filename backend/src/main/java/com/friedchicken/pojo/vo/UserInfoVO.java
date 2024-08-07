@@ -1,16 +1,17 @@
 package com.friedchicken.pojo.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
 @Builder
 public class UserInfoVO implements Serializable {
-    private int  userId;
-    private int  birthDay;
+    private String userId;
+    private int birthYear;
     private double userWeight;
     private double userHeight;
 }
-//VO 用于后端向前端传输数据
