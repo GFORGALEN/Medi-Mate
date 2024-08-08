@@ -12,10 +12,6 @@ import java.io.Serializable;
 @Builder
 public class UserRegisterDTO implements Serializable {
 
-    @NotBlank(message = "Username is mandatory.")
-    @Size(min = 3,max = 8,message = "Username must be between 3 and 8 characters")
-    private String username;
-
     @NotBlank(message = "Email is mandatory.")
     @Email(message = "Email should be valid.")
     private String email;

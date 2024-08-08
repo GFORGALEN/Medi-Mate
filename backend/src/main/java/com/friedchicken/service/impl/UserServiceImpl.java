@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
         if (userByEmail == null) {
             User user = User.builder()
                     .userId(uniqueIdUtil.generateUniqueId())
-                    .password(BCryptUtil.hashPassword(RandomStringUtil.generateRandomString()))
+                    .password(BCryptUtil.hashPassword(RandomStringUtil.generateRandomString(16)))
                     .build();
             BeanUtils.copyProperties(userGoogleLoginDTO,user);
             userMapper.register(user);
@@ -72,7 +72,6 @@ public class UserServiceImpl implements UserService {
         assert userByEmail != null;
         return generateUserLoginVO(userByEmail, claims);
     }
-
     private UserLoginVO generateUserLoginVO(User user, Map<String, Object> claims) {
         claims.put(JwtClaimsConstant.USER_ID, user.getUserId());
         claims.put(JwtClaimsConstant.USERNAME, user.getUsername());
@@ -89,7 +88,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void register(UserRegisterDTO userRegisterDTO) {
         String email = userRegisterDTO.getEmail();
-        String password = userRegisterDTO.getPassword();
 
         User userByEmail = userMapper.getUserByEmail(email);
         if (userByEmail != null) {
@@ -98,7 +96,9 @@ public class UserServiceImpl implements UserService {
             User user = new User();
             BeanUtils.copyProperties(userRegisterDTO, user);
             user.setUserId(uniqueIdUtil.generateUniqueId());
+            user.setUsername(RandomStringUtil.generateRandomString(6));
             userMapper.register(user);
         }
     }
+
 }
