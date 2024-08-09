@@ -5,6 +5,9 @@ struct HomeView: View {
     @State private var text: String = ""
     @State private var image: UIImage?
     @State private var isShowingCamera = false
+    
+    @StateObject private var searchModel = SearchViewModel()
+
 
     var body: some View {
         VStack {
@@ -13,7 +16,17 @@ struct HomeView: View {
                 .bold()
 
             HStack {
-                TextField("Type something...", text: $text)
+                TextField("Type something...", text: $searchModel.searchText)
+                
+                Button{
+                    Task {
+                        await searchModel.search()
+                    }
+                }label: {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.black)
+                        .font(.system(size: 30))
+                }
                 
                 Button(action: {
                     self.isShowingCamera = true
@@ -33,6 +46,13 @@ struct HomeView: View {
             )
             .padding(.bottom, 200)
             .padding()
+            
+            Text(searchModel.searchResult)
+                            .padding()
+                            .frame(minHeight: 100)
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(10)
+                            .padding()
 
             if let image = image {
                 Image(uiImage: image)
