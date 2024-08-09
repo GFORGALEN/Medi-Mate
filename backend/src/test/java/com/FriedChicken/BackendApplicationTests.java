@@ -1,4 +1,4 @@
-package com.friedchicken;
+package com.FriedChicken;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
