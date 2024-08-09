@@ -1,8 +1,8 @@
 package com.friedchicken.service.impl;
 
 import com.friedchicken.mapper.UserInfoMapper;
-import com.friedchicken.pojo.dto.UserInfoDTO;
-import com.friedchicken.pojo.vo.UserInfoVO;
+import com.friedchicken.pojo.dto.User.UserInfoDTO;
+import com.friedchicken.pojo.vo.User.UserInfoVO;
 import com.friedchicken.service.UserInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

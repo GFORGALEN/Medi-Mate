@@ -1,6 +1,6 @@
 package com.friedchicken.mapper;
 
-import com.friedchicken.pojo.vo.UserInfoVO;
+import com.friedchicken.pojo.vo.User.UserInfoVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 

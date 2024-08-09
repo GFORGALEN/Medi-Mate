@@ -1,9 +1,9 @@
 package com.friedchicken.controller.app;
 
-import com.friedchicken.pojo.vo.UserInfoVO;
+import com.friedchicken.pojo.vo.User.UserInfoVO;
 import com.friedchicken.service.UserInfoService;
 import com.friedchicken.result.Result;
-import com.friedchicken.pojo.dto.UserInfoDTO;
+import com.friedchicken.pojo.dto.User.UserInfoDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

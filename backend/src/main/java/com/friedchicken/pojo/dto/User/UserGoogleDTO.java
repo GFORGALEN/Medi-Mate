@@ -1,4 +1,4 @@
-package com.friedchicken.pojo.dto;
+package com.friedchicken.pojo.dto.User;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
