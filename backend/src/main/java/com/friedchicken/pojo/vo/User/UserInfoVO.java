@@ -1,9 +1,7 @@
-package com.friedchicken.pojo.vo;
+package com.friedchicken.pojo.vo.User;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 

@@ -1,6 +1,6 @@
 package com.friedchicken.mapper;
 
-import com.friedchicken.pojo.entity.User;
+import com.friedchicken.pojo.entity.User.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;

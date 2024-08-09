@@ -1,4 +1,4 @@
-package com.friedchicken.pojo.entity;
+package com.friedchicken.pojo.entity.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

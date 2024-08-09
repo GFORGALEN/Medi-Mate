@@ -1,4 +1,4 @@
-package com.friedchicken.pojo.dto;
+package com.friedchicken.pojo.dto.User;
 
 import lombok.Builder;
 import lombok.Data;

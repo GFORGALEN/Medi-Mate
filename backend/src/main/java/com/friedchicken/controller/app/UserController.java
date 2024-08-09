@@ -2,10 +2,10 @@ package com.friedchicken.controller.app;
 
 import com.friedchicken.constant.MessageConstant;
 import com.friedchicken.exception.AccountNotFoundException;
-import com.friedchicken.pojo.dto.UserGoogleDTO;
-import com.friedchicken.pojo.dto.UserLoginDTO;
-import com.friedchicken.pojo.dto.UserRegisterDTO;
-import com.friedchicken.pojo.vo.UserLoginVO;
+import com.friedchicken.pojo.dto.User.UserGoogleDTO;
+import com.friedchicken.pojo.dto.User.UserLoginDTO;
+import com.friedchicken.pojo.dto.User.UserRegisterDTO;
+import com.friedchicken.pojo.vo.User.UserLoginVO;
 import com.friedchicken.result.Result;
 import com.friedchicken.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
