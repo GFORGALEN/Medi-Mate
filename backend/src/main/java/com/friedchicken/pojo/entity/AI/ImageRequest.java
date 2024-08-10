@@ -12,11 +12,11 @@ public class ImageRequest {
     private final String model;
     private final List<Message> messages;
 
-    public ImageRequest(String model, String prompt, String base64Image) {
+    public ImageRequest(String model, String prompt, String url) {
         this.model = model;
         this.messages = List.of(
                 new Message("user", prompt),
-                new Message("system", "Here is the image data: " + base64Image)
+                new Message("system", "Here is the image url: " + url)
         );
     }
 }

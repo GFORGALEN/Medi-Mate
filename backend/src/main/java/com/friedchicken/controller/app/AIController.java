@@ -2,6 +2,7 @@ package com.friedchicken.controller.app;
 
 import com.friedchicken.constant.MessageConstant;
 import com.friedchicken.exception.ImageFailedUploadException;
+import com.friedchicken.pojo.dto.AI.AIimageDTO;
 import com.friedchicken.pojo.dto.AI.AItextDTO;
 import com.friedchicken.pojo.vo.AI.AItextVO;
 import com.friedchicken.result.Result;
@@ -59,17 +60,12 @@ public class AIController {
     })
     public Result<AItextVO> sendImage(
             @Parameter(description = "User send image.", required = true, content = @Content(mediaType = "multipart/form-data"))
-            @RequestBody MultipartFile file
+            @RequestBody AIimageDTO aiimageDTO
     ) {
         log.info("User want to use AI model to send image.");
 
-        AItextVO aitextVO;
-        try {
-            byte[] imageBytes = file.getBytes();
-            aitextVO = aiService.analyzeImage(imageBytes);
-        } catch (IOException e) {
-            throw new ImageFailedUploadException(MessageConstant.FILE_UPLOAD_ERROR);
-        }
+        AItextVO aitextVO = aiService.analyzeImage(aiimageDTO);
+
         return Result.success(aitextVO);
     }
 }
