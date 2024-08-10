@@ -7,11 +7,13 @@
 
 import Foundation
 
-struct Product: Identifiable {
-    let id = UUID()
+
+
+// Mediction Model
+struct Medication {
     let name: String
     let description: String
     let dosage: String
-    let sideEffects: [String]
-    let imageURL: URL
+    let sideEffects: String
+    let imageName: String
 }

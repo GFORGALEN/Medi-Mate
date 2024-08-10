@@ -8,11 +8,26 @@
 import SwiftUI
 
 struct AccountView: View {
+    @ObservedObject var authViewModel: AuthenticationView
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Text("Welcome, \(authViewModel.currentUser?.email ?? "User")!")
+            Button("Logout") {
+                Task {
+                    do {
+                        try await authViewModel.logout()
+                    } catch {
+                        print("Error logging out: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
     }
 }
 
-#Preview {
-    AccountView()
+struct AccountView_Previews: PreviewProvider {
+    static var previews: some View {
+        AccountView(authViewModel: AuthenticationView())
+    }
 }
