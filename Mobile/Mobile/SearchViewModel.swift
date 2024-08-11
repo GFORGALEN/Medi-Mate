@@ -11,10 +11,12 @@ import UIKit
 class SearchViewModel: ObservableObject {
     @Published var searchText = ""
     @Published var searchResult: String = ""
+    @Published var image: UIImage = UIImage(systemName: "star") ?? UIImage()
 
     func search() async {
         do {
             let result = try await textSearch(searchText: searchText)
+
             DispatchQueue.main.async {
                 self.searchResult = result
             }
@@ -60,6 +62,7 @@ class SearchViewModel: ObservableObject {
             guard let url = URL(string: "\(Constant.apiSting)/api/message/image") else {
                 throw URLError(.badURL)
             }
+            //guard let ... else: 用于确保 URL 是有效的，如果 URL 构建失败，则抛出 URLError(.badURL) 错误
 
             // 生成边界字符串
             let boundary = UUID().uuidString
@@ -70,6 +73,7 @@ class SearchViewModel: ObservableObject {
 
             // 创建 multipart form data
             var data = Data()
+            //创建一个空的 Data 对象，用于存储请求体的二进制数据
             data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
             data.append("Content-Disposition: form-data; name=\"file\"; filename=\"image.jpg\"\r\n".data(using: .utf8)!)
             data.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
@@ -80,8 +84,10 @@ class SearchViewModel: ObservableObject {
 
             // 设置请求体
             request.httpBody = data
+            //将构建好的 multipart/form-data 数据赋值给请求的 httpBody 属性
 
             let (responseData, _) = try await URLSession.shared.data(for: request)
+            //使用共享的 URLSession 实例发送 POST 请求，并等待返回的数据。这个调用是异步的，因此需要使用 await
 
             // 解析 JSON 响应
             let jsonResponse = try JSONDecoder().decode(APIResponse.self, from: responseData)

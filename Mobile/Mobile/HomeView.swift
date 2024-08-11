@@ -3,6 +3,8 @@ import UIKit
 
 struct HomeView: View {
     @State private var text: String = ""
+    //State: property wrapper 当使用 @State 包装的值发生变化时，SwiftUI 会自动重新渲染使用该值的视图
+    //private表示它只能在当前视图中使用。
     @State private var image: UIImage?
     @State private var isShowingCamera = false
     
@@ -20,12 +22,13 @@ struct HomeView: View {
                 
                 Button{
                     Task {
-                        await searchModel.search()
+                        await searchModel.uploadImage(.image)
                     }
                 }label: {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.black)
                         .font(.system(size: 30))
+                        .bold()
                 }
                 
                 Button(action: {

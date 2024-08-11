@@ -71,7 +71,7 @@ struct RegisterView: View {
     }
 }
 
-// CustomTextField 和 CustomSecureField 保持不变
+// CustomTextField and CustomSecureField 
 
 struct CustomTextField: View {
     var placeholder: String
