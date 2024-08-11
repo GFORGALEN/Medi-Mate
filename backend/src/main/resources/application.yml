@@ -15,6 +15,9 @@ spring:
     user:
       name: user
       password: ${fc.security.password}
+  ai:
+    openai:
+      api-key: ${fc.openai.api-key}
 mybatis:
   #mapper配置文件
   mapper-locations: classpath:mapper/*.xml

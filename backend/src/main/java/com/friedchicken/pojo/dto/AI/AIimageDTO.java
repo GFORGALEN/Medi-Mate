@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.net.URL;
 
 @Data
 @Builder
@@ -18,5 +19,5 @@ public class AIimageDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotBlank
-    private String url;
+    private URL url;
 }

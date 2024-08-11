@@ -1,4 +1,6 @@
-package com.friedchicken.exception;
+package com.friedchicken.controller.exception;
+
+import com.friedchicken.exception.BaseException;
 
 /**
  * 账号不存在异常

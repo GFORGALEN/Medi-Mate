@@ -1,7 +1,5 @@
 package com.friedchicken.controller.app;
 
-import com.friedchicken.constant.MessageConstant;
-import com.friedchicken.exception.ImageFailedUploadException;
 import com.friedchicken.pojo.dto.AI.AIimageDTO;
 import com.friedchicken.pojo.dto.AI.AItextDTO;
 import com.friedchicken.pojo.vo.AI.AItextVO;
@@ -20,9 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/message")
@@ -68,4 +63,5 @@ public class AIController {
 
         return Result.success(aitextVO);
     }
+
 }
