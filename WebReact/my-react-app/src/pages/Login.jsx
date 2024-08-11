@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(''); // 新增错误状态
   const dispatch = useDispatch();
   const userApi = new UserApi();
   const navigate = useNavigate();
@@ -15,16 +16,17 @@ function Login() {
     try {
       const response = await userApi.login({
         email: email,
-        password: password
+        password: password,
       });
+
       dispatch(login({
-        user: response.data.user,
-        token: response.data.token,
+        user: response.user,
+        token: response.token,
       }));
+
       navigate('/dashboard');
     } catch (error) {
-      console.error('Login failed, redirecting to register...', error);
-      navigate('/register');
+      setError('Incorrect email or password'); // 设置错误信息
     }
   };
 
@@ -32,6 +34,7 @@ function Login() {
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-black via-gray-800 to-white">
       <div className="w-full max-w-md p-8 space-y-8 bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-center text-white">Sign in to your account</h2>
+        {error && <p className="text-red-500 text-center">{error}</p>} {/* 显示错误信息 */}
         <div className="space-y-4">
           <input
             type="email"

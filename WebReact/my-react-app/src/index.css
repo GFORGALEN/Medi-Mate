@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/*body {*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    box-sizing: border-box;*/
+/*}*/
+
+/*html, body, #root {*/
+/*    height: 100%;*/
+/*}*/
+
+/*.main-content {*/
+/*    margin-top: 64px; !* 使内容在Topbar下方开始 *!*/
+/*}*/

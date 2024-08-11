@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { UserApi } from '../apis/UserApi';  // 确保正确导入 UserApi
 import { useNavigate } from 'react-router-dom';
 
 function Register() {
@@ -8,11 +7,10 @@ function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const userApi = new UserApi();  // 确保在这里实例化 UserApi
   const navigate = useNavigate();
 
   const handleAccessCodeSubmit = () => {
-    if (accessCode === 'mdimate') {
+    if (accessCode === 'medimate') {
       setIsAuthorized(true);
     } else {
       alert('Incorrect password. Please try again.');
@@ -25,7 +23,8 @@ function Register() {
       return;
     }
     try {
-      await userApi.register({ email, password });  // 正确使用实例化的 userApi
+      // 假设有一个userApi.register方法来处理注册逻辑
+      await userApi.register({ email, password });
       navigate('/login');
     } catch (error) {
       console.error('Registration failed', error);
@@ -46,12 +45,20 @@ function Register() {
               placeholder="Access Code"
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-400"
             />
-            <button
-              onClick={handleAccessCodeSubmit}
-              className="w-full px-4 py-2 text-white bg-slate-900 rounded-md hover:bg-slate-400"
-            >
-              Submit
-            </button>
+            <div className="flex justify-between">
+              <button
+                onClick={handleAccessCodeSubmit}
+                className="w-full px-4 py-2 text-white bg-slate-900 rounded-md hover:bg-slate-400 mr-2"
+              >
+                Submit
+              </button>
+              <button
+                onClick={() => navigate('/login')} // 返回登录页面的按钮
+                className="w-full px-4 py-2 text-white bg-gray-600 rounded-md hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+            </div>
           </>
         ) : (
           <>
