@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		61AD1D8F2C65E0960096B2E8 /* ProductView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61AD1D8E2C65E0960096B2E8 /* ProductView.swift */; };
 		61DC84922C622F1A0048463E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 61DC84912C622F1A0048463E /* FirebaseAuth */; };
 		61DC84952C622F3E0048463E /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 61DC84942C622F3E0048463E /* GoogleSignIn */; };
 		61DC84972C622F3E0048463E /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 61DC84962C622F3E0048463E /* GoogleSignInSwift */; };
@@ -23,6 +22,9 @@
 		D9B82B582C620D7900C5AFEB /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B82B572C620D7900C5AFEB /* RegisterView.swift */; };
 		D9B82B5A2C62125200C5AFEB /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B82B592C62125200C5AFEB /* HomeView.swift */; };
 		D9CC49C82C65DDCF00889141 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CC49C72C65DDCF00889141 /* SearchViewModel.swift */; };
+		D9F4C0602C699ED800632308 /* NewScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F4C05F2C699ED800632308 /* NewScreenView.swift */; };
+		D9F4C0622C69A0A000632308 /* SupplementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F4C0612C69A0A000632308 /* SupplementView.swift */; };
+		D9F4C0642C69A11200632308 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F4C0632C69A11200632308 /* DetailView.swift */; };
 		D9F8AAC72C61F84200B723A5 /* MobileApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F8AAC62C61F84200B723A5 /* MobileApp.swift */; };
 		D9F8AAC92C61F84200B723A5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F8AAC82C61F84200B723A5 /* ContentView.swift */; };
 		D9F8AACB2C61F84300B723A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9F8AACA2C61F84300B723A5 /* Assets.xcassets */; };
@@ -30,7 +32,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		61AD1D8E2C65E0960096B2E8 /* ProductView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductView.swift; sourceTree = "<group>"; };
 		61DC84982C6230AB0048463E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		61DC849A2C6230EA0048463E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		61DC849D2C6232660048463E /* GoogleSignInFireBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignInFireBase.swift; sourceTree = "<group>"; };
@@ -44,6 +45,9 @@
 		D9B82B572C620D7900C5AFEB /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		D9B82B592C62125200C5AFEB /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		D9CC49C72C65DDCF00889141 /* SearchViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
+		D9F4C05F2C699ED800632308 /* NewScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewScreenView.swift; sourceTree = "<group>"; };
+		D9F4C0612C69A0A000632308 /* SupplementView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SupplementView.swift; sourceTree = "<group>"; };
+		D9F4C0632C69A11200632308 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		D9F8AAC32C61F84200B723A5 /* Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9F8AAC62C61F84200B723A5 /* MobileApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileApp.swift; sourceTree = "<group>"; };
 		D9F8AAC82C61F84200B723A5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -95,13 +99,15 @@
 		D9F8AAC52C61F84200B723A5 /* Mobile */ = {
 			isa = PBXGroup;
 			children = (
-				61AD1D8E2C65E0960096B2E8 /* ProductView.swift */,
+				D9F4C0632C69A11200632308 /* DetailView.swift */,
+				D9F4C0612C69A0A000632308 /* SupplementView.swift */,
 				D9A1EF912C671DC6002CCE61 /* Models.swift */,
 				D9CC49C72C65DDCF00889141 /* SearchViewModel.swift */,
 				D9F8AAC62C61F84200B723A5 /* MobileApp.swift */,
 				D9F8AAC82C61F84200B723A5 /* ContentView.swift */,
 				D9A1EF8F2C67043A002CCE61 /* AccountView.swift */,
 				D9B82B592C62125200C5AFEB /* HomeView.swift */,
+				D9F4C05F2C699ED800632308 /* NewScreenView.swift */,
 				D9B82B4E2C61FDC600C5AFEB /* LoginView.swift */,
 				D9B82B572C620D7900C5AFEB /* RegisterView.swift */,
 				D98C8B902C632FB80022544C /* RegisterViewModel.swift */,
@@ -204,14 +210,16 @@
 			files = (
 				61DC84A22C6232FF0048463E /* Application.swift in Sources */,
 				D98C8B912C632FB80022544C /* RegisterViewModel.swift in Sources */,
+				D9F4C0642C69A11200632308 /* DetailView.swift in Sources */,
 				D9B82B4F2C61FDC600C5AFEB /* LoginView.swift in Sources */,
 				D9B82B582C620D7900C5AFEB /* RegisterView.swift in Sources */,
 				D9A1EF922C671DC6002CCE61 /* Models.swift in Sources */,
 				D9A1EF902C67043A002CCE61 /* AccountView.swift in Sources */,
+				D9F4C0602C699ED800632308 /* NewScreenView.swift in Sources */,
+				D9F4C0622C69A0A000632308 /* SupplementView.swift in Sources */,
 				D9F8AAC92C61F84200B723A5 /* ContentView.swift in Sources */,
 				61DC849E2C6232660048463E /* GoogleSignInFireBase.swift in Sources */,
 				D9CC49C82C65DDCF00889141 /* SearchViewModel.swift in Sources */,
-				61AD1D8F2C65E0960096B2E8 /* ProductView.swift in Sources */,
 				D9B82B5A2C62125200C5AFEB /* HomeView.swift in Sources */,
 				61DC84A02C6232B50048463E /* AuthenticationView.swift in Sources */,
 				D98C8B8F2C6326750022544C /* Constant.swift in Sources */,
