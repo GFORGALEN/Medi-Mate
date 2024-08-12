@@ -6,8 +6,6 @@ struct HomeView: View {
     @State private var image: UIImage?
     @State private var imageFileSize: String = ""
     @State private var isShowingCamera = false
-    @State private var isShowingDetail = false
-    
     @StateObject private var searchModel = SearchViewModel()
 
     var body: some View {
@@ -20,9 +18,9 @@ struct HomeView: View {
                 TextField("Type something...", text: $searchModel.searchText)
                 
                 Button(action: {
-                    self.isShowingDetail = true
                     Task {
                         await searchModel.uploadImage(.image)
+
                     }
                 }) {
                     Image(.cameraRetroSolid)
@@ -60,24 +58,40 @@ struct HomeView: View {
                     .font(.caption)
                     .padding(.top, 5)
             }
+            
+            if searchModel.isLoading {
+                ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                .scaleEffect(2)
+                .padding()
+                        }
+            
+            
+            
         }
         .sheet(isPresented: $isShowingCamera) {
             ImagePicker(image: self.$image, sourceType: .camera)
         }
-        .sheet(isPresented: $isShowingDetail){
+        
+        .sheet(isPresented: $searchModel.isFinished) {
             DetailView(medication: Medication(
-                image: self.image,
-                description: "\(searchModel.searchResult)"
-            ))
-        }
-        .onChange(of: image) { newImage in
-            if let newImage = newImage {
-                compressAndSetImage(newImage)
+                        image: self.image,
+                        description: searchModel.medicationInfo)
+                  )
+                }
+        
+        
+        .onChange(of: image) { oldImage, newImage in
+                    if let newImage = newImage {
+                        let compressedImage = compressAndSetImage(newImage)
+                        Task {
+                            await searchModel.uploadImage(compressedImage)
+                        }
+                    }
             }
-        }
     }
     
-    private func compressAndSetImage(_ originalImage: UIImage) {
+    private func compressAndSetImage(_ originalImage: UIImage) -> UIImage{
         let maxFileSize = 1048576 // 1MB in bytes
         let maxDimension: CGFloat = 512 // Max width or height
         
@@ -106,7 +120,11 @@ struct HomeView: View {
             print("Original image size: \(formatFileSize(originalSize))")
             print("Compressed image size: \(formatFileSize(compressedSize))")
             print("Final compression quality: \(compressionQuality)")
+            
+            return compressedImage
+
         }
+        return originalImage
     }
     
     private func resizeImage(_ image: UIImage, maxDimension: CGFloat) -> UIImage {
@@ -143,8 +161,7 @@ struct HomeView: View {
     }
 }
 
-// ... rest of your code remains the same
-// ... rest of your code remains the same
+
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var image: UIImage?
     @Environment(\.presentationMode) var presentationMode
@@ -182,5 +199,3 @@ struct ImagePicker: UIViewControllerRepresentable {
 #Preview {
     HomeView()
 }
-
-// ... rest of your code remains the same

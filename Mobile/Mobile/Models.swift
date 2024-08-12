@@ -13,5 +13,5 @@ import UIKit
 // Mediction Model
 struct Medication {
     let image: UIImage?
-    let description: String
+    let description: MedicationInfo?
 }

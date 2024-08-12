@@ -39,12 +39,13 @@ struct DetailView: View {
                     .shadow(radius: 5)
                 
                 VStack(alignment: .leading, spacing: 15) {
-                    Text("medication.name")
+                    Text("\(medication.description?.name ?? "Non")")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                    
-                    DetailRow(title: "描述", content: medication.description)
-                    
+                    DetailRow(title: "Description", content: medication.description?.description ?? "Non")
+                    DetailRow(title: "CommonUse", content: medication.description?.commonUse ?? "Non")
+                    DetailRow(title: "Dosage", content: medication.description?.dosage ?? "Non")
+                    DetailRow(title: "SideEffects", content: medication.description?.sideEffects ?? "Non")
                 }
                 .padding()
                 .background(Color.white)
@@ -59,12 +60,12 @@ struct DetailView: View {
 
 
 
-struct MedicationDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        DetailView(medication: Medication(
-            image: .image,
-            description: "ok"
-            )
-        )
-    }
-}
+//struct MedicationDetailView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        DetailView(medication: Medication(
+//            image: .image,
+//            description: "ok"
+//            )
+//        )
+//    }
+//}
