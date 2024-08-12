@@ -1,6 +1,7 @@
 package com.friedchicken.service.impl;
 
 import com.friedchicken.pojo.dto.AI.AIimageDTO;
+import com.friedchicken.pojo.entity.User.User;
 import com.friedchicken.pojo.vo.AI.AItextVO;
 import com.friedchicken.properties.OpenAIProperties;
 import com.friedchicken.service.AIService;
@@ -31,39 +32,15 @@ public class AIServiceImpl implements AIService {
 
     @Override
     public AItextVO handlerText(String message) {
-        OpenAiApi openAiApi = new OpenAiApi(openAIProperties.getApiKey());
-        OpenAiChatOptions openAiChatOptions = OpenAiChatOptions.builder()
-                .withModel(openAIProperties.getModel())
-                .withTemperature(openAIProperties.getTemperature())
-                .withMaxTokens(1000)
-                .build();
-        OpenAiChatModel openAiChatModel = new OpenAiChatModel(openAiApi, openAiChatOptions);
-
-        ChatResponse chatResponse = openAiChatModel.call(new Prompt(message));
-
-        return AItextVO.builder()
-                .text(chatResponse.getResults().get(0).getOutput().getContent())
-                .build();
+        UserMessage userMessage = new UserMessage(message);
+        return getAiClass(userMessage);
     }
 
     @Override
     public AItextVO analyzeImageUrl(AIimageDTO aiimageDTO) {
         UserMessage userMessage = new UserMessage("Tell my the text on this picture.", List.of(new Media(MimeTypeUtils.IMAGE_JPEG, aiimageDTO.getUrl())));
 
-        OpenAiApi openAiApi = new OpenAiApi(openAIProperties.getApiKey());
-        OpenAiChatOptions openAiChatOptions = OpenAiChatOptions.builder()
-                .withModel(openAIProperties.getModel())
-                .withTemperature(openAIProperties.getTemperature())
-                .withMaxTokens(1000)
-                .build();
-
-        OpenAiChatModel openAiChatModel = new OpenAiChatModel(openAiApi, openAiChatOptions);
-
-        ChatResponse chatResponse = openAiChatModel.call(new Prompt(userMessage));
-
-        return AItextVO.builder()
-                .text(chatResponse.getResults().get(0).getOutput().getContent())
-                .build();
+        return getAiClass(userMessage);
     }
 
     @Override
@@ -72,15 +49,17 @@ public class AIServiceImpl implements AIService {
         UserMessage userMessage = new UserMessage("Tell my the text on this picture."
                 , List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageResource)));
 
+        return getAiClass(userMessage);
+    }
+
+    private AItextVO getAiClass(UserMessage userMessage) {
         OpenAiApi openAiApi = new OpenAiApi(openAIProperties.getApiKey());
         OpenAiChatOptions openAiChatOptions = OpenAiChatOptions.builder()
                 .withModel(openAIProperties.getModel())
                 .withTemperature(openAIProperties.getTemperature())
                 .withMaxTokens(1000)
                 .build();
-
         OpenAiChatModel openAiChatModel = new OpenAiChatModel(openAiApi, openAiChatOptions);
-
         ChatResponse chatResponse = openAiChatModel.call(new Prompt(userMessage));
 
         return AItextVO.builder()
