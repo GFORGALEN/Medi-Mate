@@ -1,7 +1,6 @@
 package com.friedchicken.service.impl;
 
 import com.friedchicken.pojo.dto.AI.AIimageDTO;
-import com.friedchicken.pojo.entity.User.User;
 import com.friedchicken.pojo.vo.AI.AItextVO;
 import com.friedchicken.properties.OpenAIProperties;
 import com.friedchicken.service.AIService;
@@ -18,9 +17,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeTypeUtils;
-import reactor.core.publisher.Flux;
 
-import java.util.Base64;
 import java.util.List;
 
 @Slf4j
@@ -58,10 +55,12 @@ public class AIServiceImpl implements AIService {
                 .withModel(openAIProperties.getModel())
                 .withTemperature(openAIProperties.getTemperature())
                 .withMaxTokens(1000)
+                .withResponseFormat(new OpenAiApi.ChatCompletionRequest.ResponseFormat(
+                        OpenAiApi.ChatCompletionRequest.ResponseFormat.Type.JSON_SCHEMA, openAIProperties.getJsonSchema()))
                 .build();
         OpenAiChatModel openAiChatModel = new OpenAiChatModel(openAiApi, openAiChatOptions);
         ChatResponse chatResponse = openAiChatModel.call(new Prompt(userMessage));
-
+        log.info("chatResponse: {}", chatResponse.toString());
         return AItextVO.builder()
                 .text(chatResponse.getResults().get(0).getOutput().getContent())
                 .build();
