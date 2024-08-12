@@ -45,7 +45,6 @@ struct DetailView: View {
                         .fontWeight(.bold)
                     DetailRow(title: "Description", content: medication.description?.description ?? "Non")
                     DetailRow(title: "CommonUse", content: medication.description?.commonUse ?? "Non")
-                    DetailRow(title: "Dosage", content: medication.description?.dosage ?? "Non")
                     DetailRow(title: "SideEffects", content: medication.description?.sideEffects ?? "Non")
                 }
                 .padding()
