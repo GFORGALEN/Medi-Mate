@@ -23,6 +23,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeTypeUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -77,8 +78,11 @@ public class AiServiceImpl implements AiService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        Supplement supplement=aiInfoMapper.getProductByName(supplementInfo);
-        log.info(supplement.toString());
+        String name = supplementInfo.getName();
+        List<String> keywords = Arrays.asList(name.split("\\s+"));
+        log.info("keywords: {}", keywords);
+        List<Supplement> supplement = aiInfoMapper.findByMultipleWords(keywords);
+        log.info("supplement:{}",supplement);
         return AItextVO.builder()
                 .text(requestContent)
                 .build();
