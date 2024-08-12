@@ -2,11 +2,12 @@ package com.friedchicken.controller.app;
 
 import com.friedchicken.constant.MessageConstant;
 import com.friedchicken.controller.app.exception.ImageFailedUploadException;
+import com.friedchicken.mapper.AiInfoMapper;
 import com.friedchicken.pojo.dto.AI.AIimageDTO;
 import com.friedchicken.pojo.dto.AI.AItextDTO;
 import com.friedchicken.pojo.vo.AI.AItextVO;
 import com.friedchicken.result.Result;
-import com.friedchicken.service.AIService;
+import com.friedchicken.service.AiService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,7 +33,8 @@ import java.io.IOException;
 public class AIController {
 
     @Autowired
-    private AIService aiService;
+    private AiService aiService;
+
 
     @PostMapping("/text")
     @Operation(summary = "User send message to connect AI model.",
@@ -72,7 +74,7 @@ public class AIController {
 
     @PostMapping("/image")
     @Operation(summary = "User sends an image to connect with the AI model.",
-    description = "If the user wants to search using the image from the model,")
+            description = "If the user wants to search using the image from the model,")
     public Result<AItextVO> sendImageUrl(@RequestBody MultipartFile file) {
         log.info("User want to use AI model to send image.");
 
@@ -83,7 +85,7 @@ public class AIController {
             throw new ImageFailedUploadException(MessageConstant.FILE_UPLOAD_ERROR);
         }
         AItextVO aItextVO = aiService.analyzeImage(imageData);
-
+        log.info("aitextVO={}", aItextVO.toString());
         return Result.success(aItextVO);
     }
 }
