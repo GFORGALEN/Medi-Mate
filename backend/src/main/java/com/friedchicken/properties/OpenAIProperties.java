@@ -10,6 +10,20 @@ import org.springframework.stereotype.Component;
 public class OpenAIProperties {
     private String apiKey;
     private String url = "https://api.openai.com";
-    private String model = "gpt-4o";
+    private String model = "gpt-4o-2024-08-06";
     private Float temperature = 0.7F;
+    private String jsonSchema = """
+            {
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string","description": "The name of the product"},
+                    "description": { "type": "string","description": "The general description of the product" },
+                    "dosage": { "type": "string", "description": "The approximate dosage of the product" },
+                    "common_use": { "type": "string", "description": "The common use of the product" },
+                    "sideEffects": { "type": "string", "description": "The side effect of the product" }
+                },
+                "required": ["name", "description","dosage","common_use","sideEffects"],
+                "additionalProperties": false
+            }
+            """;
 }
