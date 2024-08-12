@@ -13,10 +13,13 @@ import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeTypeUtils;
 import reactor.core.publisher.Flux;
 
+import java.util.Base64;
 import java.util.List;
 
 @Slf4j
@@ -44,8 +47,30 @@ public class AIServiceImpl implements AIService {
     }
 
     @Override
-    public AItextVO analyzeImage(AIimageDTO aiimageDTO) {
-        UserMessage userMessage = new UserMessage("Tell my the text on this picture.", List.of(new Media(MimeTypeUtils.IMAGE_JPEG,aiimageDTO.getUrl())));
+    public AItextVO analyzeImageUrl(AIimageDTO aiimageDTO) {
+        UserMessage userMessage = new UserMessage("Tell my the text on this picture.", List.of(new Media(MimeTypeUtils.IMAGE_JPEG, aiimageDTO.getUrl())));
+
+        OpenAiApi openAiApi = new OpenAiApi(openAIProperties.getApiKey());
+        OpenAiChatOptions openAiChatOptions = OpenAiChatOptions.builder()
+                .withModel(openAIProperties.getModel())
+                .withTemperature(openAIProperties.getTemperature())
+                .withMaxTokens(1000)
+                .build();
+
+        OpenAiChatModel openAiChatModel = new OpenAiChatModel(openAiApi, openAiChatOptions);
+
+        ChatResponse chatResponse = openAiChatModel.call(new Prompt(userMessage));
+
+        return AItextVO.builder()
+                .text(chatResponse.getResults().get(0).getOutput().getContent())
+                .build();
+    }
+
+    @Override
+    public AItextVO analyzeImage(byte[] imageData) {
+        Resource imageResource = new ByteArrayResource(imageData);
+        UserMessage userMessage = new UserMessage("Tell my the text on this picture."
+                , List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageResource)));
 
         OpenAiApi openAiApi = new OpenAiApi(openAIProperties.getApiKey());
         OpenAiChatOptions openAiChatOptions = OpenAiChatOptions.builder()

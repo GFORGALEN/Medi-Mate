@@ -1,6 +1,6 @@
 package com.friedchicken.handler;
 
-import com.friedchicken.controller.exception.LoginFailedException;
+import com.friedchicken.controller.app.exception.LoginFailedException;
 import com.friedchicken.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

@@ -6,5 +6,7 @@ import com.friedchicken.pojo.vo.AI.AItextVO;
 public interface AIService {
     AItextVO handlerText(String message);
 
-    AItextVO analyzeImage(AIimageDTO aiimageDTO);
+    AItextVO analyzeImageUrl(AIimageDTO aiimageDTO);
+
+    AItextVO analyzeImage(byte[] imageData);
 }

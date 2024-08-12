@@ -1,4 +1,4 @@
-package com.friedchicken.controller.exception;
+package com.friedchicken.controller.app.exception;
 
 import com.friedchicken.exception.BaseException;
 
