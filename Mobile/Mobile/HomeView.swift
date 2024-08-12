@@ -17,17 +17,6 @@ struct HomeView: View {
             HStack {
                 TextField("Type something...", text: $searchModel.searchText)
                 
-                Button(action: {
-                    Task {
-                        await searchModel.uploadImage(.image)
-
-                    }
-                }) {
-                    Image(.cameraRetroSolid)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 30, height: 30)
-                }
                 
                 Button(action: {
                     self.isShowingCamera = true
@@ -48,16 +37,6 @@ struct HomeView: View {
             .padding(.bottom, 200)
             .padding()
             
-            if let image = image {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 200, height: 200)
-                
-                Text("Image size: \(imageFileSize)")
-                    .font(.caption)
-                    .padding(.top, 5)
-            }
             
             if searchModel.isLoading {
                 ProgressView()
@@ -74,7 +53,8 @@ struct HomeView: View {
         }
         
         .sheet(isPresented: $searchModel.isFinished) {
-            DetailView(medication: Medication(
+            DetailView(
+                medication: Medication(
                         image: self.image,
                         description: searchModel.medicationInfo)
                   )

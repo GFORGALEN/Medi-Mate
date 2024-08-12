@@ -31,7 +31,8 @@ struct DetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                Image(.image)
+                
+                Image(uiImage: medication.image ?? UIImage(systemName: "photo")!)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 200)
