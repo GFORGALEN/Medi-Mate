@@ -2,7 +2,6 @@ package com.friedchicken.controller.app;
 
 import com.friedchicken.constant.MessageConstant;
 import com.friedchicken.controller.app.exception.ImageFailedUploadException;
-import com.friedchicken.mapper.AiInfoMapper;
 import com.friedchicken.pojo.dto.AI.AIimageDTO;
 import com.friedchicken.pojo.dto.AI.AItextDTO;
 import com.friedchicken.pojo.vo.AI.AItextVO;
@@ -84,8 +83,8 @@ public class AIController {
         } catch (IOException e) {
             throw new ImageFailedUploadException(MessageConstant.FILE_UPLOAD_ERROR);
         }
-        AItextVO aItextVO = aiService.analyzeImage(imageData);
-        log.info("aitextVO={}", aItextVO.toString());
-        return Result.success(aItextVO);
+        AItextVO aitextVO = aiService.analyzeImage(imageData);
+        log.info("aitextVO={}", aitextVO.toString());
+        return Result.success(aitextVO);
     }
 }

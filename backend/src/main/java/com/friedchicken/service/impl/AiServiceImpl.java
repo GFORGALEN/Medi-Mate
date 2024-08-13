@@ -81,8 +81,10 @@ public class AiServiceImpl implements AiService {
         String name = supplementInfo.getName();
         List<String> keywords = Arrays.asList(name.split("\\s+"));
         log.info("keywords: {}", keywords);
+
         List<Supplement> supplement = aiInfoMapper.findByMultipleWords(keywords);
         log.info("supplement:{}",supplement);
+
         return AItextVO.builder()
                 .text(requestContent)
                 .build();
