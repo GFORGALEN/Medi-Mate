@@ -1,7 +1,7 @@
 package com.friedchicken.controller.app;
 
 import com.friedchicken.constant.MessageConstant;
-import com.friedchicken.exception.AccountNotFoundException;
+import com.friedchicken.controller.app.exception.AccountNotFoundException;
 import com.friedchicken.pojo.dto.User.UserGoogleDTO;
 import com.friedchicken.pojo.dto.User.UserLoginDTO;
 import com.friedchicken.pojo.dto.User.UserRegisterDTO;

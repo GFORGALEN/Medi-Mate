@@ -2,9 +2,9 @@ package com.friedchicken.service.impl;
 
 import com.friedchicken.constant.JwtClaimsConstant;
 import com.friedchicken.constant.MessageConstant;
-import com.friedchicken.exception.AccountNotFoundException;
-import com.friedchicken.exception.PasswordErrorException;
-import com.friedchicken.exception.RegisterFailedException;
+import com.friedchicken.controller.app.exception.AccountNotFoundException;
+import com.friedchicken.controller.app.exception.PasswordErrorException;
+import com.friedchicken.controller.app.exception.RegisterFailedException;
 import com.friedchicken.mapper.UserMapper;
 import com.friedchicken.pojo.dto.User.UserGoogleDTO;
 import com.friedchicken.pojo.dto.User.UserLoginDTO;

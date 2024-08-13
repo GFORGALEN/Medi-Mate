@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.friedchicken.mapper.AiInfoMapper">
+
+    <select id="findByMultipleWords" resultType="com.friedchicken.pojo.entity.AI.Supplement">
+        SELECT * FROM supplement
+        WHERE
+        <if test="keywords != null and keywords.size() > 0">
+            <foreach collection="keywords" item="word" separator=" AND ">
+                product_name LIKE CONCAT('%', #{word}, '%')
+            </foreach>
+        </if>
+        ORDER BY
+        <foreach collection="keywords" item="word" separator=" + " open="(" close=") DESC">
+            (IF(product_name LIKE CONCAT('%', #{word}, '%'), 1, 0))
+        </foreach>
+    </select>
+
+</mapper>

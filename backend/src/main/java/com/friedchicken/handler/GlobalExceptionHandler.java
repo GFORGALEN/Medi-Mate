@@ -1,6 +1,6 @@
 package com.friedchicken.handler;
 
-import com.friedchicken.exception.LoginFailedException;
+import com.friedchicken.controller.app.exception.LoginFailedException;
 import com.friedchicken.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,10 +27,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(Result.error(errors.toString()), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Result<?>> handleGlobalException(Exception ex) {
-        return new ResponseEntity<>(Result.error(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<Result<?>> handleGlobalException(Exception ex) {
+//        return new ResponseEntity<>(Result.error(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 
     @ExceptionHandler(LoginFailedException.class)
     public ResponseEntity<Result<?>> handleSpecificException(LoginFailedException ex) {
