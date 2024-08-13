@@ -5,6 +5,7 @@ struct ContentView: View {
     @State private var selectedIndex = 0
     @StateObject private var authViewModel = AuthenticationView()
 
+
     let icons = ["house", "bag", "star", "person.crop.circle"]  // Icons for each tab
 
     var body: some View {
@@ -51,7 +52,7 @@ struct ContentView: View {
             .padding(.bottom, 20)
             .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
         }
-        .onChange(of: authViewModel.isLoginSuccessed) { newValue in
+        .onChange(of: authViewModel.isLoginSuccessed) { oldValue, newValue in
             if newValue {
                 selectedIndex = 0  // Set to home page when login succeeds
             }

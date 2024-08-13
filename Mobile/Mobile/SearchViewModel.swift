@@ -7,21 +7,28 @@
 
 import Foundation
 import UIKit
+@MainActor
 
-struct MedicationInfo: Codable {
-    let name: String
-    let description: String
-    let commonUse: String
-    let sideEffects: String
+enum SearchError: Error {
+    case invalidURL
+    case networkError(Error)
+    case decodingError(Error)
+    case invalidResponse
+    
+    var localizedDescription: String {
+        switch self {
+        case .invalidURL:
+            return "Invalid URL"
+        case .networkError(let error):
+            return "Network error: \(error.localizedDescription)"
+        case .decodingError(let error):
+            return "Decoding error: \(error.localizedDescription)"
+        case .invalidResponse:
+            return "Invalid response from server"
+        }
+    }
 }
 
-
-struct SearchRequest: Codable {
-    let page: Int
-    let pageSize: Int
-    let productName: String
-    let manufacture: String
-}
 
 
 class SearchViewModel: ObservableObject {
@@ -32,27 +39,24 @@ class SearchViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var medicationInfo: MedicationInfo?
     
-    
-    
-    
-    
+        
     
     func search() async {
-            do {
-                let result = try await textSearch(searchText: searchText)
-                DispatchQueue.main.async {
-                    self.searchResult = result
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    self.searchResult = "Error: \(error.localizedDescription)"
-                }
-            }
+        isLoading = true
+        do {
+            let result = try await textSearch(searchText: searchText)
+            searchResult = result
+            parseSearchResult()
+        } catch {
+            self.searchResult = "Error: \(error.localizedDescription)"
+            print("Error: \(error.localizedDescription)")
         }
+        isLoading = false
+}
 
     private func textSearch(searchText: String) async throws -> String {
             guard let url = URL(string: "\(Constant.apiSting)/api/products") else {
-                throw URLError(.badURL)
+                throw SearchError.invalidURL
             }
             var request = URLRequest(url: url)
             request.httpMethod = "GET"
@@ -60,43 +64,43 @@ class SearchViewModel: ObservableObject {
         
             let searchRequest = SearchRequest(
                     page: 1,
-                    pageSize: 10,
+                    pageSize: 1,
                     productName: searchText,
                     manufacture: ""
                 )   
+
         
             request.httpBody = try JSONEncoder().encode(searchRequest)
 
-            let (data, _) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await URLSession.shared.data(for: request)
+            print("data")
+
+        
+            guard let httpResponse = response as? HTTPURLResponse, 200...299 ~= httpResponse.statusCode else {
+                    throw SearchError.invalidResponse
+                }
 
             // 解析 JSON 响应
             let jsonResponse = try JSONDecoder().decode(APIResponse.self, from: data)
 
             // 返回 data 中的 text 内容
-        return "jsonResponse.data"
+        return jsonResponse.data.text
         }
     
 
     func uploadImage(_ image: UIImage) async {
-        DispatchQueue.main.async {
-            self.isLoading = true
-        }
-        do {
-            let compressedImage = compressImage(image)
-            let result = try await imageSearch(image: compressedImage)
-            DispatchQueue.main.async {
-                self.searchResult = result
-                self.parseSearchResult()
-                self.isLoading = false
-                self.isFinished = true
-            }
-        } catch {
-            DispatchQueue.main.async {
-                self.searchResult = "Error: \(error.localizedDescription)"
-                self.isLoading = false
-            }
-        }
-    }
+        isLoading = true
+                do {
+                    let compressedImage = compressImage(image)
+                    let result = try await imageSearch(image: compressedImage)
+                    searchResult = result
+                    parseSearchResult()
+                } catch {
+                    searchResult = "Error: \(error.localizedDescription)"
+                }
+                isLoading = false
+                isFinished = true
+}
 
     private func imageSearch(image: UIImage) async throws -> String {
         guard let url = URL(string: "\(Constant.apiSting)/api/message/image") else {
@@ -183,16 +187,3 @@ class SearchViewModel: ObservableObject {
         }
     }
 }
-
-// 用于解析 API 响应的结构体
-struct APIResponse: Codable {
-    let code: Int
-    let msg: String?
-    let data: ResponseData
-}
-
-struct ResponseData: Codable {
-    let text: String
-}
-
-
