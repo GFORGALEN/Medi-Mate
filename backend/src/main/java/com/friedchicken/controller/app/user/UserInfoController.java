@@ -1,4 +1,4 @@
-package com.friedchicken.controller.app;
+package com.friedchicken.controller.app.user;
 
 import com.friedchicken.pojo.vo.User.UserInfoVO;
 import com.friedchicken.service.UserInfoService;
