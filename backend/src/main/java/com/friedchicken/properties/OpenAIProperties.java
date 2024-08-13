@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class OpenAIProperties {
     private String apiKey;
     private String url = "https://api.openai.com";
-    private String model = "gpt-4o-2024-08-06";
+    private String model = "gpt-4o-mini";
     private Float temperature = 0.7F;
     private String jsonSchema = """
             {

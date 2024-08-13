@@ -13,6 +13,7 @@ public interface UserMapper {
 
     @Insert("insert into users (user_id, username, email, password, google_id, created_at, updated_at) " +
             "VALUES (#{userId},#{username},#{email},#{password},#{googleId},#{createdAt},#{updatedAt})")
-    void register(User build);
+    void register(User user);
 
+    void update(User user);
 }

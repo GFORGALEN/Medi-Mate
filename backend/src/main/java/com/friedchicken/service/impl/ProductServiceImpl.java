@@ -21,9 +21,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public PageResult<SupplementVO> getProductsByName(SupplementDTO supplementDTO) {
-        PageHelper.startPage(supplementDTO.getPage(), supplementDTO.getSize());
+
+        PageHelper.startPage(supplementDTO.getPage(), supplementDTO.getPageSize());
         Page<SupplementVO> page = productMapper.getProducts(supplementDTO);
-        log.info("page:{}",page.getTotal());
+
+        log.info("page:{}", page);
         return new PageResult<>(page.getTotal(), page.getResult());
     }
 }
