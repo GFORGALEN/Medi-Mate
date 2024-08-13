@@ -1,4 +1,4 @@
-package com.friedchicken.pojo.entity.AI;
+package com.friedchicken.pojo.entity.Supplement;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

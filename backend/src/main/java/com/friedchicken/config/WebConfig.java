@@ -19,6 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
                 ,"/api/user/register"
                 ,"/api/user/google-login"
                 ,"/api/message/**"
+                ,"/api/products/**"
                 ,"/swagger-ui/index.html#"
                 ,"/swagger-ui.html",
                 "/v3/api-docs/**",

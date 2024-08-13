@@ -1,20 +1,13 @@
-package com.friedchicken.pojo.entity.AI;
+package com.friedchicken.pojo.vo.Supplement;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class Supplement implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class SupplementVO implements Serializable {
     private String productId;
     private String productName;
     private String productPrice;
@@ -25,5 +18,4 @@ public class Supplement implements Serializable {
     private String ingredients;
     private String directions;
     private String imageSrc;
-
 }

@@ -1,4 +1,4 @@
-package com.friedchicken.controller.app;
+package com.friedchicken.controller.app.AI;
 
 import com.friedchicken.constant.MessageConstant;
 import com.friedchicken.controller.app.exception.ImageFailedUploadException;
@@ -16,7 +16,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

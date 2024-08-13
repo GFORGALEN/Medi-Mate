@@ -1,6 +1,6 @@
 package com.friedchicken.mapper;
 
-import com.friedchicken.pojo.entity.AI.Supplement;
+import com.friedchicken.pojo.entity.Supplement.Supplement;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
