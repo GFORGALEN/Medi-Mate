@@ -1,6 +1,5 @@
 server:
   port: 8080
-
 spring:
   profiles:
     active: dev
@@ -25,7 +24,7 @@ spring:
 mybatis:
   #mapper配置文件
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.friedChicken.pojo.entity
+  type-aliases-package: com.friedchicken.pojo.entity
   configuration:
     #开启驼峰命名
     map-underscore-to-camel-case: true
