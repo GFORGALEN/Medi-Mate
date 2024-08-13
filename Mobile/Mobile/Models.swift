@@ -6,14 +6,12 @@
 //
 
 import Foundation
+import UIKit
 
 
 
 // Mediction Model
 struct Medication {
-    let name: String
-    let description: String
-    let dosage: String
-    let sideEffects: String
-    let imageName: String
+    let image: UIImage?
+    let description: MedicationInfo?
 }

@@ -8,52 +8,43 @@
 import Foundation
 import UIKit
 
+
+struct MedicationInfo: Codable {
+    let name: String
+    let description: String
+    let dosage: String
+    let commonUse: String
+    let sideEffects: String
+}
+
 class SearchViewModel: ObservableObject {
     @Published var searchText = ""
     @Published var searchResult: String = ""
+    @Published var isFinished = false
     @Published var image: UIImage = UIImage(systemName: "star") ?? UIImage()
+    @Published var isLoading = false
+    @Published var medicationInfo: MedicationInfo?
 
-    func search() async {
-        do {
-            let result = try await textSearch(searchText: searchText)
 
-            DispatchQueue.main.async {
-                self.searchResult = result
-            }
-        } catch {
-            DispatchQueue.main.async {
-                self.searchResult = "Error: \(error.localizedDescription)"
-            }
-        }
-    }
-    
-    private func textSearch(searchText: String) async throws -> String {
-        guard let url = URL(string: "\(Constant.apiSting)/api/message/text") else {
-            throw URLError(.badURL)
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONEncoder().encode(["message": searchText])
-        
-        let (data, _) = try await URLSession.shared.data(for: request)
-        
-        // 解析 JSON 响应
-        let jsonResponse = try JSONDecoder().decode(APIResponse.self, from: data)
-        
-        // 返回 data 中的 text 内容
-        return jsonResponse.data.text
-    }
     
     func uploadImage(_ image: UIImage) async {
+        DispatchQueue.main.async {
+                    self.isLoading = true
+                }
             do {
                 let result = try await imageSearch(image: image)
                 DispatchQueue.main.async {
                     self.searchResult = result
+                    self.parseSearchResult()
+                    self.isLoading = false
+                    self.isFinished = true
+                      
+                    
                 }
             } catch {
                 DispatchQueue.main.async {
                     self.searchResult = "Error: \(error.localizedDescription)"
+                    self.isLoading = false
                 }
             }
         }
@@ -95,6 +86,21 @@ class SearchViewModel: ObservableObject {
             // 返回 data 中的 text 内容
             return jsonResponse.data.text
         }
+    
+    private func parseSearchResult() {
+            guard let jsonData = searchResult.data(using: .utf8) else {
+                print("Failed to convert string to data")
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                self.medicationInfo = try decoder.decode(MedicationInfo.self, from: jsonData)
+            } catch {
+                print("Error parsing JSON: \(error)")
+            }
+        }
+    
     
     
     
