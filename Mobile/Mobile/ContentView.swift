@@ -4,6 +4,8 @@ import AnimatedTabBar
 struct ContentView: View {
     @State private var selectedIndex = 0
     @StateObject private var authViewModel = AuthenticationView()
+    @State private var showTabBar = true
+
 
 
     let icons = ["house", "bag", "star", "person.crop.circle"]  // Icons for each tab
@@ -16,7 +18,7 @@ struct ContentView: View {
                 Spacer()
                 switch selectedIndex {
                 case 0:
-                    HomeView()  // Assuming HomeView exists
+                    HomeView(showTabBar: $showTabBar)  // Assuming HomeView exists
                 case 1:
                     Text("Shop")  // Placeholder for Shop content
                 case 2:
@@ -34,23 +36,25 @@ struct ContentView: View {
             }
             
             // AnimatedTabBar
-            HStack {
-                Spacer(minLength: 20) // Left padding
-                AnimatedTabBar(selectedIndex: $selectedIndex, views: icons.indices.map { index in
-                    wiggleButtonAt(index)
-                })
-                .barColor(Color("bar"))
-                .cornerRadius(30)
-                .selectedColor(Color("select"))
-                .unselectedColor(Color("unSelect"))
-                .ballColor(Color("bar"))
-                .verticalPadding(20)
-                .ballTrajectory(.parabolic)
-                .ballAnimation(.easeOut(duration: 0.4))
-                Spacer(minLength: 20) // Right padding
+            if showTabBar {
+                HStack {
+                    Spacer(minLength: 20) // Left padding
+                    AnimatedTabBar(selectedIndex: $selectedIndex, views: icons.indices.map { index in
+                        wiggleButtonAt(index)
+                    })
+                    .barColor(Color("bar"))
+                    .cornerRadius(30)
+                    .selectedColor(Color("select"))
+                    .unselectedColor(Color("unSelect"))
+                    .ballColor(Color("bar"))
+                    .verticalPadding(20)
+                    .ballTrajectory(.parabolic)
+                    .ballAnimation(.easeOut(duration: 0.4))
+                    Spacer(minLength: 20) // Right padding
+                }
+                .padding(.bottom, 20)
+                .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
             }
-            .padding(.bottom, 20)
-            .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
         }
         .onChange(of: authViewModel.isLoginSuccessed) { oldValue, newValue in
             if newValue {

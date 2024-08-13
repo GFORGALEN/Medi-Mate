@@ -8,9 +8,10 @@ struct HomeView: View {
     @State private var isShowingCamera = false
     @StateObject private var searchModel = SearchViewModel()
     @State private var navigateToResults = false
+    @Binding var showTabBar: Bool
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 Text("Medimate")
                     .font(.system(size: 60, weight: .bold, design: .rounded))
@@ -22,10 +23,6 @@ struct HomeView: View {
                 HStack {
                     TextField("Type something...", text: $searchModel.searchText)
                         .font(.system(size: 20, weight: .bold, design: .monospaced))
-                    
-                    NavigationLink(destination: ProductSearchResultsView(products: sampleProducts), isActive: $navigateToResults) {
-                        EmptyView()
-                    }
                     
                     Button(action: {
                         navigateToResults = true
@@ -66,6 +63,11 @@ struct HomeView: View {
                         .frame(height: 200)
                 }
             }
+            .navigationDestination(isPresented: $navigateToResults) {
+                ProductSearchResultsView(products: sampleProducts)
+                    .onAppear { showTabBar = false }
+                    .onDisappear { showTabBar = true }
+            }
             .sheet(isPresented: $isShowingCamera) {
                 ImagePicker(image: self.$image, sourceType: .camera)
             }
@@ -86,7 +88,7 @@ struct HomeView: View {
         }
     }
     
-    // 示例产品数据
+    // Sample product data remains the same
     private var sampleProducts: [Product] {
         [
             Product(id: "1", name: "iPhone 13", imageURL: "https://example.com/iphone13.jpg"),
@@ -99,5 +101,5 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    HomeView(showTabBar: .constant(true))
 }

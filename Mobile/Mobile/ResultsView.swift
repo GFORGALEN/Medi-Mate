@@ -71,8 +71,7 @@ struct ProductCard: View {
 struct ProductGridView: View {
     let products: [Product]
     let columns = [
-        GridItem(.flexible()),
-        GridItem(.flexible())
+        GridItem(.adaptive(minimum: 150, maximum: 170), spacing: 20)
     ]
     let isSelectable: Bool
     @Binding var selectedProducts: Set<String>
@@ -88,7 +87,6 @@ struct ProductGridView: View {
         }
     }
 }
-
 struct ProductSearchResultsView: View {
     let products: [Product]
     @State private var isSelectMode = false
@@ -107,18 +105,8 @@ struct ProductSearchResultsView: View {
         }
         .navigationTitle("Results (\(products.count))")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(trailing: closeButton)
     }
     
-    private var closeButton: some View {
-        Button(action: {
-            presentationMode.wrappedValue.dismiss()
-        }) {
-            Image(systemName: "xmark.circle.fill")
-                .foregroundColor(.gray)
-                .imageScale(.large)
-        }
-    }
     
     private var selectButton: some View {
         Button(action: {
@@ -127,10 +115,10 @@ struct ProductSearchResultsView: View {
             Text("Select for Comparison")
                 .fontWeight(.semibold)
                 .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color("Button"))
+                .frame(maxWidth: 200)
+                .background(Color("bar"))
                 .foregroundColor(.white)
-                .cornerRadius(30)
+                .cornerRadius(60)
         }
         .padding(.horizontal)
         .padding(.bottom)
@@ -145,10 +133,10 @@ struct ProductSearchResultsView: View {
             Text("Compare Selected (\(selectedProducts.count))")
                 .fontWeight(.semibold)
                 .padding()
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: 200)
                 .background(selectedProducts.count >= 2 ? Color("Button") : Color.gray)
                 .foregroundColor(.white)
-                .cornerRadius(30)
+                .cornerRadius(60)
         }
         .disabled(selectedProducts.count < 2)
         .padding(.horizontal)
