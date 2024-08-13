@@ -15,6 +15,15 @@ struct MedicationInfo: Codable {
     let sideEffects: String
 }
 
+
+struct SearchRequest: Codable {
+    let page: Int
+    let pageSize: Int
+    let productName: String
+    let manufacture: String
+}
+
+
 class SearchViewModel: ObservableObject {
     @Published var searchText = ""
     @Published var searchResult: String = ""
@@ -22,12 +31,56 @@ class SearchViewModel: ObservableObject {
     @Published var image: UIImage = UIImage(systemName: "star") ?? UIImage()
     @Published var isLoading = false
     @Published var medicationInfo: MedicationInfo?
+    
+    
+    
+    
+    
+    
+    func search() async {
+            do {
+                let result = try await textSearch(searchText: searchText)
+                DispatchQueue.main.async {
+                    self.searchResult = result
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.searchResult = "Error: \(error.localizedDescription)"
+                }
+            }
+        }
+
+    private func textSearch(searchText: String) async throws -> String {
+            guard let url = URL(string: "\(Constant.apiSting)/api/products") else {
+                throw URLError(.badURL)
+            }
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+            let searchRequest = SearchRequest(
+                    page: 1,
+                    pageSize: 10,
+                    productName: searchText,
+                    manufacture: ""
+                )   
+        
+            request.httpBody = try JSONEncoder().encode(searchRequest)
+
+            let (data, _) = try await URLSession.shared.data(for: request)
+
+            // 解析 JSON 响应
+            let jsonResponse = try JSONDecoder().decode(APIResponse.self, from: data)
+
+            // 返回 data 中的 text 内容
+        return "jsonResponse.data"
+        }
+    
 
     func uploadImage(_ image: UIImage) async {
         DispatchQueue.main.async {
             self.isLoading = true
         }
-        
         do {
             let compressedImage = compressImage(image)
             let result = try await imageSearch(image: compressedImage)

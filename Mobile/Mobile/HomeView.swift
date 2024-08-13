@@ -11,11 +11,28 @@ struct HomeView: View {
     var body: some View {
         VStack {
             Text("Medimate")
-                .font(.largeTitle)
-                .bold()
+                .font(.system(size: 60, weight: .bold, design: .rounded))
+                .foregroundColor(Color("bar"))
+                .padding(.top, 50)
+            
             
             HStack {
                 TextField("Type something...", text: $searchModel.searchText)
+                    .font(.system(size: 20, weight: .bold, design: .monospaced))
+                
+                Button(action: {
+                    Task {
+                        await searchModel.search()
+                    }
+                    }) {
+                        Image(systemName: "magnifyingglass")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 30, height: 30)
+                            .bold()
+                            .padding(.trailing, 10)
+                            .foregroundColor(.black)
+                    }
                 
                 
                 Button(action: {
@@ -40,11 +57,11 @@ struct HomeView: View {
             
             if searchModel.isLoading {
                 ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .blue))
-                    .scaleEffect(2)
-                    .padding()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .black))
+                    .scaleEffect(5)
+                    .frame(height: 200)
             }
-            
+                        
             
         }
         .sheet(isPresented: $isShowingCamera) {
