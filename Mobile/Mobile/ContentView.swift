@@ -32,17 +32,24 @@ struct ContentView: View {
             
             
             // AnimatedTabBar with custom WiggleButton for each tab
-            AnimatedTabBar(selectedIndex: $selectedIndex, views: icons.indices.map { index in
-                wiggleButtonAt(index)
-            })
-            .barColor(Color("bar"))
-            .cornerRadius(30)
-            .selectedColor(.black)
-            .unselectedColor(Color("unSelect"))
-            .ballColor(Color("ball"))
-            .verticalPadding(20)
-            .ballTrajectory(.teleport)
-            .ballAnimation(.easeOut(duration: 0.2))
+            HStack {
+                    Spacer(minLength: 20) // Left padding
+                    AnimatedTabBar(selectedIndex: $selectedIndex, views: icons.indices.map { index in
+                                wiggleButtonAt(index)
+                            })
+                            .barColor(Color("bar"))
+                            .cornerRadius(30)
+                            .selectedColor(Color("select"))
+                            .unselectedColor(Color("unSelect"))
+                            .ballColor(Color("bar"))
+                            .verticalPadding(20)
+                            .ballTrajectory(.parabolic)
+                            .ballAnimation(.easeOut(duration: 0.4))
+                            Spacer(minLength: 20) // Right padding
+                    }
+                        .padding(.bottom, 20)
+                        .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
+
             
             
             

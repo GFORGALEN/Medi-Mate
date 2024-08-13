@@ -31,7 +31,7 @@ struct HomeView: View {
             }
             .padding()
             .overlay(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 20)
                     .stroke(Color.black, lineWidth: 4)
             )
             .padding(.bottom, 200)
@@ -44,7 +44,6 @@ struct HomeView: View {
                 .scaleEffect(2)
                 .padding()
                         }
-            
             
             
         }
