@@ -1,4 +1,4 @@
-package com.friedchicken.controller.app;
+package com.friedchicken.controller.app.user;
 
 import com.friedchicken.constant.MessageConstant;
 import com.friedchicken.controller.app.exception.AccountNotFoundException;
