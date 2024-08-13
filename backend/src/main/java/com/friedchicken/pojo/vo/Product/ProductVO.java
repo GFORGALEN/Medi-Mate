@@ -11,6 +11,6 @@ public class ProductVO implements Serializable {
     private String productId;
     private String productName;
     private String productPrice;
-    private String manufacture;
+    private String manufactureName;
     private String imageSrc;
 }

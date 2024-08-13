@@ -6,5 +6,5 @@ import com.friedchicken.result.PageResult;
 
 public interface ProductService {
 
-    PageResult<ProductVO> getProducts(ProductDTO productDTO);
+    PageResult<ProductVO> getProductsByName(ProductDTO productDTO);
 }

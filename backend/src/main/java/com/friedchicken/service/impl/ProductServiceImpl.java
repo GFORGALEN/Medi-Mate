@@ -5,10 +5,11 @@ import com.friedchicken.pojo.dto.Product.ProductDTO;
 import com.friedchicken.pojo.vo.Product.ProductVO;
 import com.friedchicken.result.PageResult;
 import com.friedchicken.service.ProductService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -17,10 +18,9 @@ public class ProductServiceImpl implements ProductService {
     private ProductMapper productMapper;
 
     @Override
-    public PageResult<ProductVO> getProducts(ProductDTO productDTO) {
-        int offset = productDTO.getPage() * productDTO.getSize();
-        List<ProductVO> products = productMapper.getProducts(offset, productDTO.getSize(), productDTO.getProductName(), productDTO.getProductId(), productDTO.getManufacture());
-        long total = products.size();
-        return new PageResult<>(total, products);
+    public PageResult<ProductVO> getProductsByName(ProductDTO productDTO) {
+        PageHelper.startPage(productDTO.getPage(), productDTO.getSize());
+        Page<ProductVO> page = productMapper.getProducts(productDTO);
+        return new PageResult<ProductVO>(page.getTotal(), page.getResult());
     }
 }
