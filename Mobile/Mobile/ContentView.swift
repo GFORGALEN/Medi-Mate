@@ -20,7 +20,7 @@ struct ContentView: View {
                 case 0:
                     HomeView(showTabBar: $showTabBar)  // Assuming HomeView exists
                 case 1:
-                    Text("Shop")  // Placeholder for Shop content
+                    ShopView(authViewModel:authViewModel)  // Placeholder for Shop content
                 case 2:
                     Text("Cart")  // Placeholder for Cart content
                 case 3:
@@ -62,6 +62,7 @@ struct ContentView: View {
             }
         }
     }
+    
 
     // Helper function to generate each WiggleButton with appropriate settings
     func wiggleButtonAt(_ index: Int) -> some View {
