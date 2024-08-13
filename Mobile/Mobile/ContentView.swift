@@ -8,7 +8,7 @@ struct ContentView: View {
 
 
 
-    let icons = ["house", "bag", "star", "person.crop.circle"]  // Icons for each tab
+    let icons = ["house", "storefront", "star", "person.crop.circle"]  // Icons for each tab
 
     var body: some View {
         ZStack(alignment: .bottom) {
