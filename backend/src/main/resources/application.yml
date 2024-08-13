@@ -18,6 +18,10 @@ spring:
   ai:
     openai:
       api-key: ${fc.openai.api-key}
+  data:
+    redis:
+      host: ${fc.datasource.host}
+      port: 6379
 mybatis:
   #mapper配置文件
   mapper-locations: classpath:mapper/*.xml
