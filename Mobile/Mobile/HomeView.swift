@@ -62,9 +62,8 @@ struct HomeView: View {
         
         .onChange(of: image) { oldImage, newImage in
                     if let newImage = newImage {
-                        let compressedImage = compressAndSetImage(newImage)
                         Task {
-                            await searchModel.uploadImage(compressedImage)
+                            await searchModel.uploadImage(newImage)
                         }
                     }
             }

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6114B8102C6AC99D00AA866C /* Utlis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6114B80F2C6AC99D00AA866C /* Utlis.swift */; };
 		6114B8122C6AC9B800AA866C /* KeyFrameWiggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6114B8112C6AC9B800AA866C /* KeyFrameWiggleButton.swift */; };
 		6114B8152C6AC9DF00AA866C /* AnimatedTabBar in Frameworks */ = {isa = PBXBuildFile; productRef = 6114B8142C6AC9DF00AA866C /* AnimatedTabBar */; };
 		61DC84922C622F1A0048463E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 61DC84912C622F1A0048463E /* FirebaseAuth */; };
@@ -227,7 +226,6 @@
 				D9B82B582C620D7900C5AFEB /* RegisterView.swift in Sources */,
 				D9A1EF922C671DC6002CCE61 /* Models.swift in Sources */,
 				D9A1EF902C67043A002CCE61 /* AccountView.swift in Sources */,
-				D9F4C0622C69A0A000632308 /* SupplementView.swift in Sources */,
 				D9F8AAC92C61F84200B723A5 /* ContentView.swift in Sources */,
 				61DC849E2C6232660048463E /* GoogleSignInFireBase.swift in Sources */,
 				D9CC49C82C65DDCF00889141 /* SearchViewModel.swift in Sources */,
@@ -369,7 +367,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Mobile/Preview Content\"";
-				DEVELOPMENT_TEAM = 5A8JFDJVRM;
+				DEVELOPMENT_TEAM = 6NW5SH8SH9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Mobile/Info.plist;
@@ -384,7 +382,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.FriedChicken.Mobile1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.FriedChicken.Mobile;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -400,7 +398,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Mobile/Preview Content\"";
-				DEVELOPMENT_TEAM = 5A8JFDJVRM;
+				DEVELOPMENT_TEAM = 6NW5SH8SH9;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Mobile/Info.plist;
@@ -415,7 +413,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.FriedChicken.Mobile1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.FriedChicken.Mobile;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
