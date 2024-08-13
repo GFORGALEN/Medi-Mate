@@ -2,10 +2,11 @@ package com.friedchicken.service.impl;
 
 import com.friedchicken.constant.JwtClaimsConstant;
 import com.friedchicken.constant.MessageConstant;
-import com.friedchicken.controller.app.exception.AccountNotFoundException;
-import com.friedchicken.controller.app.exception.PasswordErrorException;
-import com.friedchicken.controller.app.exception.RegisterFailedException;
+import com.friedchicken.controller.app.user.exception.AccountNotFoundException;
+import com.friedchicken.controller.app.user.exception.PasswordErrorException;
+import com.friedchicken.controller.app.user.exception.RegisterFailedException;
 import com.friedchicken.mapper.UserMapper;
+import com.friedchicken.pojo.dto.User.UserChangePasswordDTO;
 import com.friedchicken.pojo.dto.User.UserGoogleDTO;
 import com.friedchicken.pojo.dto.User.UserLoginDTO;
 import com.friedchicken.pojo.dto.User.UserRegisterDTO;
@@ -21,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -35,6 +37,8 @@ public class UserServiceImpl implements UserService {
     private UniqueIdUtil uniqueIdUtil;
     @Autowired
     private JwtProperties jwtProperties;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     public UserLoginVO login(UserLoginDTO userLoginDTO) {
         String email = userLoginDTO.getEmail();
@@ -63,7 +67,7 @@ public class UserServiceImpl implements UserService {
                     .userId(uniqueIdUtil.generateUniqueId())
                     .password(BCryptUtil.hashPassword(RandomStringUtil.generateRandomString(16)))
                     .build();
-            BeanUtils.copyProperties(userGoogleLoginDTO,user);
+            BeanUtils.copyProperties(userGoogleLoginDTO, user);
             userMapper.register(user);
         } else if (!userByEmail.getGoogleId().equals(googleId)) {
             throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
@@ -72,11 +76,13 @@ public class UserServiceImpl implements UserService {
         assert userByEmail != null;
         return generateUserLoginVO(userByEmail, claims);
     }
+
+
     private UserLoginVO generateUserLoginVO(User user, Map<String, Object> claims) {
         claims.put(JwtClaimsConstant.USER_ID, user.getUserId());
         claims.put(JwtClaimsConstant.USERNAME, user.getUsername());
         String token = JwtUtil.genToken(claims, jwtProperties.getUserTtl(), jwtProperties.getUserSecretKey());
-
+        stringRedisTemplate.opsForValue().set(token, token);
         return UserLoginVO.builder()
                 .userId(user.getUserId())
                 .username(user.getUsername())
@@ -101,4 +107,18 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void updatePassword(UserChangePasswordDTO userChangePasswordDTO) {
+        String email = userChangePasswordDTO.getEmail();
+        User userByEmail = userMapper.getUserByEmail(email);
+        if(userByEmail == null) {
+            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+        }
+        if (!userByEmail.getPassword().equals(userChangePasswordDTO.getOldPassword())){
+            throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
+        }
+        userByEmail.setPassword(userChangePasswordDTO.getNewPassword());
+        userMapper.update(userByEmail);
+
+    }
 }

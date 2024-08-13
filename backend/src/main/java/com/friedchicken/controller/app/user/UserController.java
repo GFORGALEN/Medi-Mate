@@ -1,7 +1,8 @@
 package com.friedchicken.controller.app.user;
 
 import com.friedchicken.constant.MessageConstant;
-import com.friedchicken.controller.app.exception.AccountNotFoundException;
+import com.friedchicken.controller.app.user.exception.AccountNotFoundException;
+import com.friedchicken.pojo.dto.User.UserChangePasswordDTO;
 import com.friedchicken.pojo.dto.User.UserGoogleDTO;
 import com.friedchicken.pojo.dto.User.UserLoginDTO;
 import com.friedchicken.pojo.dto.User.UserRegisterDTO;
@@ -98,4 +99,21 @@ public class UserController {
         return Result.success();
     }
 
+    @PostMapping("/updatePassword")
+    @Operation(summary = "Update Password",
+            description = "If the user want to change his password, it will use this API to create a new Password.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Register successfully.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserLoginVO.class)))
+    })
+    public Result<UserLoginVO> updatePassword(
+            @Parameter(description = "User register information", required = true)
+            @Valid @RequestBody UserChangePasswordDTO userChangePasswordDTO
+    ) {
+        log.info("A new user want to change password:{}", userChangePasswordDTO.toString());
+
+        userService.updatePassword(userChangePasswordDTO);
+
+        return Result.success();
+    }
 }

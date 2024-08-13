@@ -1,7 +1,7 @@
 package com.friedchicken.controller.app.AI;
 
 import com.friedchicken.constant.MessageConstant;
-import com.friedchicken.controller.app.exception.ImageFailedUploadException;
+import com.friedchicken.controller.app.AI.exception.ImageFailedUploadException;
 import com.friedchicken.pojo.dto.AI.AIimageDTO;
 import com.friedchicken.pojo.dto.AI.AItextDTO;
 import com.friedchicken.pojo.vo.AI.AItextVO;
@@ -73,6 +73,10 @@ public class AIController {
     @PostMapping("/image")
     @Operation(summary = "User sends an image to connect with the AI model.",
             description = "If the user wants to search using the image from the model,")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Image processed successfully.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = AItextVO.class))),
+    })
     public Result<AItextVO> sendImageUrl(@RequestBody MultipartFile file) {
         log.info("User want to use AI model to send image.");
 
@@ -86,4 +90,5 @@ public class AIController {
         log.info("aitextVO={}", aitextVO.toString());
         return Result.success(aitextVO);
     }
+
 }

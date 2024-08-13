@@ -1,5 +1,6 @@
 package com.friedchicken.service;
 
+import com.friedchicken.pojo.dto.User.UserChangePasswordDTO;
 import com.friedchicken.pojo.dto.User.UserGoogleDTO;
 import com.friedchicken.pojo.dto.User.UserLoginDTO;
 import com.friedchicken.pojo.dto.User.UserRegisterDTO;
@@ -13,4 +14,5 @@ public interface UserService {
 
     UserLoginVO googleLogin(UserGoogleDTO userGoogleLoginDTO);
 
+    void updatePassword(UserChangePasswordDTO userChangePasswordDTO);
 }
