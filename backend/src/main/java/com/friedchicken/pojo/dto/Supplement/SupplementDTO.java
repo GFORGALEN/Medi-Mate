@@ -1,4 +1,4 @@
-package com.friedchicken.pojo.dto.Product;
+package com.friedchicken.pojo.dto.Supplement;
 
 import lombok.Builder;
 import lombok.Data;
@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Data
 @Builder
-public class ProductDTO implements Serializable {
+public class SupplementDTO implements Serializable {
     private int page;         // 页码
     private int size;         // 每页大小
     private String productName;  // 商品名称（可选）

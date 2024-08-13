@@ -3,7 +3,7 @@
 
 <mapper namespace="com.friedchicken.mapper.AiInfoMapper">
 
-    <select id="findByMultipleWords" resultType="com.friedchicken.pojo.entity.AI.Supplement">
+    <select id="findByMultipleWords" resultType="com.friedchicken.pojo.entity.Supplement.Supplement">
         SELECT * FROM supplement
         WHERE
         <if test="keywords != null and keywords.size() > 0">
