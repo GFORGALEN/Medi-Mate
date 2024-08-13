@@ -5,11 +5,9 @@ import GoogleSignIn
 import GoogleSignInSwift
 
 struct LoginView: View {
-    @State private var email = ""
-    @State private var password = ""
-    @State private var loginError = ""
-    @State private var showRegister = false
+    @StateObject private var viewModel = LoginViewModel()
     @ObservedObject var authViewModel: AuthenticationView
+    @State private var showRegister = false
     
     var body: some View {
         ZStack {
@@ -17,14 +15,14 @@ struct LoginView: View {
                 Text("Welcome to Medimate")
                     .font(.title)
                 
-                TextField("Email", text: $email)
+                TextField("Email", text: $viewModel.email)
                     .padding()
                     .background(Color.white)
                     .cornerRadius(10)
                     .shadow(radius: 5)
                     .padding(.horizontal, 20)
                 
-                SecureField("Password", text: $password)
+                SecureField("Password", text: $viewModel.password)
                     .padding()
                     .background(Color.white)
                     .cornerRadius(10)
@@ -32,7 +30,9 @@ struct LoginView: View {
                     .padding(.horizontal, 20)
                 
                 Button {
-                    // Implement email/password login here
+                    Task {
+                        await viewModel.login(authViewModel: authViewModel)
+                    }
                 } label: {
                     Text("Sign In")
                         .foregroundColor(.white)
@@ -41,8 +41,7 @@ struct LoginView: View {
                         .cornerRadius(10)
                         .shadow(radius: 1, y: 5)
                 }
-                
-                
+                .disabled(viewModel.isLoading)
                 
                 Button {
                     authViewModel.signInWithGoogle()
@@ -64,8 +63,8 @@ struct LoginView: View {
                 .padding()
                 .shadow(radius: 2)
                 
-                if !loginError.isEmpty {
-                    Text(loginError)
+                if !viewModel.loginError.isEmpty {
+                    Text(viewModel.loginError)
                         .foregroundColor(.red)
                         .padding()
                 }
