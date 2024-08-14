@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 @Data
@@ -15,6 +16,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 public class UserGoogleDTO implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @NotBlank(message = "Email is mandatory.")
     @Email(message = "Email should be valid.")
