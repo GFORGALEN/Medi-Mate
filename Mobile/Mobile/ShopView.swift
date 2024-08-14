@@ -30,22 +30,6 @@ struct ShopView: View {
     }
     
     private var shopContent: some View {
-        // MARK: - Shop Content
-        // TODO: Replace this Text view with your actual shop content
-        // This is where you should implement your shop's main interface
-        // Consider adding:
-        // - A list or grid of products
-        // - Category filters
-        // - Search functionality
-        // - Add to cart buttons
-        // Example:
-        // ScrollView {
-        //     LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))]) {
-        //         ForEach(yourProductsArray) { product in
-        //             ProductView(product: product)
-        //         }
-        //     }
-        // }
         Text("Welcome to the Shop!")
     }
     

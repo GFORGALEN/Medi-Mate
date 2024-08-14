@@ -71,7 +71,7 @@ class AuthenticationView: ObservableObject {
             return
         }
         
-        let url = URL(string: "http://172.24.72.175:8080/api/user/google-login")!
+        let url = URL(string: "\(Constant.apiSting)/api/user/google-login")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -82,6 +82,7 @@ class AuthenticationView: ObservableObject {
             "username": username,
             "userPic": userPic
         ]
+        print("Request body: \(body)")
         
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: body)
@@ -96,16 +97,27 @@ class AuthenticationView: ObservableObject {
                 return
             }
             
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
-                print("Invalid response from server")
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print("Response is not HTTPURLResponse")
                 return
             }
             
-            print("User successfully stored in database")
+            print("Response status code: \(httpResponse.statusCode)")
+            
+            if let data = data, let responseString = String(data: data, encoding: .utf8) {
+                print("Response body: \(responseString)")
+            }
+            
+            switch httpResponse.statusCode {
+            case 200...299:
+                print("User successfully stored in database")
+            case 409: // Assuming 409 is the status code for user already exists
+                print("User already stored in database")
+            default:
+                print("Failed to store user. Status code: \(httpResponse.statusCode)")
+            }
         }.resume()
     }
-
     func logout() async throws {
         GIDSignIn.sharedInstance.signOut()
         try Auth.auth().signOut()

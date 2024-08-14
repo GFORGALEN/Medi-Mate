@@ -122,6 +122,29 @@
 			path = Map;
 			sourceTree = "<group>";
 		};
+		619AC2E02C6C62AB0064D8F1 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				D9A1EF8F2C67043A002CCE61 /* AccountView.swift */,
+				619AC2C22C6B21360064D8F1 /* LoginViewModel.swift */,
+				D9B82B4E2C61FDC600C5AFEB /* LoginView.swift */,
+				D98C8B902C632FB80022544C /* RegisterViewModel.swift */,
+				D9B82B572C620D7900C5AFEB /* RegisterView.swift */,
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
+		619AC2E12C6C63520064D8F1 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				D9F4C0632C69A11200632308 /* DetailView.swift */,
+				D9B82B592C62125200C5AFEB /* HomeView.swift */,
+				D9E3C27C2C6B0BEF0026BDAE /* ImagePicker.swift */,
+				D9D44CA82C6B12F600AEA850 /* SearchViewModel.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
 		D9F8AABA2C61F84200B723A5 = {
 			isa = PBXGroup;
 			children = (
@@ -141,22 +164,15 @@
 		D9F8AAC52C61F84200B723A5 /* Mobile */ = {
 			isa = PBXGroup;
 			children = (
-				D9F4C0632C69A11200632308 /* DetailView.swift */,
 				D9A1EF912C671DC6002CCE61 /* Models.swift */,
 				D9F8AAC62C61F84200B723A5 /* MobileApp.swift */,
 				D9F8AAC82C61F84200B723A5 /* ContentView.swift */,
 				619AC2CE2C6C36EF0064D8F1 /* ShopView.swift */,
-				D9E3C27C2C6B0BEF0026BDAE /* ImagePicker.swift */,
-				D9A1EF8F2C67043A002CCE61 /* AccountView.swift */,
-				D9B82B592C62125200C5AFEB /* HomeView.swift */,
-				D9B82B4E2C61FDC600C5AFEB /* LoginView.swift */,
-				619AC2C22C6B21360064D8F1 /* LoginViewModel.swift */,
-				D9B82B572C620D7900C5AFEB /* RegisterView.swift */,
-				D98C8B902C632FB80022544C /* RegisterViewModel.swift */,
 				D98C8B8E2C6326750022544C /* Constant.swift */,
 				D9D44CAA2C6B157000AEA850 /* ResultsView.swift */,
 				619AC2C62C6C15250064D8F1 /* ShopViewModel.swift */,
-				D9D44CA82C6B12F600AEA850 /* SearchViewModel.swift */,
+				619AC2E12C6C63520064D8F1 /* Home */,
+				619AC2E02C6C62AB0064D8F1 /* Authentication */,
 				619AC2DF2C6C536D0064D8F1 /* Map */,
 				6181D9BF2C6ACD0400CE11CB /* TabBar */,
 				61DC849A2C6230EA0048463E /* Info.plist */,
@@ -415,7 +431,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Mobile/Preview Content\"";
-				DEVELOPMENT_TEAM = 6NW5SH8SH9;
+				DEVELOPMENT_TEAM = 5A8JFDJVRM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Mobile/Info.plist;
@@ -430,7 +446,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.FriedChicken.Mobile;
+				PRODUCT_BUNDLE_IDENTIFIER = com.FriedChicken.Mobile1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -446,7 +462,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Mobile/Preview Content\"";
-				DEVELOPMENT_TEAM = 6NW5SH8SH9;
+				DEVELOPMENT_TEAM = 5A8JFDJVRM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Mobile/Info.plist;
@@ -461,7 +477,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.FriedChicken.Mobile;
+				PRODUCT_BUNDLE_IDENTIFIER = com.FriedChicken.Mobile1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
