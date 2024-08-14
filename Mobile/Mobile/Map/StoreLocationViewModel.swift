@@ -9,21 +9,6 @@
 import Foundation
 import CoreLocation
 
-struct Location: Identifiable, Codable {
-    let id = UUID()
-    let name_store: String
-    let name: String
-    let latitude: Double
-    let longitude: Double
-    
-    var coordinate: CLLocationCoordinate2D {
-        CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-    }
-}
-
-struct LocationsData: Codable {
-    let locations: [Location]
-}
 
 class LocationViewModel: ObservableObject {
     @Published var locations: [Location] = []
