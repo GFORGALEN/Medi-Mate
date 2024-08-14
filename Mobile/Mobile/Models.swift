@@ -45,3 +45,22 @@ struct Product: Codable, Identifiable{
     let name: String
     let imageURL: String
 }
+
+struct Product1: Codable, Identifiable {
+    let commonUse: String?
+    let directions: String?
+    let generalInformation: String?
+    let imageSrc: String
+    let ingredients: String?
+    let manufacturerName: String?
+    let productId: String
+    let productName: String
+    let productPrice: String
+    let warnings: String?
+    
+    var id: String { productId }
+    
+    var intProductId: Int? {
+        return Int(productId)
+    }
+}

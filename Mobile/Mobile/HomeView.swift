@@ -17,16 +17,17 @@ struct HomeView: View {
                     .font(.system(size: 60, weight: .bold, design: .rounded))
                     .foregroundColor(Color("bar"))
                     .padding(.top, 50)
-                
-                Text("result: \(navigateToResults)")
-                
+                                
                 HStack {
                     TextField("Type something...", text: $searchModel.searchText)
                         .font(.system(size: 20, weight: .bold, design: .monospaced))
                     
                     Button(action: {
+                        Task {
+                            searchModel.search()
+                        }
                         navigateToResults = true
-                        print(navigateToResults)
+                        //print(navigateToResults)
                     }) {
                         Image(systemName: "magnifyingglass")
                             .resizable()
@@ -64,7 +65,7 @@ struct HomeView: View {
                 }
             }
             .navigationDestination(isPresented: $navigateToResults) {
-                ProductSearchResultsView(products: sampleProducts)
+                ProductSearchResultsView(viewModel: searchModel)
                     .onAppear { showTabBar = false }
                     .onDisappear { showTabBar = true }
             }

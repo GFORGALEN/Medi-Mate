@@ -29,7 +29,15 @@ enum SearchError: Error {
     }
 }
 
-
+struct SearchData: Codable {
+    let records: [Product1]
+    let total: Int
+}
+struct SearchResponse: Codable {
+    let code: Int
+    let data: SearchData
+    let msg: String?
+}
 
 class SearchViewModel: ObservableObject {
     @Published var searchText = ""
@@ -38,53 +46,78 @@ class SearchViewModel: ObservableObject {
     @Published var image: UIImage = UIImage(systemName: "star") ?? UIImage()
     @Published var isLoading = false
     @Published var medicationInfo: MedicationInfo?
-    
-        
-    
-    func search() async {
-        isLoading = true
-        do {
-            let result = try await textSearch(searchText: searchText)
-            searchResult = result
-            parseSearchResult()
-        } catch {
-            self.searchResult = "Error: \(error.localizedDescription)"
-            print("Error: \(error.localizedDescription)")
-        }
-        isLoading = false
-}
+    @Published var products: [Product1] = []
+    @Published var totalProducts: Int = 0
+    @Published var errorMessage: String?
 
-    private func textSearch(searchText: String) async throws -> String {
-            guard let url = URL(string: "\(Constant.apiSting)/api/products") else {
-                throw SearchError.invalidURL
-            }
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    
         
-            let searchRequest = SearchRequest(
+    
+    func search() {
+            Task {
+                await performSearch()
+            }
+        }
+        
+        @MainActor
+        private func performSearch() async {
+            isLoading = true
+            errorMessage = nil
+            do {
+                let result = try await textSearchAsync(
                     page: 1,
-                    pageSize: 1,
+                    pageSize: 10,
                     productName: searchText,
                     manufacture: ""
-                )   
-
+                )
+                parseSearchResult(result)
+            } catch {
+                errorMessage = error.localizedDescription
+                print("Search error: \(error)")
+            }
+            isLoading = false
+        }
         
-            request.httpBody = try JSONEncoder().encode(searchRequest)
-
+        private func textSearchAsync(page: Int, pageSize: Int, productName: String, manufacture: String) async throws -> String {
+            var components = URLComponents(string: "\(Constant.apiSting)/api/products")
+            components?.queryItems = [
+                URLQueryItem(name: "page", value: String(page)),
+                URLQueryItem(name: "pageSize", value: String(pageSize)),
+                URLQueryItem(name: "productName", value: productName),
+                URLQueryItem(name: "manufacture", value: manufacture)
+            ]
+            
+            guard let url = components?.url else {
+                throw URLError(.badURL)
+            }
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
+            
             let (data, response) = try await URLSession.shared.data(for: request)
-            print("data")
-
-        
+            
             guard let httpResponse = response as? HTTPURLResponse, 200...299 ~= httpResponse.statusCode else {
-                    throw SearchError.invalidResponse
-                }
-
-            // 解析 JSON 响应
-            let jsonResponse = try JSONDecoder().decode(APIResponse.self, from: data)
-
-            // 返回 data 中的 text 内容
-        return jsonResponse.data.text
+                throw URLError(.badServerResponse)
+            }
+            
+            return String(data: data, encoding: .utf8) ?? ""
+        }
+        
+        private func parseSearchResult(_ jsonString: String) {
+            guard let jsonData = jsonString.data(using: .utf8) else {
+                errorMessage = "Invalid data format"
+                return
+            }
+            
+            do {
+                let searchResponse = try JSONDecoder().decode(SearchResponse.self, from: jsonData)
+                self.products = searchResponse.data.records
+                self.totalProducts = searchResponse.data.total
+            } catch {
+                errorMessage = "Failed to parse data: \(error.localizedDescription)"
+                print("Error parsing search result: \(error)")
+            }
         }
     
 
