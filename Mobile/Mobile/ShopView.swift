@@ -1,3 +1,11 @@
+//
+//  ShopView.swift
+//  Mobile
+//
+//  Created by Lykheang Taing on 14/08/2024.
+//
+
+
 import SwiftUI
 
 struct ShopView: View {
@@ -61,3 +69,4 @@ struct ShopView: View {
 #Preview {
     ShopView(authViewModel: AuthenticationView())
 }
+
