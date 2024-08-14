@@ -8,12 +8,11 @@ import java.io.Serializable;
 
 @Data
 @Builder
-public class SupplementInfoVO implements Serializable {
+public class SupplementListVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private String productId;
     private String productName;
     private String productPrice;
-    private String manufactureName;
     private String imageSrc;
 }
