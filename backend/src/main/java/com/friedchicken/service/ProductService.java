@@ -1,10 +1,13 @@
 package com.friedchicken.service;
 
-import com.friedchicken.pojo.dto.Supplement.SupplementDTO;
-import com.friedchicken.pojo.vo.Supplement.SupplementVO;
+import com.friedchicken.pojo.dto.Supplement.SupplementPageDTO;
+import com.friedchicken.pojo.vo.Supplement.SupplementDetailVO;
+import com.friedchicken.pojo.vo.Supplement.SupplementListVO;
 import com.friedchicken.result.PageResult;
 
 public interface ProductService {
 
-    PageResult<SupplementVO> getProductsByName(SupplementDTO supplementDTO);
+    PageResult<SupplementListVO> getProductsByName(SupplementPageDTO supplementPageDTO);
+
+    SupplementDetailVO getProductById(int productId);
 }

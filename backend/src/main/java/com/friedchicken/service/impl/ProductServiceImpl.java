@@ -1,8 +1,9 @@
 package com.friedchicken.service.impl;
 
 import com.friedchicken.mapper.ProductMapper;
-import com.friedchicken.pojo.dto.Supplement.SupplementDTO;
-import com.friedchicken.pojo.vo.Supplement.SupplementVO;
+import com.friedchicken.pojo.dto.Supplement.SupplementPageDTO;
+import com.friedchicken.pojo.vo.Supplement.SupplementDetailVO;
+import com.friedchicken.pojo.vo.Supplement.SupplementListVO;
 import com.friedchicken.result.PageResult;
 import com.friedchicken.service.ProductService;
 import com.github.pagehelper.Page;
@@ -20,12 +21,16 @@ public class ProductServiceImpl implements ProductService {
     private ProductMapper productMapper;
 
     @Override
-    public PageResult<SupplementVO> getProductsByName(SupplementDTO supplementDTO) {
+    public PageResult<SupplementListVO> getProductsByName(SupplementPageDTO supplementPageDTO) {
 
-        PageHelper.startPage(supplementDTO.getPage(), supplementDTO.getPageSize());
-        Page<SupplementVO> page = productMapper.getProducts(supplementDTO);
+        PageHelper.startPage(supplementPageDTO.getPage(), supplementPageDTO.getPageSize());
+        Page<SupplementListVO> page = productMapper.getProducts(supplementPageDTO);
 
-        log.info("page:{}", page);
         return new PageResult<>(page.getTotal(), page.getResult());
+    }
+
+    @Override
+    public SupplementDetailVO getProductById(int productId) {
+        return productMapper.getProductById(productId);
     }
 }
