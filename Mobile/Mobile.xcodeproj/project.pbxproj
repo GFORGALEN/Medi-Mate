@@ -122,7 +122,7 @@
 			path = Map;
 			sourceTree = "<group>";
 		};
-		619AC2E02C6C62AB0064D8F1 /* Authentication  */ = {
+		619AC2E02C6C62AB0064D8F1 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
 				D9A1EF8F2C67043A002CCE61 /* AccountView.swift */,
@@ -131,7 +131,7 @@
 				D98C8B902C632FB80022544C /* RegisterViewModel.swift */,
 				D9B82B572C620D7900C5AFEB /* RegisterView.swift */,
 			);
-			path = "Authentication ";
+			path = Authentication;
 			sourceTree = "<group>";
 		};
 		619AC2E12C6C63520064D8F1 /* Home */ = {
@@ -172,7 +172,7 @@
 				D9D44CAA2C6B157000AEA850 /* ResultsView.swift */,
 				619AC2C62C6C15250064D8F1 /* ShopViewModel.swift */,
 				619AC2E12C6C63520064D8F1 /* Home */,
-				619AC2E02C6C62AB0064D8F1 /* Authentication  */,
+				619AC2E02C6C62AB0064D8F1 /* Authentication */,
 				619AC2DF2C6C536D0064D8F1 /* Map */,
 				6181D9BF2C6ACD0400CE11CB /* TabBar */,
 				61DC849A2C6230EA0048463E /* Info.plist */,
