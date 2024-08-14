@@ -8,7 +8,7 @@ struct ContentView: View {
 
 
 
-    let icons = ["house", "storefront", "star", "person.crop.circle"]  // Icons for each tab
+    let icons = ["house", "storefront", "map", "person.crop.circle"]  // Icons for each tab
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -22,7 +22,9 @@ struct ContentView: View {
                 case 1:
                     ShopView(authViewModel:authViewModel)  // Placeholder for Shop content
                 case 2:
-                    Text("Cart")  // Placeholder for Cart content
+                    NavigationView {
+                        StoreLocationsView()
+                    } // Placeholder for Cart content
                 case 3:
                     if authViewModel.isLoginSuccessed {
                         AccountView(authViewModel: authViewModel)
