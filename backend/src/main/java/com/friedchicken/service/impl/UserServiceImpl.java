@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -79,10 +80,11 @@ public class UserServiceImpl implements UserService {
 
 
     private UserLoginVO generateUserLoginVO(User user, Map<String, Object> claims) {
+        log.info("user:{}", user);
         claims.put(JwtClaimsConstant.USER_ID, user.getUserId());
         claims.put(JwtClaimsConstant.USERNAME, user.getUsername());
         String token = JwtUtil.genToken(claims, jwtProperties.getUserTtl(), jwtProperties.getUserSecretKey());
-        stringRedisTemplate.opsForValue().set(token, token);
+        stringRedisTemplate.opsForValue().set(token, token, 30, TimeUnit.DAYS);
         return UserLoginVO.builder()
                 .userId(user.getUserId())
                 .username(user.getUsername())
@@ -111,10 +113,10 @@ public class UserServiceImpl implements UserService {
     public void updatePassword(UserChangePasswordDTO userChangePasswordDTO) {
         String email = userChangePasswordDTO.getEmail();
         User userByEmail = userMapper.getUserByEmail(email);
-        if(userByEmail == null) {
+        if (userByEmail == null) {
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
-        if (!userByEmail.getPassword().equals(userChangePasswordDTO.getOldPassword())){
+        if (!userByEmail.getPassword().equals(userChangePasswordDTO.getOldPassword())) {
             throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
         }
         userByEmail.setPassword(userChangePasswordDTO.getNewPassword());

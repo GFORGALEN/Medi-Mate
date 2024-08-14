@@ -13,18 +13,20 @@ services:
       SPRING_DATASOURCE_PASSWORD: 123456
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
+    networks:
+      - backend
 
   mysql:
     image: mysql:8
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_DATABASE: medi_mate
-      MYSQL_USER: root
-      MYSQL_PASSWORD: 123456
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - backend
 
   redis:
     image: redis:7
@@ -32,7 +34,12 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    networks:
+      - backend
 
 volumes:
   mysql_data:
   redis_data:
+
+networks:
+  backend:

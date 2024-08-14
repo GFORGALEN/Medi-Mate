@@ -6,9 +6,9 @@ spring:
   main:
     allow-circular-references: true
   datasource:
-    driver-class-name: ${fc.datasource.driver-class-name}
-    url: jdbc:mysql://${fc.datasource.host}:${fc.datasource.port}/${fc.datasource.database}
-    username: ${fc.datasource.username}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql:3306/medi_mate
+    username: root
     password: ${fc.datasource.password}
   security:
     user:
@@ -19,7 +19,7 @@ spring:
       api-key: ${fc.openai.api-key}
   data:
     redis:
-      host: ${fc.datasource.host}
+      host: redis
       port: 6379
 mybatis:
   #mapper配置文件
