@@ -77,6 +77,7 @@ public class UserController {
         if(email == null || googleId == null) {
             throw new AccountNotFoundException(MessageConstant.WRONG_INPUT);
         }
+
         UserLoginVO userLoginVO = userService.googleLogin(userGoogleLoginDTO);
         return Result.success(userLoginVO);
     }
