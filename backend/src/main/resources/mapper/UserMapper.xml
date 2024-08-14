@@ -13,4 +13,16 @@
         where user_id = #{userId};
     </update>
 
+    <!-- Insert User -->
+    <insert id="register" parameterType="User">
+        INSERT INTO users
+        (user_id, username, email, password, google_id, user_pic, created_at, updated_at)
+        VALUES
+            (#{userId}, #{username}, #{email}, #{password}, #{googleId}, #{userPic}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <insert id="addUserInfo">
+        INSERT INTO user_info
+        (user_id, birth_year, user_weight, user_height) VALUES (#{userId}, 2024, 0, 0)
+    </insert>
 </mapper>

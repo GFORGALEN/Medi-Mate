@@ -18,20 +18,22 @@ import com.friedchicken.utils.BCryptUtil;
 import com.friedchicken.utils.JwtUtil;
 import com.friedchicken.utils.RandomStringUtil;
 import com.friedchicken.utils.UniqueIdUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
-    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
     @Autowired
     private UserMapper userMapper;
     @Autowired
@@ -58,13 +60,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserLoginVO googleLogin(UserGoogleDTO userGoogleLoginDTO) {
         String email = userGoogleLoginDTO.getEmail();
         String googleId = userGoogleLoginDTO.getGoogleId();
-        User userByEmail = userMapper.getUserByEmail(email);
 
+        User userByEmail = userMapper.getUserByEmail(email);
+        User user = new User();
         if (userByEmail == null) {
-            User user = User.builder()
+            user = User.builder()
                     .userId(uniqueIdUtil.generateUniqueId())
                     .password(BCryptUtil.hashPassword(RandomStringUtil.generateRandomString(16)))
                     .build();
@@ -74,13 +78,12 @@ public class UserServiceImpl implements UserService {
             throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
         }
         Map<String, Object> claims = new HashMap<>();
-        assert userByEmail != null;
-        return generateUserLoginVO(userByEmail, claims);
+        userMapper.addUserInfo(user);
+        return generateUserLoginVO(user, claims);
     }
 
 
     private UserLoginVO generateUserLoginVO(User user, Map<String, Object> claims) {
-        log.info("user:{}", user);
         claims.put(JwtClaimsConstant.USER_ID, user.getUserId());
         claims.put(JwtClaimsConstant.USERNAME, user.getUsername());
         String token = JwtUtil.genToken(claims, jwtProperties.getUserTtl(), jwtProperties.getUserSecretKey());
@@ -88,6 +91,7 @@ public class UserServiceImpl implements UserService {
         return UserLoginVO.builder()
                 .userId(user.getUserId())
                 .username(user.getUsername())
+                .userPic(user.getUserPic())
                 .email(user.getEmail())
                 .token(token)
                 .build();
