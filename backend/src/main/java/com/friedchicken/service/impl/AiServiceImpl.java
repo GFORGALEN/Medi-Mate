@@ -66,7 +66,7 @@ public class AiServiceImpl implements AiService {
     public AItextVO analyzeImage(byte[] imageData) {
         Resource imageResource = new ByteArrayResource(imageData);
 
-        UserMessage userMessage = new UserMessage("Tell me the text on this picture."
+        UserMessage userMessage = new UserMessage("Tell me the text on this picture. Please be more specific and comprehensive."
                 , List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageResource)));
 
         ChatResponse chatResponse = getAiClass(userMessage);

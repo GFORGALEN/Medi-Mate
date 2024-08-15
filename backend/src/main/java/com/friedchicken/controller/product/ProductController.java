@@ -1,6 +1,5 @@
 package com.friedchicken.controller.product;
 
-import com.friedchicken.pojo.dto.Supplement.SupplementDTO;
 import com.friedchicken.pojo.dto.Supplement.SupplementPageDTO;
 import com.friedchicken.pojo.vo.Supplement.SupplementDetailVO;
 import com.friedchicken.pojo.vo.Supplement.SupplementListVO;
