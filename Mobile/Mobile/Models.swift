@@ -58,15 +58,13 @@ struct Product1: Codable, Identifiable {
     let productName: String
     let productPrice: String
     let warnings: String?
-    
     var id: String { productId }
-    
     var intProductId: Int? {
         return Int(productId)
     }
 }
 struct Location: Identifiable, Codable {
-    var id = UUID()
+    let id = UUID()
     let name_store: String
     let name: String
     let latitude: Double
