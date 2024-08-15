@@ -73,7 +73,7 @@ struct HomeView: View {
                 ImagePicker(image: self.$image, sourceType: .camera)
             }
             .sheet(isPresented: $searchModel.isFinished) {
-                DetailView(
+                ImageDetailView(
                     medication: Medication(
                         image: self.image,
                         description: searchModel.medicationInfo)

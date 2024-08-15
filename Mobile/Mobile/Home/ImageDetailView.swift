@@ -25,7 +25,7 @@ struct DetailRow: View {
 }
 
 // 药品详情视图
-struct DetailView: View {
+struct ImageDetailView: View {
     let medication: Medication
     
     var body: some View {
@@ -54,18 +54,6 @@ struct DetailView: View {
             }
             .padding()
         }
-        //.background(Color(UIColor.systemGroupedBackground))
     }
 }
 
-
-
-//struct MedicationDetailView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        DetailView(medication: Medication(
-//            image: .image,
-//            description: "ok"
-//            )
-//        )
-//    }
-//}

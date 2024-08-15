@@ -66,7 +66,7 @@ struct Product1: Codable, Identifiable {
     }
 }
 struct Location: Identifiable, Codable {
-    let id = UUID()
+    var id = UUID()
     let name_store: String
     let name: String
     let latitude: Double
