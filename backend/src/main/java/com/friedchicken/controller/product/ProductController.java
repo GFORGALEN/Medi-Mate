@@ -1,4 +1,4 @@
-package com.friedchicken.controller.app.product;
+package com.friedchicken.controller.product;
 
 import com.friedchicken.pojo.dto.Supplement.SupplementDTO;
 import com.friedchicken.pojo.dto.Supplement.SupplementPageDTO;

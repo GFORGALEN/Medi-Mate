@@ -1,8 +1,6 @@
 package com.friedchicken.handler;
 
-import com.friedchicken.controller.app.AI.exception.ImageFailedUploadException;
-import com.friedchicken.controller.app.user.exception.LoginFailedException;
-import com.friedchicken.exception.BaseException;
+import com.friedchicken.controller.AI.exception.ImageFailedUploadException;
 import com.friedchicken.exception.LoginException;
 import com.friedchicken.result.Result;
 import lombok.extern.slf4j.Slf4j;

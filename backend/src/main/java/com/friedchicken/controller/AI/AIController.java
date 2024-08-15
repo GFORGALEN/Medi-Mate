@@ -1,7 +1,7 @@
-package com.friedchicken.controller.app.AI;
+package com.friedchicken.controller.AI;
 
 import com.friedchicken.constant.MessageConstant;
-import com.friedchicken.controller.app.AI.exception.ImageFailedUploadException;
+import com.friedchicken.controller.AI.exception.ImageFailedUploadException;
 import com.friedchicken.pojo.dto.AI.AIimageDTO;
 import com.friedchicken.pojo.dto.AI.AItextDTO;
 import com.friedchicken.pojo.vo.AI.AItextVO;
