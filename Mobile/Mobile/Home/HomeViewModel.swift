@@ -9,25 +9,7 @@ import Foundation
 import UIKit
 @MainActor
 
-enum SearchError: Error {
-    case invalidURL
-    case networkError(Error)
-    case decodingError(Error)
-    case invalidResponse
-    
-    var localizedDescription: String {
-        switch self {
-        case .invalidURL:
-            return "Invalid URL"
-        case .networkError(let error):
-            return "Network error: \(error.localizedDescription)"
-        case .decodingError(let error):
-            return "Decoding error: \(error.localizedDescription)"
-        case .invalidResponse:
-            return "Invalid response from server"
-        }
-    }
-}
+
 
 struct SearchData: Codable {
     let records: [Product1]
@@ -39,7 +21,7 @@ struct SearchResponse: Codable {
     let msg: String?
 }
 
-class SearchViewModel: ObservableObject {
+class HomeViewModel: ObservableObject {
     @Published var searchText = ""
     @Published var searchResult: String = ""
     @Published var isFinished = false
@@ -54,25 +36,30 @@ class SearchViewModel: ObservableObject {
         
     
     func search() {
-            Task {
-                await performSearch()
-            }
+        Task {
+            await performSearch()
         }
-        
-        @MainActor
-        private func performSearch() async {
+    }
+            
+    private func performSearch() async {
             isLoading = true
             errorMessage = nil
-            do {
-                let result = try await textSearchAsync(
-                    page: 1,
-                    pageSize: 10,
-                    productName: searchText,
-                    manufacture: ""
-                )
-                parseSearchResult(result)
-            } catch {
-                errorMessage = error.localizedDescription
+        do {
+            let result = try await textSearchAsync(
+                page: 1,
+                pageSize: 10,
+                productName: searchText,
+                manufacture: ""
+            )
+            await MainActor.run {
+                self.parseSearchResult(result)
+                self.isLoading = false
+            }
+        } catch {
+            await MainActor.run {
+                            self.errorMessage = error.localizedDescription
+                            self.isLoading = false
+                        }
                 print("Search error: \(error)")
             }
             isLoading = false
