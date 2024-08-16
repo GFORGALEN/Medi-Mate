@@ -6,3 +6,63 @@
 //
 
 import Foundation
+import UIKit
+
+protocol NetworkServiceProtocol {
+    func textSearch(page: Int, pageSize: Int, productName: String, manufacture: String) async throws -> String
+    func imageSearch(image: UIImage) async throws -> String
+}
+
+class NetworkService: NetworkServiceProtocol {
+    func textSearch(page: Int, pageSize: Int, productName: String, manufacture: String) async throws -> String {
+        var components = URLComponents(string: "\(Constant.apiSting)/api/products")
+        components?.queryItems = [
+            URLQueryItem(name: "page", value: String(page)),
+            URLQueryItem(name: "pageSize", value: String(pageSize)),
+            URLQueryItem(name: "productName", value: productName),
+            URLQueryItem(name: "manufacture", value: manufacture)
+        ]
+        
+        guard let url = components?.url else {
+            throw URLError(.badURL)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, 200...299 ~= httpResponse.statusCode else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return String(data: data, encoding: .utf8) ?? ""
+    }
+    
+    func imageSearch(image: UIImage) async throws -> String {
+        guard let url = URL(string: "\(Constant.apiSting)/api/message/image") else {
+            throw URLError(.badURL)
+        }
+
+        let boundary = UUID().uuidString
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        var data = Data()
+        data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
+        data.append("Content-Disposition: form-data; name=\"file\"; filename=\"image.jpg\"\r\n".data(using: .utf8)!)
+        data.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
+        if let imageData = image.jpegData(compressionQuality: 0.7) {
+            data.append(imageData)
+        }
+        data.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+
+        request.httpBody = data
+
+        let (responseData, _) = try await URLSession.shared.data(for: request)
+        let jsonResponse = try JSONDecoder().decode(APIResponse.self, from: responseData)
+        return jsonResponse.data.text
+    }
+}

@@ -12,17 +12,6 @@ import MapKit
 
 
 // Mediction Model
-struct Medication {
-    let image: UIImage?
-    let description: MedicationInfo?
-}
-
-struct MedicationInfo: Codable {
-    let name: String
-    let description: String
-    let commonUse: String
-    let sideEffects: String
-}
 
 struct SearchRequest: Codable {
     let page: Int
@@ -47,22 +36,6 @@ struct Product: Codable, Identifiable{
     let imageURL: String
 }
 
-struct Product1: Codable, Identifiable {
-    let commonUse: String?
-    let directions: String?
-    let generalInformation: String?
-    let imageSrc: String
-    let ingredients: String?
-    let manufacturerName: String?
-    let productId: String
-    let productName: String
-    let productPrice: String
-    let warnings: String?
-    var id: String { productId }
-    var intProductId: Int? {
-        return Int(productId)
-    }
-}
 struct Location: Identifiable, Codable {
     let id = UUID()
     let name_store: String
@@ -77,4 +50,25 @@ struct Location: Identifiable, Codable {
 
 struct LocationsData: Codable {
     let locations: [Location]
+}
+
+
+enum SearchError: Error {
+    case invalidURL
+    case networkError(Error)
+    case decodingError(Error)
+    case invalidResponse
+    
+    var localizedDescription: String {
+        switch self {
+        case .invalidURL:
+            return "Invalid URL"
+        case .networkError(let error):
+            return "Network error: \(error.localizedDescription)"
+        case .decodingError(let error):
+            return "Decoding error: \(error.localizedDescription)"
+        case .invalidResponse:
+            return "Invalid response from server"
+        }
+    }
 }
