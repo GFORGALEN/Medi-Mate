@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ProductSearchResultsView: View {
-    @ObservedObject var viewModel: SearchViewModel
+    @ObservedObject var viewModel: HomeViewModel
     @State private var isSelectMode = false
     @State private var selectedProducts: Set<String> = []
     @Environment(\.presentationMode) var presentationMode
@@ -156,12 +156,6 @@ struct ProductCard: View {
 // 预览
 struct ProductSearchResultsView_Previews: PreviewProvider {
     static var previews: some View {
-        let viewModel = SearchViewModel()
-        viewModel.products = [
-            Product1(commonUse: "", directions: nil, generalInformation: "", imageSrc: "https://example.com/product1.jpg", ingredients: "", manufacturerName: "Company A", productId: "1", productName: "Product 1", productPrice: "$19.99", warnings: ""),
-            Product1(commonUse: "", directions: nil, generalInformation: "", imageSrc: "https://example.com/product2.jpg", ingredients: "", manufacturerName: "Company B", productId: "2", productName: "Product 2", productPrice: "$29.99", warnings: ""),
-            // 添加更多示例产品...
-        ]
-        return ProductSearchResultsView(viewModel: viewModel)
-    }
+            ProductSearchResultsView(viewModel: HomeViewModel())
+        }
 }
