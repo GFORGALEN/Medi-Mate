@@ -1,10 +1,11 @@
-import {StrictMode} from 'react'
-import {createRoot} from 'react-dom/client'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
-import './input.css'
+// import './index.css'
+// import 'antd/dist/antd.css'; // 或使用 'antd/dist/antd.less' 如果你使用 Less
 
-createRoot(document.getElementById('root')).render(
-    <StrictMode>
-        <App/>
-    </StrictMode>,
+ReactDOM.createRoot(document.getElementById('root')).render(
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>,
 )
