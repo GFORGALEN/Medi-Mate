@@ -17,4 +17,13 @@
         </foreach>
     </select>
 
+    <select id="findProductByIds" resultType="com.friedchicken.pojo.entity.Supplement.Supplement">
+        select *
+        from supplement
+        where product_id in
+        <foreach collection="productId" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
 </mapper>
