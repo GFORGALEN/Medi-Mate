@@ -5,13 +5,15 @@ import GoogleSignIn
 import FirebaseAuth
 
 class AuthenticationView: ObservableObject {
-    
     @Published var isLoginSuccessed = false
     @Published var currentUser: User?
     @Published var userEmail: String = ""
     @Published var userName: String = ""
     @Published var userPicURL: URL?
     @Published var userId: String = ""
+    @Published var errorMessage: String?
+    
+    private let apiService = UserAPIService.shared
 
     init() {
         self.currentUser = Auth.auth().currentUser
@@ -25,33 +27,34 @@ class AuthenticationView: ObservableObject {
         
         GIDSignIn.sharedInstance.signIn(withPresenting: Application_utility.rootViewController) { [weak self] result, error in
             if let error = error {
-                print(error.localizedDescription)
+                self?.errorMessage = "Google Sign-In error: \(error.localizedDescription)"
                 return
             }
             
             guard let user = result?.user,
-                  let idToken = user.idToken else { return }
-            
-            let accessToken = user.accessToken
-            print(accessToken)
-            
-            let credential = GoogleAuthProvider.credential(withIDToken: idToken.tokenString, accessToken: accessToken.tokenString)
-            print(credential)
-            
-            Auth.auth().signIn(with: credential) { [weak self] res, error in
-                if let error = error {
-                    print(error.localizedDescription)
-                    return
-                }
-                self?.currentUser = res?.user
-                self?.isLoginSuccessed = true
-                
-                // Update user information
-                self?.updateUserInfo(user: user)
-                
-                // Store user in your database
-                self?.storeUserInDatabase(user: user)
+                  let idToken = user.idToken else {
+                self?.errorMessage = "Failed to get user information from Google Sign-In"
+                return
             }
+            
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken.tokenString, accessToken: user.accessToken.tokenString)
+            
+            self?.authenticateWithFirebase(credential: credential, user: user)
+        }
+    }
+    
+    private func authenticateWithFirebase(credential: AuthCredential, user: GIDGoogleUser) {
+        Auth.auth().signIn(with: credential) { [weak self] authResult, error in
+            if let error = error {
+                self?.errorMessage = "Firebase authentication failed: \(error.localizedDescription)"
+                return
+            }
+            
+            self?.currentUser = authResult?.user
+            self?.isLoginSuccessed = true
+            
+            self?.updateUserInfo(user: user)
+            self?.storeUserInDatabase(user: user)
         }
     }
     
@@ -67,57 +70,47 @@ class AuthenticationView: ObservableObject {
               let googleId = user.userID,
               let username = user.profile?.name,
               let userPic = user.profile?.imageURL(withDimension: 200)?.absoluteString else {
-            print("Failed to get user information")
+            self.errorMessage = "Failed to get complete user information"
             return
         }
         
-        let url = URL(string: "\(Constant.apiSting)/api/user/google-login")!
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let body: [String: Any] = [
-            "email": email,
-            "googleId": googleId,
-            "username": username,
-            "userPic": userPic
-        ]
-        print("Request body: \(body)")
-        
-        do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: body)
-        } catch {
-            print("Error serializing user data: \(error.localizedDescription)")
-            return
+        Task {
+            do {
+                let response: GoogleLoginResponse = try await apiService.request(
+                    endpoint: "google-login",
+                    method: "POST",
+                    body: [
+                        "email": email,
+                        "googleId": googleId,
+                        "username": username,
+                        "userPic": userPic
+                    ]
+                )
+                await MainActor.run {
+                    print("User successfully stored in database")
+                    // Update user information if needed based on the response
+                    // For example:
+                    // self.userId = response.userId ?? self.userId
+                }
+            } catch {
+                await MainActor.run {
+                    if let apiError = error as? APIError {
+                        switch apiError {
+                        case .serverError(let message):
+                            self.errorMessage = "Server error: \(message)"
+                        case .networkError(let underlyingError):
+                            self.errorMessage = "Network error: \(underlyingError.localizedDescription)"
+                        default:
+                            self.errorMessage = "An unexpected error occurred: \(apiError.localizedDescription)"
+                        }
+                    } else {
+                        self.errorMessage = "Error storing user in database: \(error.localizedDescription)"
+                    }
+                }
+            }
         }
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("Error storing user in database: \(error.localizedDescription)")
-                return
-            }
-            
-            guard let httpResponse = response as? HTTPURLResponse else {
-                print("Response is not HTTPURLResponse")
-                return
-            }
-            
-            print("Response status code: \(httpResponse.statusCode)")
-            
-            if let data = data, let responseString = String(data: data, encoding: .utf8) {
-                print("Response body: \(responseString)")
-            }
-            
-            switch httpResponse.statusCode {
-            case 200...299:
-                print("User successfully stored in database")
-            case 409: // Assuming 409 is the status code for user already exists
-                print("User already stored in database")
-            default:
-                print("Failed to store user. Status code: \(httpResponse.statusCode)")
-            }
-        }.resume()
     }
+    
     func logout() async throws {
         GIDSignIn.sharedInstance.signOut()
         try Auth.auth().signOut()
@@ -128,5 +121,12 @@ class AuthenticationView: ObservableObject {
         userName = ""
         userPicURL = nil
         userId = ""
+        errorMessage = nil
     }
+}
+
+struct GoogleLoginResponse: Codable {
+    let userId: String?
+    let email: String?
+    // Add other fields as needed based on your API response
 }
