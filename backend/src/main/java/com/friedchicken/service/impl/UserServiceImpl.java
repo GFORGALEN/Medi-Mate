@@ -72,11 +72,11 @@ public class UserServiceImpl implements UserService {
                     .build();
             BeanUtils.copyProperties(userGoogleLoginDTO, user);
             userMapper.register(user);
+            userMapper.addUserInfo(user);
         } else if (!userByEmail.getGoogleId().equals(googleId)) {
             throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
         }
         Map<String, Object> claims = new HashMap<>();
-        userMapper.addUserInfo(user);
         return generateUserLoginVO(user, claims);
     }
 

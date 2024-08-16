@@ -3,9 +3,11 @@ package com.friedchicken.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.friedchicken.mapper.AiInfoMapper;
+import com.friedchicken.pojo.dto.AI.AICompareDTO;
 import com.friedchicken.pojo.dto.AI.AIimageDTO;
 import com.friedchicken.pojo.entity.Supplement.Supplement;
 import com.friedchicken.pojo.entity.Supplement.SupplementInfo;
+import com.friedchicken.pojo.vo.AI.AIcomparisonVO;
 import com.friedchicken.pojo.vo.AI.AItextVO;
 import com.friedchicken.properties.OpenAIProperties;
 import com.friedchicken.service.AiService;
@@ -42,7 +44,7 @@ public class AiServiceImpl implements AiService {
     public AItextVO handlerText(String message) {
         UserMessage userMessage = new UserMessage(message);
 
-        ChatResponse chatResponse = getAiClass(userMessage);
+        ChatResponse chatResponse = getAiClass(userMessage, "");
         String requestContent = chatResponse.getResults().get(0).getOutput().getContent();
 
         return AItextVO.builder()
@@ -52,9 +54,11 @@ public class AiServiceImpl implements AiService {
 
     @Override
     public AItextVO analyzeImageUrl(AIimageDTO aiimageDTO) {
-        UserMessage userMessage = new UserMessage("Tell my the text on this picture.", List.of(new Media(MimeTypeUtils.IMAGE_JPEG, aiimageDTO.getUrl())));
+        UserMessage userMessage = new UserMessage(
+                "Tell my the text on this picture. Please be more specific and comprehensive according to the description."
+                , List.of(new Media(MimeTypeUtils.IMAGE_JPEG, aiimageDTO.getUrl())));
 
-        ChatResponse chatResponse = getAiClass(userMessage);
+        ChatResponse chatResponse = getAiClass(userMessage, openAIProperties.getJsonSchemaForAnalyse());
         String requestContent = chatResponse.getResults().get(0).getOutput().getContent();
 
         return AItextVO.builder()
@@ -66,10 +70,11 @@ public class AiServiceImpl implements AiService {
     public AItextVO analyzeImage(byte[] imageData) {
         Resource imageResource = new ByteArrayResource(imageData);
 
-        UserMessage userMessage = new UserMessage("Tell me the text on this picture. Please be more specific and comprehensive."
+        UserMessage userMessage = new UserMessage(
+                "Tell me the text on this picture. Please be more specific and comprehensive according to the description."
                 , List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageResource)));
 
-        ChatResponse chatResponse = getAiClass(userMessage);
+        ChatResponse chatResponse = getAiClass(userMessage, openAIProperties.getJsonSchemaForAnalyse());
         String requestContent = chatResponse.getResults().get(0).getOutput().getContent();
 
         SupplementInfo supplementInfo;
@@ -87,14 +92,35 @@ public class AiServiceImpl implements AiService {
                 .build();
     }
 
-    private ChatResponse getAiClass(UserMessage userMessage) {
+    @Override
+    public AIcomparisonVO compareImage(AICompareDTO aiCompareDTO) {
+        List<Supplement> supplementList = aiInfoMapper.findProductByIds(Arrays.stream(aiCompareDTO.getProductId()).boxed().toList());
+
+        UserMessage userMessage = new UserMessage(
+                "I will give you a set of drug information, please summarize briefly the differences between them.The information returned is mainly the differences."
+                        + supplementList.toString());
+
+        ChatResponse chatResponse = getAiClass(userMessage, openAIProperties.getJsonSchemaForComparison());
+        String requestContent = chatResponse.getResults().get(0).getOutput().getContent();
+        AIcomparisonVO aicomparisonVO = new AIcomparisonVO();
+        try {
+            aicomparisonVO=objectMapper.readValue(requestContent, AIcomparisonVO.class);
+        }catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        log.info("here:{}",aicomparisonVO);
+        return aicomparisonVO;
+    }
+
+    private ChatResponse getAiClass(UserMessage userMessage, String format) {
         OpenAiApi openAiApi = new OpenAiApi(openAIProperties.getApiKey());
         OpenAiChatOptions openAiChatOptions = OpenAiChatOptions.builder()
                 .withModel(openAIProperties.getModel())
                 .withTemperature(openAIProperties.getTemperature())
-                .withMaxTokens(1000)
+                .withMaxTokens(10000)
                 .withResponseFormat(new OpenAiApi.ChatCompletionRequest.ResponseFormat(
-                        OpenAiApi.ChatCompletionRequest.ResponseFormat.Type.JSON_SCHEMA, openAIProperties.getJsonSchema()))
+                        OpenAiApi.ChatCompletionRequest.ResponseFormat.Type.JSON_SCHEMA, format))
                 .build();
         OpenAiChatModel openAiChatModel = new OpenAiChatModel(openAiApi, openAiChatOptions);
 
