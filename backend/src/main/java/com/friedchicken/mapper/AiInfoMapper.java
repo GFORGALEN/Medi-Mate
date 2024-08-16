@@ -10,6 +10,7 @@ import java.util.List;
 @Mapper
 public interface AiInfoMapper {
 
-    List<Supplement> findByMultipleWords(@Param("keywords") List<String> keywords);
+    List<Supplement> findByMultipleWords(List<String> keywords);
 
+    List<Supplement> findProductByIds(List<Integer> productId);
 }
