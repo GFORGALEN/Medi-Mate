@@ -1,58 +1,41 @@
-import React, {useState} from 'react';
 import {
     AppstoreOutlined,
-    CalendarOutlined,
-    LinkOutlined,
+    ContainerOutlined,
+    DesktopOutlined,
     MailOutlined,
-    SettingOutlined,
+    PieChartOutlined,
 } from '@ant-design/icons';
-import {Divider, Menu, Switch} from 'antd';
+import {Menu} from 'antd';
 
 const items = [
     {
         key: '1',
-        icon: <MailOutlined/>,
-        label: 'Navigation One',
+        icon: <PieChartOutlined/>,
+        label: 'Option 1',
     },
     {
         key: '2',
-        icon: <CalendarOutlined/>,
-        label: 'Navigation Two',
+        icon: <DesktopOutlined/>,
+        label: 'Option 2',
+    },
+    {
+        key: '3',
+        icon: <ContainerOutlined/>,
+        label: 'Option 3',
     },
     {
         key: 'sub1',
-        label: 'Navigation Two',
-        icon: <AppstoreOutlined/>,
+        label: 'Navigation One',
+        icon: <MailOutlined/>,
         children: [
             {
-                key: '3',
-                label: 'Option 3',
+                key: '5',
+                label: 'Option 5',
             },
             {
-                key: '4',
-                label: 'Option 4',
+                key: '6',
+                label: 'Option 6',
             },
-            {
-                key: 'sub1-2',
-                label: 'Submenu',
-                children: [
-                    {
-                        key: '5',
-                        label: 'Option 5',
-                    },
-                    {
-                        key: '6',
-                        label: 'Option 6',
-                    },
-                ],
-            },
-        ],
-    },
-    {
-        key: 'sub2',
-        label: 'Navigation Three',
-        icon: <SettingOutlined/>,
-        children: [
             {
                 key: '7',
                 label: 'Option 7',
@@ -61,6 +44,13 @@ const items = [
                 key: '8',
                 label: 'Option 8',
             },
+        ],
+    },
+    {
+        key: 'sub2',
+        label: 'Navigation Two',
+        icon: <AppstoreOutlined/>,
+        children: [
             {
                 key: '9',
                 label: 'Option 9',
@@ -69,24 +59,38 @@ const items = [
                 key: '10',
                 label: 'Option 10',
             },
+            {
+                key: 'sub3',
+                label: 'Submenu',
+                children: [
+                    {
+                        key: '11',
+                        label: 'Option 11',
+                    },
+                    {
+                        key: '12',
+                        label: 'Option 12',
+                    },
+                ],
+            },
         ],
-    }
+    },
 ];
 const App = () => {
     return (
-        <>
+        <div
+            style={{
+                width: '100%',
+                backgroundColor: 'transparent'
+            }}
+        >
             <Menu
-                style={{
-                    width: '100%',
-                    backgroundColor: 'transparent'
-                }}
                 defaultSelectedKeys={['1']}
                 defaultOpenKeys={['sub1']}
-                mode={mode}
-                theme={theme}
+                mode="inline"
                 items={items}
             />
-        </>
+        </div>
     );
 };
 export default App;

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Layout } from 'antd';
 import LeftMenu from "../menu/LeftMenu.jsx";
 const { Header, Footer, Sider, Content } = Layout;
