@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Layout from '../layouts/MainLayout';
 import Login from '../pages/Login';
-import MyChart from '../MyChart';
+import MyChart from '../pages/MyChart.jsx';
 import React from 'react';
 const router = createBrowserRouter([
     {

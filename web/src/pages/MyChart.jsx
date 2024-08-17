@@ -1,16 +1,27 @@
+// eslint-disable-next-line no-unused-vars
 import React from 'react';
-import { Typography } from 'antd';
-import MyChart from "@/MyChart.jsx";
+import ReactECharts from 'echarts-for-react';
 
-const { Title } = Typography;
+const MyChart = () => {
+    const option = {
+        title: {
+            text: 'ECharts Example'
+        },
+        tooltip: {},
+        xAxis: {
+            data: ['Shirts', 'Cardigans', 'Chiffons', 'Pants', 'Heels', 'Socks']
+        },
+        yAxis: {},
+        series: [
+            {
+                name: 'Sales',
+                type: 'bar',
+                data: [5, 20, 36, 10, 10, 20]
+            }
+        ]
+    };
 
-const Dashboard = () => {
-    return (
-        <div>
-            <Title level={2}>MyChart</Title>
-            <p>Welcome to your MyChart!</p>
-        </div>
-    );
+    return <ReactECharts option={option} />;
 };
 
-export default Dashboard;
+export default MyChart;
