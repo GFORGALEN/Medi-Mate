@@ -1,5 +1,5 @@
 import { Layout } from 'antd';
-import LeftMenu from "../menu/LeftMenu.jsx";
+import LeftMenu from "@/pages/menu/LeftMenu.jsx";
 const { Header, Footer, Sider, Content } = Layout;
 
 const headerStyle = {
