@@ -11,12 +11,12 @@ const items = [
     {
         key: '1',
         icon: <PieChartOutlined/>,
-        label: 'Option 1',
+        label: 'Analytics',
     },
     {
         key: '2',
         icon: <DesktopOutlined/>,
-        label: 'Option 2',
+        label: 'Products',
     },
     {
         key: '3',

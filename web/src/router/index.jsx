@@ -1,10 +1,14 @@
 import {createBrowserRouter} from 'react-router-dom'
-import Layout from "@/pages/layout/Layout.jsx";
+import DashBoardLayout from "@/pages/Layout/DashBoardLayout.jsx";
+import Login from "@/pages/Auth/Login.jsx";
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <Layout/>,
+        element: <DashBoardLayout/>,
+    }, {
+        path: '/login',
+        element: <Login/>
     }
 ])
 
