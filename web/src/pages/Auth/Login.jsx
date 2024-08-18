@@ -1,43 +1,38 @@
-import {useState} from 'react';
-import { sendUserDataAPI } from "@/api/user/user.jsx";
-import {useNavigate} from "react-router-dom";
-import { setUserToken, getUserToken, removeUserToken } from '@/utils/token.jsx'; // getUserToken 是用来从 sessionStorage 中获取已保存的 token
-
+import useLogin from "@/hook/useLogin.jsx";
+import {SmileOutlined} from '@ant-design/icons';
+import {notification} from "antd";
+import {useEffect} from 'react';
 
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
+    const {
+        email, setEmail,
+        password, setPassword,
+        error,
+        isLoading,
+        handleSubmit
+    } = useLogin();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        setIsLoading(true);
+    const [api, contextHolder] = notification.useNotification();
 
-        if (!email || !password) {
-            setError('email or password is wrong');
-            setIsLoading(false);
-            return;
-        }
-
-        try {
-            const response = await sendUserDataAPI({ email, password });
-
-            if (response.token) { // 登录成功后服务器返回的 token
-                setUserToken(response.token); // 保存服务器返回的新 token
-                navigate('/dashboard');
-            } else {
-                setError('login failed');
-            }
-        } catch (err) {
-            console.error('Login error:', err);
-            setError(err.response?.data?.message || 'login failed try again');
-        } finally {
-            setIsLoading(false);
-        }
+    const openNotification = (message) => {
+        api.open({
+            message: 'Login Error',
+            description: message,
+            icon: (
+                <SmileOutlined
+                    style={{
+                        color: '#f5222d',
+                    }}
+                />
+            ),
+        });
     };
+
+    useEffect(() => {
+        if (error) {
+            openNotification(error);
+        }
+    }, [error]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -90,11 +85,13 @@ const Login = () => {
                     <button
                         type="submit"
                         className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        disabled={isLoading}
                     >
                         Sign In
                     </button>
                 </form>
             </div>
+            {contextHolder}
         </div>
     );
 };

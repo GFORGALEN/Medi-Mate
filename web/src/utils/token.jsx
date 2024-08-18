@@ -1,14 +1,14 @@
 const TOKEN = 'token';
 const setUserToken = (token) => {
-    sessionStorage.setItem(token, token)
+    localStorage.setItem(token, token)
 }
 
 const getUserToken = () => {
-    return sessionStorage.getItem(TOKEN)
+    return localStorage.getItem(TOKEN)
 }
 
 const removeUserToken = () => {
-    sessionStorage.removeItem(TOKEN)
+    localStorage.removeItem(TOKEN)
 }
 
 export {
