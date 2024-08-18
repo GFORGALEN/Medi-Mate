@@ -6,10 +6,11 @@ import {
     PieChartOutlined,
 } from '@ant-design/icons';
 import {Menu} from 'antd';
+import {useNavigate} from "react-router-dom";
 
 const items = [
     {
-        key: '1',
+        key: '/analytics',
         icon: <PieChartOutlined/>,
         label: 'Analytics',
     },
@@ -77,6 +78,10 @@ const items = [
     },
 ];
 const App = () => {
+    const navigate = useNavigate();
+    const clickHandler = (e) => {
+        navigate(e.key, {replace: true})
+    }
     return (
         <div
             style={{
@@ -89,6 +94,7 @@ const App = () => {
                 defaultOpenKeys={['sub1']}
                 mode="inline"
                 items={items}
+                onClick={clickHandler}
             />
         </div>
     );

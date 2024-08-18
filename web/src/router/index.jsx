@@ -1,11 +1,16 @@
 import {createBrowserRouter} from 'react-router-dom'
-import DashBoardLayout from "@/pages/Layout/DashBoardLayout.jsx";
-import Login from "@/pages/Auth/Login.jsx";
+import Login from "@/pages/Login.jsx";
+import Analytics from "@/pages/Analytics.jsx";
+import DashBoardLayout from "@/pages/DashBoardLayout.jsx";
 
 const router = createBrowserRouter([
     {
         path: '/',
         element: <DashBoardLayout/>,
+        children: [{
+            path: '/analytics',
+            element: <Analytics/>
+        }]
     }, {
         path: '/login',
         element: <Login/>

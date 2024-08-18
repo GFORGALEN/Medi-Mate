@@ -1,6 +1,6 @@
 import ReactECharts from 'echarts-for-react';
 
-const MyChart = () => {
+const Analytics = () => {
     const option = {
         title: {
             text: 'ECharts Example'
@@ -22,4 +22,4 @@ const MyChart = () => {
     return <ReactECharts option={option} />;
 };
 
-export default MyChart;
+export default Analytics;
