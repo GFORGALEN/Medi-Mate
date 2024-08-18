@@ -16,7 +16,7 @@ struct ProductSearchResultsView: View {
                 selectButton
             }
         }
-        .navigationTitle("Results (\(viewModel.products.count))")
+        .navigationTitle("Results")
         .navigationBarTitleDisplayMode(.inline)
     }
     

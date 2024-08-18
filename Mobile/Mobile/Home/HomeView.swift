@@ -5,6 +5,9 @@ struct HomeView: View {
     @State private var isShowingCamera = false
     @State private var navigateToResults = false
     @Binding var showTabBar: Bool
+    @FocusState private var isSearchFieldFocused: Bool
+
+
 
     var body: some View {
         NavigationStack {
@@ -34,6 +37,12 @@ struct HomeView: View {
                     }
                 }
             }
+            .gesture(
+                TapGesture()
+                    .onEnded { _ in
+                        isSearchFieldFocused = false
+                    }
+            )
         }
     }
 
@@ -48,6 +57,9 @@ struct HomeView: View {
         HStack {
             TextField("Type something...", text: $viewModel.searchText)
                 .font(.system(size: 20, weight: .bold, design: .monospaced))
+                .focused($isSearchFieldFocused)
+
+
             
             Button(action: performSearch) {
                 Image(systemName: "magnifyingglass")
@@ -89,9 +101,7 @@ struct HomeView: View {
     }
 
     private func performSearch() {
-        Task {
-             viewModel.search()
-        }
+        viewModel.performSearch()
         navigateToResults = true
     }
 }

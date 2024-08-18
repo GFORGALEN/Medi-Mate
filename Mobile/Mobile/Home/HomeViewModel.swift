@@ -18,26 +18,15 @@ class HomeViewModel: ObservableObject {
     
     init(networkService: NetworkServiceProtocol = NetworkService()) {
         self.networkService = networkService
-        setupSearchTextPublisher()
     }
     
-    private func setupSearchTextPublisher() {
-        $searchText
-            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
-            .removeDuplicates()
-            .sink { [weak self] _ in
-                self?.search()
-            }
-            .store(in: &cancellables)
-    }
-    
-    func search() {
+    func performSearch() {
         Task {
-            await performSearch()
+            await search()
         }
     }
     
-    private func performSearch() async {
+    private func search() async {
         isLoading = true
         errorMessage = nil
         do {
