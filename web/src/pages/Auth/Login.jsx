@@ -1,14 +1,42 @@
 import {useState} from 'react';
+import { sendUserDataAPI } from "@/api/user/user.jsx";
+import {useNavigate} from "react-router-dom";
+import { setUserToken, getUserToken, removeUserToken } from '@/utils/token.jsx'; // getUserToken 是用来从 sessionStorage 中获取已保存的 token
+
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // 处理登录逻辑
-        console.log('Email:', email);
-        console.log('Password:', password);
+        setError('');
+        setIsLoading(true);
+
+        if (!email || !password) {
+            setError('email or password is wrong');
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            const response = await sendUserDataAPI({ email, password });
+
+            if (response.token) { // 登录成功后服务器返回的 token
+                setUserToken(response.token); // 保存服务器返回的新 token
+                navigate('/dashboard');
+            } else {
+                setError('login failed');
+            }
+        } catch (err) {
+            console.error('Login error:', err);
+            setError(err.response?.data?.message || 'login failed try again');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
