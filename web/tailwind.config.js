@@ -7,8 +7,18 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                poppins: ['Poppins', 'sans-serif']
-            }
+                'poppins': ['Poppins', 'system-ui'],
+            },
+            fontWeight: {
+                'extralight': '200',
+                'regular': '400',
+                'semibold': '600',
+                'extrabold': '800',
+            },
+            fontStyle: {
+                'italic': 'italic',
+                'normal': 'normal',
+            },
         },
     },
     plugins: [],
