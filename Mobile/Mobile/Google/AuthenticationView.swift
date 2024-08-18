@@ -1,4 +1,5 @@
 import Foundation
+import FirebaseCore
 import SwiftUI
 import Firebase
 import GoogleSignIn
