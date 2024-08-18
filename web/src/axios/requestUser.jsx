@@ -3,7 +3,7 @@ import {getUserToken} from "@/utils/index.jsx";
 import {APP_API_URL} from "@/../config.js";
 
 const requestUser = axios.create({
-    baseURL: `${APP_API_URL}user`,
+    baseURL: `${APP_API_URL}/user`,
     timeout: 5000
 })
 

@@ -1,15 +1,38 @@
-import {useState} from 'react';
+import useLogin from "@/hook/useLogin.jsx";
+import {SmileOutlined} from '@ant-design/icons';
+import {notification} from "antd";
+import {useEffect} from 'react';
 
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const {
+        email, setEmail,
+        password, setPassword,
+        error,
+        isLoading,
+        handleSubmit
+    } = useLogin();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // 处理登录逻辑
-        console.log('Email:', email);
-        console.log('Password:', password);
+    const [api, contextHolder] = notification.useNotification();
+
+    const openNotification = (message) => {
+        api.open({
+            message: 'Login Error',
+            description: message,
+            icon: (
+                <SmileOutlined
+                    style={{
+                        color: '#f5222d',
+                    }}
+                />
+            ),
+        });
     };
+
+    useEffect(() => {
+        if (error) {
+            openNotification(error);
+        }
+    }, [error]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -62,11 +85,13 @@ const Login = () => {
                     <button
                         type="submit"
                         className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        disabled={isLoading}
                     >
                         Sign In
                     </button>
                 </form>
             </div>
+            {contextHolder}
         </div>
     );
 };

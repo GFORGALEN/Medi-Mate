@@ -1,5 +1,6 @@
 import {Layout} from 'antd';
-import LeftMenu from "@/pages/Menu/LeftMenu.jsx";
+import LeftMenu from "@/pages/LeftMenu.jsx";
+import {Outlet} from "react-router-dom";
 
 const {Header, Footer, Sider, Content} = Layout;
 
@@ -54,7 +55,9 @@ const DashBoardLayout = () => (
                 <Sider width="15%" style={leftSiderStyle}>
                     <LeftMenu/>
                 </Sider>
-                <Content style={contentStyle}>Content</Content>
+                <Content style={contentStyle}>
+                    <Outlet/>
+                </Content>
             </Layout>
             <Footer style={footerStyle}>Footer</Footer>
         </Layout>
