@@ -1,4 +1,4 @@
-package com.friedchicken.pojo.dto.Supplement;
+package com.friedchicken.pojo.dto.Medicine;
 
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Data
 @Builder
-public class SupplementPageDTO implements Serializable {
+public class MedicinePageDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private int page = 1;        // 页码

@@ -1,8 +1,8 @@
 package com.friedchicken.controller.product;
 
-import com.friedchicken.pojo.dto.Supplement.SupplementPageDTO;
-import com.friedchicken.pojo.vo.Supplement.SupplementDetailVO;
-import com.friedchicken.pojo.vo.Supplement.SupplementListVO;
+import com.friedchicken.pojo.dto.Medicine.MedicinePageDTO;
+import com.friedchicken.pojo.vo.Medicine.MedicineDetailVO;
+import com.friedchicken.pojo.vo.Medicine.MedicineListVO;
 import com.friedchicken.result.PageResult;
 import com.friedchicken.result.Result;
 import com.friedchicken.service.ProductService;
@@ -32,11 +32,11 @@ public class ProductController {
             @ApiResponse(responseCode = "200", description = "Products retrieved successfully.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageResult.class)))
     })
-    public Result<PageResult<SupplementListVO>> getProducts(SupplementPageDTO supplementPageDTO) {
+    public Result<PageResult<MedicineListVO>> getProducts(MedicinePageDTO medicinePageDTO) {
 
-        log.info("User want to retrieve products by product name:{}", supplementPageDTO.getProductName());
+        log.info("User want to retrieve products by product name:{}", medicinePageDTO.getProductName());
 
-        PageResult<SupplementListVO> pageResult=productService.getProductsByName(supplementPageDTO);
+        PageResult<MedicineListVO> pageResult=productService.getProductsByName(medicinePageDTO);
 
         return Result.success(pageResult);
     }
@@ -46,14 +46,14 @@ public class ProductController {
             description = "Retrieve a specific product.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Product retrieved successfully.",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = SupplementDetailVO.class)))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MedicineDetailVO.class)))
     })
-    public Result<SupplementDetailVO> getProduct(@PathVariable("id") String productId) {
+    public Result<MedicineDetailVO> getProduct(@PathVariable("id") String productId) {
         log.info("User want to retrieve the specific product by product id:{}", productId);
 
-        SupplementDetailVO supplementDetailVO = productService.getProductById(productId);
+        MedicineDetailVO medicineDetailVO = productService.getProductById(productId);
 
-        return Result.success(supplementDetailVO);
+        return Result.success(medicineDetailVO);
     }
 
     @GetMapping("/detailProducts")
@@ -63,11 +63,11 @@ public class ProductController {
             @ApiResponse(responseCode = "200", description = "Products retrieved successfully.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageResult.class)))
     })
-    public Result<PageResult<SupplementDetailVO>> getDetailProducts(SupplementPageDTO supplementPageDTO) {
+    public Result<PageResult<MedicineDetailVO>> getDetailProducts(MedicinePageDTO medicinePageDTO) {
 
-        log.info("User want to retrieve products by product name or manufacture name:{}", supplementPageDTO);
+        log.info("User want to retrieve products by product name or manufacture name:{}", medicinePageDTO);
 
-        PageResult<SupplementDetailVO> pageResult=productService.getDetailProductsByName(supplementPageDTO);
+        PageResult<MedicineDetailVO> pageResult=productService.getDetailProductsByName(medicinePageDTO);
 
         return Result.success(pageResult);
     }

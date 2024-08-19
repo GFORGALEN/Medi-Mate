@@ -4,7 +4,7 @@ import com.friedchicken.pojo.dto.AI.AICompareDTO;
 import com.friedchicken.pojo.dto.AI.AIimageDTO;
 import com.friedchicken.pojo.vo.AI.AIcomparisonVO;
 import com.friedchicken.pojo.vo.AI.AItextVO;
-import com.friedchicken.pojo.vo.Supplement.SupplementListVO;
+import com.friedchicken.pojo.vo.Medicine.MedicineListVO;
 import com.friedchicken.result.PageResult;
 
 public interface AiService {
@@ -12,7 +12,7 @@ public interface AiService {
 
     AItextVO analyzeImageUrl(AIimageDTO aiimageDTO);
 
-    PageResult<SupplementListVO> analyzeImage(byte[] imageData);
+    PageResult<MedicineListVO> analyzeImage(byte[] imageData);
 
     AIcomparisonVO compareImage(AICompareDTO aiCompareDTO);
 }
