@@ -3,7 +3,7 @@
 
 <mapper namespace="com.friedchicken.mapper.ProductMapper">
     <update id="updateProductById">
-        update supplement
+        update medicine
         <set>
             <if test="productId != null">
                 product_id = #{productId},
@@ -41,9 +41,9 @@
         </set>
         where product_id = #{productId};
     </update>
-    <select id="getProducts" resultType="com.friedchicken.pojo.vo.Supplement.SupplementListVO">
+    <select id="getProducts" resultType="com.friedchicken.pojo.vo.Medicine.MedicineListVO">
         SELECT *
-        from supplement
+        from medicine
         <where>
             <if test="productName != null and productName != ''">
                 product_name like concat('%',#{productName},'%')
@@ -53,16 +53,16 @@
             </if>
         </where>
     </select>
-    <select id="getProductById" resultType="com.friedchicken.pojo.vo.Supplement.SupplementDetailVO">
+    <select id="getProductById" resultType="com.friedchicken.pojo.vo.Medicine.MedicineDetailVO">
         select *
-        from supplement
+        from medicine
         <where>
             product_id = #{productId}
         </where>
     </select>
-    <select id="getDetailProducts" resultType="com.friedchicken.pojo.vo.Supplement.SupplementDetailVO">
+    <select id="getDetailProducts" resultType="com.friedchicken.pojo.vo.Medicine.MedicineDetailVO">
         SELECT *
-        from supplement
+        from medicine
         <where>
             <if test="productName != null and productName != ''">
                 product_name like concat('%',#{productName},'%')

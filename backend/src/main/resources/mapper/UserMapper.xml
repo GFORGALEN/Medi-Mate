@@ -4,7 +4,7 @@
 <mapper namespace="com.friedchicken.mapper.UserMapper">
 
     <update id="update" parameterType="User">
-        update users
+        update user
         <set>
             <if test="password != null">
                 password = #{password}
@@ -15,7 +15,7 @@
 
     <!-- Insert User -->
     <insert id="register" parameterType="User">
-        INSERT INTO users
+        INSERT INTO user
         (user_id, username, email, password, google_id, user_pic, created_at, updated_at)
         VALUES
             (#{userId}, #{username}, #{email}, #{password}, #{googleId}, #{userPic}, #{createdAt}, #{updatedAt})

@@ -7,7 +7,7 @@ import com.friedchicken.pojo.dto.AI.AIimageDTO;
 import com.friedchicken.pojo.dto.AI.AItextDTO;
 import com.friedchicken.pojo.vo.AI.AIcomparisonVO;
 import com.friedchicken.pojo.vo.AI.AItextVO;
-import com.friedchicken.pojo.vo.Supplement.SupplementListVO;
+import com.friedchicken.pojo.vo.Medicine.MedicineListVO;
 import com.friedchicken.result.PageResult;
 import com.friedchicken.result.Result;
 import com.friedchicken.service.AiService;
@@ -78,7 +78,7 @@ public class AIController {
             @ApiResponse(responseCode = "200", description = "Image processed successfully.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AItextVO.class)))
     })
-    public Result<PageResult<SupplementListVO>> sendImageUrl(@RequestBody MultipartFile file) {
+    public Result<PageResult<MedicineListVO>> sendImageUrl(@RequestBody MultipartFile file) {
         log.info("User want to use AI model to send image.");
 
         byte[] imageData;
@@ -87,7 +87,7 @@ public class AIController {
         } catch (IOException e) {
             throw new ImageFailedUploadException(MessageConstant.FILE_UPLOAD_ERROR);
         }
-        PageResult<SupplementListVO> pageResult = aiService.analyzeImage(imageData);
+        PageResult<MedicineListVO> pageResult = aiService.analyzeImage(imageData);
         log.info("here{}", pageResult.getRecords().toString());
         return Result.success(pageResult);
     }

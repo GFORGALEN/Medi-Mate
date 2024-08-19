@@ -10,7 +10,7 @@ const Products = () => {
     const [loading, setLoading] = useState(false);
     const [params, setParams] = useState({
         page: 1,
-        pageSize: 10,
+        pageSize: 15,
         productName: "",
     });
     const [total, setTotal] = useState(0);
@@ -63,7 +63,7 @@ const Products = () => {
             title: 'Product Name',
             dataIndex: 'productName',
             key: 'name',
-            width: '30%',
+            fixed: 'left',
             ellipsis: true,
             render: (text) => <span className="text-base font-medium">{text}</span>
         },
@@ -71,7 +71,7 @@ const Products = () => {
             title: 'Price',
             dataIndex: 'productPrice',
             key: 'price',
-            width: '15%',
+
             ellipsis: true,
             render: (text) => <span className="text-base">${text}</span>
         },
@@ -79,7 +79,7 @@ const Products = () => {
             title: 'Image',
             dataIndex: 'imageSrc',
             key: 'image',
-            width: '15%',
+
             ellipsis: true,
             render: (imageSrc) => (
                 <img
@@ -94,61 +94,61 @@ const Products = () => {
             title: 'Id',
             dataIndex: 'productId',
             key: 'id',
-            width: '20%',
+
             ellipsis: true
         },
         {
             title: 'Manufacturer Name',
             dataIndex: 'manufacturerName',
             key: 'ManufacturerName',
-            width: '20%',
+
             ellipsis: true
         },
         {
             title: 'General Information',
             dataIndex: 'generalInformation',
             key: 'generalInformation',
-            width: '20%',
+
             ellipsis: true
         },
         {
             title: 'Warnings',
             dataIndex: 'warnings',
             key: 'warnings',
-            width: '20%',
+
             ellipsis: true
         },
         {
             title: 'Common Use',
             dataIndex: 'commonUse',
             key: 'commonUse',
-            width: '20%',
+
             ellipsis: true
         },
         {
             title: 'Ingredients',
             dataIndex: 'ingredients',
             key: 'ingredients',
-            width: '20%',
+
             ellipsis: true
         },
         {
             title: 'Directions',
             dataIndex: 'directions',
             key: 'directions',
-            width: '20%',
+
             ellipsis: true
         },        {
             title: 'Summary',
             dataIndex: 'summary',
             key: 'summary',
-            width: '20%',
+
             ellipsis: true
         },
         {
             title: 'Action',
             key: 'operation',
-            width: '20%',
+            fixed: 'right',
             render: () => <a className="text-blue-600 hover:text-blue-800">Details</a>,
             ellipsis: true
         },

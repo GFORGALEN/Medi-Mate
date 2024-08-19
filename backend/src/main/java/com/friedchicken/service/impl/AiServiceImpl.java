@@ -6,11 +6,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.friedchicken.mapper.AiInfoMapper;
 import com.friedchicken.pojo.dto.AI.AICompareDTO;
 import com.friedchicken.pojo.dto.AI.AIimageDTO;
-import com.friedchicken.pojo.entity.Supplement.Supplement;
-import com.friedchicken.pojo.entity.Supplement.SupplementInfo;
+import com.friedchicken.pojo.entity.Medicine.Medicine;
+import com.friedchicken.pojo.entity.Medicine.MedicineInfo;
 import com.friedchicken.pojo.vo.AI.AIcomparisonVO;
 import com.friedchicken.pojo.vo.AI.AItextVO;
-import com.friedchicken.pojo.vo.Supplement.SupplementListVO;
+import com.friedchicken.pojo.vo.Medicine.MedicineListVO;
 import com.friedchicken.properties.OpenAIProperties;
 import com.friedchicken.result.PageResult;
 import com.friedchicken.service.AiService;
@@ -78,7 +78,7 @@ public class AiServiceImpl implements AiService {
     }
 
     @Override
-    public PageResult<SupplementListVO> analyzeImage(byte[] imageData) {
+    public PageResult<MedicineListVO> analyzeImage(byte[] imageData) {
         Resource imageResource = new ByteArrayResource(imageData);
 
         UserMessage userMessage = new UserMessage(
@@ -88,28 +88,28 @@ public class AiServiceImpl implements AiService {
         ChatResponse chatResponse = getAiClass(userMessage, openAIProperties.getJsonSchemaForKeywords());
         String requestContent = chatResponse.getResults().get(0).getOutput().getContent();
 
-        SupplementInfo supplementInfo;
+        MedicineInfo medicineInfo;
         try {
-            supplementInfo = objectMapper.readValue(requestContent, SupplementInfo.class);
+            medicineInfo = objectMapper.readValue(requestContent, MedicineInfo.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        String name = supplementInfo.getName();
+        String name = medicineInfo.getName();
         List<String> keywords = Arrays.asList(name.split("\\s+"));
         log.info("name:{}", keywords.toString());
         PageHelper.startPage(1, 100);
-        Page<SupplementListVO> page = aiInfoMapper.findByMultipleWords(keywords);
+        Page<MedicineListVO> page = aiInfoMapper.findByMultipleWords(keywords);
 
         return new PageResult<>(page.getTotal(), page.getResult());
     }
 
     @Override
     public AIcomparisonVO compareImage(AICompareDTO aiCompareDTO) {
-        List<Supplement> supplementList = aiInfoMapper.findProductByIds(Arrays.stream(aiCompareDTO.getProductId()).boxed().toList());
+        List<Medicine> medicineList = aiInfoMapper.findProductByIds(Arrays.stream(aiCompareDTO.getProductId()).boxed().toList());
 
         UserMessage userMessage = new UserMessage(
                 "I will give you a set of drug information, please summarize briefly the differences between them.The information returned is mainly the differences."
-                        + supplementList.toString());
+                        + medicineList.toString());
 
         ChatResponse chatResponse = getAiClass(userMessage, openAIProperties.getJsonSchemaForComparison());
         String requestContent = chatResponse.getResults().get(0).getOutput().getContent();

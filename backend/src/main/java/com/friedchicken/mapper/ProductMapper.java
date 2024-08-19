@@ -1,9 +1,8 @@
 package com.friedchicken.mapper;
 
-import com.friedchicken.pojo.dto.Supplement.SupplementDTO;
-import com.friedchicken.pojo.dto.Supplement.SupplementPageDTO;
-import com.friedchicken.pojo.vo.Supplement.SupplementDetailVO;
-import com.friedchicken.pojo.vo.Supplement.SupplementListVO;
+import com.friedchicken.pojo.dto.Medicine.MedicinePageDTO;
+import com.friedchicken.pojo.vo.Medicine.MedicineDetailVO;
+import com.friedchicken.pojo.vo.Medicine.MedicineListVO;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -11,11 +10,11 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ProductMapper {
 
-    Page<SupplementListVO> getProducts(SupplementPageDTO supplementPageDTO);
+    Page<MedicineListVO> getProducts(MedicinePageDTO medicinePageDTO);
 
-    SupplementDetailVO getProductById(String productId);
+    MedicineDetailVO getProductById(String productId);
 
-    void updateProductById(SupplementDetailVO supplementDetailVO);
+    void updateProductById(MedicineDetailVO medicineDetailVO);
 
-    Page<SupplementDetailVO> getDetailProducts(SupplementPageDTO supplementPageDTO);
+    Page<MedicineDetailVO> getDetailProducts(MedicinePageDTO medicinePageDTO);
 }

@@ -1,4 +1,4 @@
-package com.friedchicken.pojo.vo.Supplement;
+package com.friedchicken.pojo.entity.Medicine;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SupplementDetailVO implements Serializable {
+public class Medicine implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private String productId;
