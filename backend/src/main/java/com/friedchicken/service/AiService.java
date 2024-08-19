@@ -4,13 +4,15 @@ import com.friedchicken.pojo.dto.AI.AICompareDTO;
 import com.friedchicken.pojo.dto.AI.AIimageDTO;
 import com.friedchicken.pojo.vo.AI.AIcomparisonVO;
 import com.friedchicken.pojo.vo.AI.AItextVO;
+import com.friedchicken.pojo.vo.Supplement.SupplementListVO;
+import com.friedchicken.result.PageResult;
 
 public interface AiService {
     AItextVO handlerText(String message);
 
     AItextVO analyzeImageUrl(AIimageDTO aiimageDTO);
 
-    AItextVO analyzeImage(byte[] imageData);
+    PageResult<SupplementListVO> analyzeImage(byte[] imageData);
 
     AIcomparisonVO compareImage(AICompareDTO aiCompareDTO);
 }

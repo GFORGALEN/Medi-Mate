@@ -12,6 +12,32 @@ public class OpenAIProperties {
     private String url = "https://api.openai.com";
     private String model = "gpt-4o-mini";
     private Float temperature = 0.7F;
+    private String jsonSchemaForKeywords = """
+            {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "The main name of the product. Including the brand."
+                    }
+                },
+                "required": ["name"],
+                "additionalProperties": false
+            }
+            """;
+    private String jsonSchemaForSummary = """
+            {
+                "type": "object",
+                "properties": {
+                    "summary": {
+                        "type": "string",
+                        "description": "A brief summary of the information from a professional pharmacist."
+                    }
+                },
+                "required": ["summary"],
+                "additionalProperties": false
+            }
+            """;
     private String jsonSchemaForAnalyse = """
             {
                 "type": "object",

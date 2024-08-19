@@ -3,11 +3,11 @@
 
 <mapper namespace="com.friedchicken.mapper.AiInfoMapper">
 
-    <select id="findByMultipleWords" resultType="com.friedchicken.pojo.entity.Supplement.Supplement">
+    <select id="findByMultipleWords" resultType="com.friedchicken.pojo.vo.Supplement.SupplementListVO">
         SELECT * FROM supplement
         WHERE
         <if test="keywords != null and keywords.size() > 0">
-            <foreach collection="keywords" item="word" separator=" AND ">
+            <foreach collection="keywords" item="word" separator=" OR ">
                 product_name LIKE CONCAT('%', #{word}, '%')
             </foreach>
         </if>

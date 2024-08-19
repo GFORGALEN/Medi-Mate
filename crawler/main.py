@@ -82,7 +82,7 @@ def parse_product_details(driver):
             common_uses, ingredients, directions, image_src]
 
 
-def save_to_csv(data, filename='C:\\Users\\TZQ\\OneDrive\\桌面\\UOA\\778\\pythonProject\\products_info.csv'):
+def save_to_csv(data, filename='C:\\Users\\TZQ\\OneDrive\\桌面\\UOA\\778\\FriedChicken\\products_info.csv'):
     with open(filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(
@@ -92,7 +92,9 @@ def save_to_csv(data, filename='C:\\Users\\TZQ\\OneDrive\\桌面\\UOA\\778\\pyth
 
 
 def main():
-    base_url = "https://www.chemistwarehouse.co.nz/shop-online/81/vitamins-supplements"
+    # base_url = "https://www.chemistwarehouse.co.nz/shop-online/81/vitamins-supplements"
+
+    base_url = "https://www.chemistwarehouse.co.nz/shop-online/1093/cold-flu"
 
     options = Options()
     options.headless = True  # 无头模式
@@ -107,7 +109,6 @@ def main():
             product_links = parse_product_list(driver)
             all_product_links.extend(product_links)
 
-        # 检查是否有“下一页”按钮
         try:
             next_button = driver.find_element(By.CLASS_NAME, 'pager__button.pager__button--next')
             next_button.click()
@@ -116,6 +117,7 @@ def main():
         except Exception as e:
             print(f"No more pages or error finding next page button: {e}")
             break
+
     print(all_product_links)
     all_products_info = []
     for link in all_product_links:

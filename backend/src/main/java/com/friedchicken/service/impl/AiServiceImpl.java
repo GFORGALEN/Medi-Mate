@@ -1,6 +1,7 @@
 package com.friedchicken.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.friedchicken.mapper.AiInfoMapper;
 import com.friedchicken.pojo.dto.AI.AICompareDTO;
@@ -9,8 +10,12 @@ import com.friedchicken.pojo.entity.Supplement.Supplement;
 import com.friedchicken.pojo.entity.Supplement.SupplementInfo;
 import com.friedchicken.pojo.vo.AI.AIcomparisonVO;
 import com.friedchicken.pojo.vo.AI.AItextVO;
+import com.friedchicken.pojo.vo.Supplement.SupplementListVO;
 import com.friedchicken.properties.OpenAIProperties;
+import com.friedchicken.result.PageResult;
 import com.friedchicken.service.AiService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -44,11 +49,17 @@ public class AiServiceImpl implements AiService {
     public AItextVO handlerText(String message) {
         UserMessage userMessage = new UserMessage(message);
 
-        ChatResponse chatResponse = getAiClass(userMessage, "");
+        ChatResponse chatResponse = getAiClass(userMessage, openAIProperties.getJsonSchemaForSummary());
         String requestContent = chatResponse.getResults().get(0).getOutput().getContent();
-
+        String summary;
+        try {
+            JsonNode jsonNode = objectMapper.readTree(requestContent);
+            summary = jsonNode.get("summary").asText();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         return AItextVO.builder()
-                .text(requestContent)
+                .text(summary)
                 .build();
     }
 
@@ -67,14 +78,14 @@ public class AiServiceImpl implements AiService {
     }
 
     @Override
-    public AItextVO analyzeImage(byte[] imageData) {
+    public PageResult<SupplementListVO> analyzeImage(byte[] imageData) {
         Resource imageResource = new ByteArrayResource(imageData);
 
         UserMessage userMessage = new UserMessage(
-                "Tell me the text on this picture. Please be more specific and comprehensive according to the description."
+                "Tell me the main name of this medicine."
                 , List.of(new Media(MimeTypeUtils.IMAGE_PNG, imageResource)));
 
-        ChatResponse chatResponse = getAiClass(userMessage, openAIProperties.getJsonSchemaForAnalyse());
+        ChatResponse chatResponse = getAiClass(userMessage, openAIProperties.getJsonSchemaForKeywords());
         String requestContent = chatResponse.getResults().get(0).getOutput().getContent();
 
         SupplementInfo supplementInfo;
@@ -85,11 +96,11 @@ public class AiServiceImpl implements AiService {
         }
         String name = supplementInfo.getName();
         List<String> keywords = Arrays.asList(name.split("\\s+"));
-        List<Supplement> supplement = aiInfoMapper.findByMultipleWords(keywords);
+        log.info("name:{}", keywords.toString());
+        PageHelper.startPage(1, 100);
+        Page<SupplementListVO> page = aiInfoMapper.findByMultipleWords(keywords);
 
-        return AItextVO.builder()
-                .text(requestContent)
-                .build();
+        return new PageResult<>(page.getTotal(), page.getResult());
     }
 
     @Override
@@ -104,12 +115,12 @@ public class AiServiceImpl implements AiService {
         String requestContent = chatResponse.getResults().get(0).getOutput().getContent();
         AIcomparisonVO aicomparisonVO = new AIcomparisonVO();
         try {
-            aicomparisonVO=objectMapper.readValue(requestContent, AIcomparisonVO.class);
-        }catch (JsonProcessingException e) {
+            aicomparisonVO = objectMapper.readValue(requestContent, AIcomparisonVO.class);
+        } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
 
-        log.info("here:{}",aicomparisonVO);
+        log.info("here:{}", aicomparisonVO);
         return aicomparisonVO;
     }
 
