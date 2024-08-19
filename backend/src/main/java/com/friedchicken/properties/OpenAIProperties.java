@@ -25,6 +25,19 @@ public class OpenAIProperties {
                 "additionalProperties": false
             }
             """;
+    private String jsonSchemaForSummary = """
+            {
+                "type": "object",
+                "properties": {
+                    "summary": {
+                        "type": "string",
+                        "description": "A brief summary of the information from a professional pharmacist."
+                    }
+                },
+                "required": ["summary"],
+                "additionalProperties": false
+            }
+            """;
     private String jsonSchemaForAnalyse = """
             {
                 "type": "object",

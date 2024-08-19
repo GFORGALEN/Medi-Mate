@@ -2,6 +2,7 @@ package com.friedchicken.service.impl;
 
 import com.friedchicken.mapper.ProductMapper;
 import com.friedchicken.pojo.dto.Supplement.SupplementPageDTO;
+import com.friedchicken.pojo.vo.AI.AItextVO;
 import com.friedchicken.pojo.vo.Supplement.SupplementDetailVO;
 import com.friedchicken.pojo.vo.Supplement.SupplementListVO;
 import com.friedchicken.result.PageResult;
@@ -19,6 +20,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductMapper productMapper;
+    @Autowired
+    private AiServiceImpl aiServiceImpl;
 
     @Override
     public PageResult<SupplementListVO> getProductsByName(SupplementPageDTO supplementPageDTO) {
@@ -31,6 +34,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public SupplementDetailVO getProductById(int productId) {
-        return productMapper.getProductById(productId);
+        SupplementDetailVO productById = productMapper.getProductById(productId);
+        String text = aiServiceImpl.handlerText("You are a professional pharmacist, give me a brief summary."
+                + productById.toString()).getText();
+        productById.setSummary(text);
+        return productById;
     }
 }

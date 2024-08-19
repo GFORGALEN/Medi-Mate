@@ -1,13 +1,17 @@
 package com.friedchicken.pojo.vo.Supplement;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class SupplementDetailVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -21,4 +25,5 @@ public class SupplementDetailVO implements Serializable {
     private String ingredients;
     private String directions;
     private String imageSrc;
+    private String summary;
 }
