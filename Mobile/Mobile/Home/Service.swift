@@ -11,7 +11,7 @@ import UIKit
 protocol NetworkServiceProtocol {
     func textSearch(page: Int, pageSize: Int, productName: String, manufacture: String) async throws -> String
     func imageSearch(image: UIImage) async throws -> String
-    func fetchProductDetails(productId: String) async throws -> ProductDetails
+    func fetchProductDetails(productId: String) async throws -> String
 }
 
 class NetworkService: NetworkServiceProtocol {
@@ -37,7 +37,6 @@ class NetworkService: NetworkServiceProtocol {
         guard let httpResponse = response as? HTTPURLResponse, 200...299 ~= httpResponse.statusCode else {
             throw URLError(.badServerResponse)
         }
-        
         return String(data: data, encoding: .utf8) ?? ""
     }
     
@@ -72,7 +71,7 @@ class NetworkService: NetworkServiceProtocol {
         return String(data: imageData, encoding: .utf8) ?? ""
     }
     
-    func fetchProductDetails(productId: String) async throws -> ProductDetails {
+    func fetchProductDetails(productId: String) async throws -> String {
             guard let url = URL(string: "\(Constant.apiSting)/api/products/\(productId)") else {
                 throw URLError(.badURL)
             }
@@ -86,8 +85,6 @@ class NetworkService: NetworkServiceProtocol {
             guard let httpResponse = response as? HTTPURLResponse, 200...299 ~= httpResponse.statusCode else {
                 throw URLError(.badServerResponse)
             }
-            
-            let decoder = JSONDecoder()
-            return try decoder.decode(ProductDetails.self, from: data)
+            return String(data: data, encoding: .utf8) ?? ""
         }
 }

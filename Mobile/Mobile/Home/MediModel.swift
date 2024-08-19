@@ -7,6 +7,8 @@
 
 import UIKit
 
+
+
 struct Medication {
     let image: UIImage?
     let description: MedicationInfo?
@@ -43,4 +45,18 @@ struct SearchResponse: Codable {
 struct SearchData: Codable {
     let records: [Product1]
     let total: Int
+}
+
+struct ProductDetails: Codable {
+    let productId: String
+    let productName: String
+    let productPrice: String
+    let manufacturerName: String
+    let generalInformation: String
+    let warnings: String
+    let commonUse: String
+    let ingredients: String
+    let directions: String
+    let imageSrc: String
+    let summary: String
 }
