@@ -47,4 +47,12 @@ public class ProductServiceImpl implements ProductService {
         }
         return productById;
     }
+
+    @Override
+    public PageResult<SupplementDetailVO> getDetailProductsByName(SupplementPageDTO supplementPageDTO) {
+        PageHelper.startPage(supplementPageDTO.getPage(), supplementPageDTO.getPageSize());
+        Page<SupplementDetailVO> page = productMapper.getDetailProducts(supplementPageDTO);
+
+        return new PageResult<>(page.getTotal(), page.getResult());
+    }
 }

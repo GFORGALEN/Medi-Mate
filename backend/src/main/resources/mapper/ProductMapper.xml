@@ -60,4 +60,16 @@
             product_id = #{productId}
         </where>
     </select>
+    <select id="getDetailProducts" resultType="com.friedchicken.pojo.vo.Supplement.SupplementDetailVO">
+        SELECT *
+        from supplement
+        <where>
+            <if test="productName != null and productName != ''">
+                product_name like concat('%',#{productName},'%')
+            </if>
+            <if test="manufacture != null and manufacture != ''">
+                manufacturer_name like concat('%',#{manufacture},'%')
+            </if>
+        </where>
+    </select>
 </mapper>

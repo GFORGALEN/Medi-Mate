@@ -10,4 +10,6 @@ public interface ProductService {
     PageResult<SupplementListVO> getProductsByName(SupplementPageDTO supplementPageDTO);
 
     SupplementDetailVO getProductById(String productId);
+
+    PageResult<SupplementDetailVO> getDetailProductsByName(SupplementPageDTO supplementPageDTO);
 }

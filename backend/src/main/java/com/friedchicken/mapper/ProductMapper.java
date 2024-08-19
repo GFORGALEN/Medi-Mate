@@ -16,4 +16,6 @@ public interface ProductMapper {
     SupplementDetailVO getProductById(String productId);
 
     void updateProductById(SupplementDetailVO supplementDetailVO);
+
+    Page<SupplementDetailVO> getDetailProducts(SupplementPageDTO supplementPageDTO);
 }
