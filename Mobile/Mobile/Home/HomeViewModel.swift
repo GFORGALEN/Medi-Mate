@@ -40,6 +40,7 @@ class HomeViewModel: ObservableObject {
             errorMessage = error.localizedDescription
             print("Search error: \(error)")
         }
+        navigateToResults = true
         isLoading = false
     }
     

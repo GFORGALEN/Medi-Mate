@@ -6,45 +6,55 @@ struct HomeView: View {
     @Binding var showTabBar: Bool
     @FocusState private var isSearchFieldFocused: Bool
 
-
-
     var body: some View {
         NavigationStack {
-            VStack {
-                titleView
-                searchBar
-                contentArea
-            }
-            .navigationDestination(isPresented: $viewModel.navigateToResults) {
-                ProductSearchResultsView(viewModel: viewModel)
-                    .onAppear { 
-                        showTabBar = false
-                        print("Navigation to results occurred. Products count: \(viewModel.products.count)")
-                    }
-                    .onDisappear { showTabBar = true }
-            }
-            .sheet(isPresented: $isShowingCamera) {
-                            ImagePicker(image: $viewModel.image, sourceType: .camera)
-                                .onDisappear {
-                                    if let image = viewModel.image {
-                                        Task {
-                                            await viewModel.uploadImage(image)
-                                        }
-                                    }
-                                }
+            ZStack {
+                VStack {
+                    titleView
+                    searchBar
+                    contentArea
+                }
+                .navigationDestination(isPresented: $viewModel.navigateToResults) {
+                    ProductSearchResultsView(viewModel: viewModel)
+                        .onAppear {
+                            showTabBar = false
                         }
-            .onChange(of: viewModel.image) { oldImage, newImage in
-                            if newImage != nil {
-                                isShowingCamera = false
+                        .onDisappear { showTabBar = true }
+                }
+                .sheet(isPresented: $isShowingCamera) {
+                    ImagePicker(image: $viewModel.image, sourceType: .camera)
+                        .onDisappear {
+                            if let image = viewModel.image {
+                                Task {
+                                    await viewModel.uploadImage(image)
+                                }
                             }
                         }
-            .gesture(
-                TapGesture()
-                    .onEnded { _ in
-                        isSearchFieldFocused = false
+                }
+                .onChange(of: viewModel.image) { oldImage, newImage in
+                    if newImage != nil {
+                        isShowingCamera = false
                     }
-            )
+                }
+                .gesture(
+                    TapGesture()
+                        .onEnded { _ in
+                            isSearchFieldFocused = false
+                        }
+                )
+                
+                // 加载遮罩层
+                if viewModel.isLoading {
+                    Color.black.opacity(0.5)
+                        .edgesIgnoringSafeArea(.all)
+                        .overlay(
+                            CustomLoadingView()
+                        )
+                        .allowsHitTesting(true)
+                }
+            }
         }
+        .disabled(viewModel.isLoading)
     }
 
     private var titleView: some View {
@@ -59,8 +69,9 @@ struct HomeView: View {
             TextField("Type something...", text: $viewModel.searchText)
                 .font(.system(size: 20, weight: .bold, design: .monospaced))
                 .focused($isSearchFieldFocused)
-
-
+                .onSubmit {
+                    performSearch()
+                }
             
             Button(action: performSearch) {
                 Image(systemName: "magnifyingglass")
@@ -92,12 +103,7 @@ struct HomeView: View {
 
     private var contentArea: some View {
         Group {
-            if viewModel.isLoading {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .black))
-                    .scaleEffect(5)
-                    .frame(height: 200)
-            }
+            EmptyView()
         }
     }
 

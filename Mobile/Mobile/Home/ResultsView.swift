@@ -4,11 +4,14 @@ struct ProductSearchResultsView: View {
     @ObservedObject var viewModel: HomeViewModel
     @State private var isSelectMode = false
     @State private var selectedProducts: Set<String> = []
+    @State private var selectedProductId: String?
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         ZStack(alignment: .bottom) {
-            ProductGridView(products: viewModel.products, isSelectable: isSelectMode, selectedProducts: $selectedProducts)
+            ProductGridView(products: viewModel.products, isSelectable: isSelectMode, selectedProducts: $selectedProducts, onProductTap: { productId in
+                selectedProductId = productId
+            })
             
             if isSelectMode {
                 compareButton
@@ -18,6 +21,12 @@ struct ProductSearchResultsView: View {
         }
         .navigationTitle("Results")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(item: Binding(
+            get: { selectedProductId.map { ProductIdentifier(id: $0) } },
+            set: { selectedProductId = $0?.id }
+        )) { productIdentifier in
+            ProductDetailsView(productId: productIdentifier.id)
+        }
     }
     
     private var selectButton: some View {
@@ -68,12 +77,13 @@ struct ProductGridView: View {
     ]
     let isSelectable: Bool
     @Binding var selectedProducts: Set<String>
+    let onProductTap: (String) -> Void
     
     var body: some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 20) {
                 ForEach(products) { product in
-                    ProductCard(product: product, isSelectable: isSelectable, selectedProducts: $selectedProducts)
+                    ProductCard(product: product, isSelectable: isSelectable, selectedProducts: $selectedProducts, onProductTap: onProductTap)
                 }
             }
             .padding()
@@ -85,6 +95,7 @@ struct ProductCard: View {
     let product: Product1
     let isSelectable: Bool
     @Binding var selectedProducts: Set<String>
+    let onProductTap: (String) -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -120,9 +131,26 @@ struct ProductCard: View {
                 .multilineTextAlignment(.leading)
                 .frame(height: 40)
             
-            Text("Price: \(product.productPrice)")
-                .font(.system(size: 13, weight: .regular))
-                .foregroundColor(.gray)
+            HStack {
+                Text("Price: \(product.productPrice)")
+                    .font(.system(size: 13, weight: .regular))
+                    .foregroundColor(.gray)
+                
+                Spacer()
+                
+                Button(action: {
+                    onProductTap(product.productId)
+                }) {
+                    Text("Detail")
+                        .font(.system(size: 12, weight: .medium))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .disabled(isSelectable)
+            }
         }
         .frame(width: 150)
         .padding(10)
@@ -158,4 +186,8 @@ struct ProductSearchResultsView_Previews: PreviewProvider {
     static var previews: some View {
             ProductSearchResultsView(viewModel: HomeViewModel())
         }
+}
+
+struct ProductIdentifier: Identifiable {
+    let id: String
 }

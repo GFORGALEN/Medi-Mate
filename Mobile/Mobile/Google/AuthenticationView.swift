@@ -77,7 +77,7 @@ class AuthenticationView: ObservableObject {
         
         Task {
             do {
-                let response: GoogleLoginResponse = try await apiService.request(
+                let _: GoogleLoginResponse = try await apiService.request(
                     endpoint: "google-login",
                     method: "POST",
                     body: [

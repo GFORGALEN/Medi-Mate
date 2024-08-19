@@ -13,18 +13,6 @@ import MapKit
 
 // Mediction Model
 
-struct SearchRequest: Codable {
-    let page: Int
-    let pageSize: Int
-    let productName: String
-    let manufacture: String
-}
-
-struct APIResponse: Codable {
-    let code: Int
-    let msg: String?
-    let data: ResponseData
-}
 
 struct ResponseData: Codable {
     let text: String
