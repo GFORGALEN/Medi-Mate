@@ -48,11 +48,27 @@ public class ProductController {
             @ApiResponse(responseCode = "200", description = "Product retrieved successfully.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = SupplementDetailVO.class)))
     })
-    public Result<SupplementDetailVO> getProduct(@PathVariable("id") int productId) {
+    public Result<SupplementDetailVO> getProduct(@PathVariable("id") String productId) {
         log.info("User want to retrieve the specific product by product id:{}", productId);
 
         SupplementDetailVO supplementDetailVO = productService.getProductById(productId);
 
         return Result.success(supplementDetailVO);
+    }
+
+    @GetMapping("/detailProducts")
+    @Operation(summary = "Get All Products list",
+            description = "Retrieve a list of products with pagination and optional filtering by name, ID, or manufacture.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Products retrieved successfully.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageResult.class)))
+    })
+    public Result<PageResult<SupplementDetailVO>> getDetailProducts(SupplementPageDTO supplementPageDTO) {
+
+        log.info("User want to retrieve products by product name or manufacture name:{}", supplementPageDTO);
+
+        PageResult<SupplementDetailVO> pageResult=productService.getDetailProductsByName(supplementPageDTO);
+
+        return Result.success(pageResult);
     }
 }

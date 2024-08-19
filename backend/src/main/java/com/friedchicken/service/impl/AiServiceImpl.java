@@ -1,6 +1,7 @@
 package com.friedchicken.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.friedchicken.mapper.AiInfoMapper;
 import com.friedchicken.pojo.dto.AI.AICompareDTO;
@@ -48,11 +49,17 @@ public class AiServiceImpl implements AiService {
     public AItextVO handlerText(String message) {
         UserMessage userMessage = new UserMessage(message);
 
-        ChatResponse chatResponse = getAiClass(userMessage, "");
+        ChatResponse chatResponse = getAiClass(userMessage, openAIProperties.getJsonSchemaForSummary());
         String requestContent = chatResponse.getResults().get(0).getOutput().getContent();
-
+        String summary;
+        try {
+            JsonNode jsonNode = objectMapper.readTree(requestContent);
+            summary = jsonNode.get("summary").asText();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         return AItextVO.builder()
-                .text(requestContent)
+                .text(summary)
                 .build();
     }
 

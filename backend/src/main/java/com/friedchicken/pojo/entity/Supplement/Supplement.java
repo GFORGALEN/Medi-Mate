@@ -25,5 +25,5 @@ public class Supplement implements Serializable {
     private String ingredients;
     private String directions;
     private String imageSrc;
-
+    private String summary;
 }
