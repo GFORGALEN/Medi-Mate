@@ -7,6 +7,8 @@ import com.friedchicken.pojo.dto.AI.AIimageDTO;
 import com.friedchicken.pojo.dto.AI.AItextDTO;
 import com.friedchicken.pojo.vo.AI.AIcomparisonVO;
 import com.friedchicken.pojo.vo.AI.AItextVO;
+import com.friedchicken.pojo.vo.Supplement.SupplementListVO;
+import com.friedchicken.result.PageResult;
 import com.friedchicken.result.Result;
 import com.friedchicken.service.AiService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -76,7 +78,7 @@ public class AIController {
             @ApiResponse(responseCode = "200", description = "Image processed successfully.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = AItextVO.class)))
     })
-    public Result<AItextVO> sendImageUrl(@RequestBody MultipartFile file) {
+    public Result<PageResult<SupplementListVO>> sendImageUrl(@RequestBody MultipartFile file) {
         log.info("User want to use AI model to send image.");
 
         byte[] imageData;
@@ -85,11 +87,9 @@ public class AIController {
         } catch (IOException e) {
             throw new ImageFailedUploadException(MessageConstant.FILE_UPLOAD_ERROR);
         }
-        AItextVO aitextVO = aiService.analyzeImage(imageData);
-
-        log.info("aitextVO={}", aitextVO.toString());
-
-        return Result.success(aitextVO);
+        PageResult<SupplementListVO> pageResult = aiService.analyzeImage(imageData);
+        log.info("here{}", pageResult.getRecords().toString());
+        return Result.success(pageResult);
     }
 
     @PostMapping("/comparison")
@@ -103,7 +103,7 @@ public class AIController {
         log.info("User want to use AI model to send comparison.{}", aiCompareDTO.toString());
 
         AIcomparisonVO aicomparisonVO = aiService.compareImage(aiCompareDTO);
-
-        return null;
+        log.info("Compare result,{}", aicomparisonVO.toString());
+        return Result.success(aicomparisonVO);
     }
 }
