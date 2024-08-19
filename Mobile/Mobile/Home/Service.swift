@@ -61,8 +61,13 @@ class NetworkService: NetworkServiceProtocol {
 
         request.httpBody = data
 
-        let (responseData, _) = try await URLSession.shared.data(for: request)
-        let jsonResponse = try JSONDecoder().decode(APIResponse.self, from: responseData)
-        return jsonResponse.data.text
+        let (imageData, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, 200...299 ~= httpResponse.statusCode else {
+            throw URLError(.badServerResponse)
+        }
+        
+        
+        return String(data: imageData, encoding: .utf8) ?? ""
     }
 }

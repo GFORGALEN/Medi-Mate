@@ -7,12 +7,11 @@ class HomeViewModel: ObservableObject {
     @Published var searchText = ""
     @Published var image: UIImage?
     @Published var isLoading = false
-    @Published var medicationInfo: MedicationInfo?
     @Published var products: [Product1] = []
     @Published var totalProducts: Int = 0
     @Published var errorMessage: String?
-    @Published var isFinished = false
-    
+    @Published var navigateToResults = false
+
     private var cancellables = Set<AnyCancellable>()
     private let networkService: NetworkServiceProtocol
     
@@ -65,28 +64,14 @@ class HomeViewModel: ObservableObject {
         do {
             let compressedImage = compressImage(image)
             let result = try await networkService.imageSearch(image: compressedImage)
-            parseImageSearchResult(result)
+            parseSearchResult(result)
         } catch {
             errorMessage = "Error: \(error.localizedDescription)"
         }
         isLoading = false
-        isFinished = true
+        navigateToResults = true
     }
     
-    private func parseImageSearchResult(_ jsonString: String) {
-        guard let jsonData = jsonString.data(using: .utf8) else {
-            errorMessage = "Failed to convert string to data"
-            return
-        }
-        
-        do {
-            let decoder = JSONDecoder()
-            self.medicationInfo = try decoder.decode(MedicationInfo.self, from: jsonData)
-        } catch {
-            errorMessage = "Error parsing JSON: \(error)"
-            print("Error parsing JSON: \(error)")
-        }
-    }
     
     private func compressImage(_ image: UIImage, maxFileSize: Int = 1_048_576, maxDimension: CGFloat = 512) -> UIImage {
         let resizedImage = resizeImage(image, maxDimension: maxDimension)

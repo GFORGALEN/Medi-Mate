@@ -3,7 +3,6 @@ import SwiftUI
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     @State private var isShowingCamera = false
-    @State private var navigateToResults = false
     @Binding var showTabBar: Bool
     @FocusState private var isSearchFieldFocused: Bool
 
@@ -16,27 +15,29 @@ struct HomeView: View {
                 searchBar
                 contentArea
             }
-            .navigationDestination(isPresented: $navigateToResults) {
+            .navigationDestination(isPresented: $viewModel.navigateToResults) {
                 ProductSearchResultsView(viewModel: viewModel)
-                    .onAppear { showTabBar = false }
+                    .onAppear { 
+                        showTabBar = false
+                        print("Navigation to results occurred. Products count: \(viewModel.products.count)")
+                    }
                     .onDisappear { showTabBar = true }
             }
             .sheet(isPresented: $isShowingCamera) {
-                ImagePicker(image: $viewModel.image, sourceType: .camera)
-            }
-            .sheet(isPresented: $viewModel.isFinished) {
-                ImageDetailView(medication: Medication(
-                    image: viewModel.image,
-                    description: viewModel.medicationInfo
-                ))
-            }
+                            ImagePicker(image: $viewModel.image, sourceType: .camera)
+                                .onDisappear {
+                                    if let image = viewModel.image {
+                                        Task {
+                                            await viewModel.uploadImage(image)
+                                        }
+                                    }
+                                }
+                        }
             .onChange(of: viewModel.image) { oldImage, newImage in
-                if let newImage = newImage {
-                    Task {
-                        await viewModel.uploadImage(newImage)
-                    }
-                }
-            }
+                            if newImage != nil {
+                                isShowingCamera = false
+                            }
+                        }
             .gesture(
                 TapGesture()
                     .onEnded { _ in
@@ -102,6 +103,5 @@ struct HomeView: View {
 
     private func performSearch() {
         viewModel.performSearch()
-        navigateToResults = true
     }
 }

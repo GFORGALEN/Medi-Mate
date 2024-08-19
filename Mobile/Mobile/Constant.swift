@@ -8,6 +8,6 @@
 import Foundation
 
 enum Constant {
-    static let apiSting = "http://192.168.1.143:8080"
+    static let apiSting = "http://172.24.76.128:8080"
 }
 
