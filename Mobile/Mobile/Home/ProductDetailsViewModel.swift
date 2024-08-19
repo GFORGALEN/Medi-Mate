@@ -8,10 +8,9 @@
 import SwiftUI
 
 
+@MainActor
 class ProductDetailsViewModel: ObservableObject {
-    @Published var productDetails: ProductDetails?
-    @Published var isLoading = false
-    @Published var error: Error?
+    @Published private(set) var state: LoadingState = .idle
     
     private let networkService: NetworkServiceProtocol
     private let productId: String
@@ -21,24 +20,15 @@ class ProductDetailsViewModel: ObservableObject {
         self.networkService = networkService
     }
     
-    func loadProductDetails() {
-        isLoading = true
-        error = nil
+    func loadProductDetails() async {
+        state = .loading
         
-        Task {
-            do {
-                let jsonString = try await networkService.fetchProductDetails(productId: productId)
-                let details = try parseProductDetails(from: jsonString)
-                DispatchQueue.main.async {
-                    self.productDetails = details
-                    self.isLoading = false
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    self.error = error
-                    self.isLoading = false
-                }
-            }
+        do {
+            let jsonString = try await networkService.fetchProductDetails(productId: productId)
+            let details = try parseProductDetails(from: jsonString)
+            state = .loaded(details)
+        } catch {
+            state = .error(error)
         }
     }
     
@@ -48,22 +38,19 @@ class ProductDetailsViewModel: ObservableObject {
         }
         
         let decoder = JSONDecoder()
+        let response = try decoder.decode(APIResponse<ProductDetails>.self, from: jsonData)
         
-        // Define a structure to match the JSON response
-        struct Response: Codable {
-            let code: Int
-            let msg: String?
-            let data: ProductDetails
-        }
-        
-        let response = try decoder.decode(Response.self, from: jsonData)
-        
-        // You might want to check the response code here
         guard response.code == 1 else {
             throw NSError(domain: "APIError", code: response.code, userInfo: [NSLocalizedDescriptionKey: response.msg ?? "Unknown error"])
         }
         
         return response.data
     }
+    
+    enum LoadingState {
+        case idle
+        case loading
+        case loaded(ProductDetails)
+        case error(Error)
+    }
 }
-
