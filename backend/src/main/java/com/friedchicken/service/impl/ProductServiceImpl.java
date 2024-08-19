@@ -12,6 +12,9 @@ import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.CompletableFuture;
 
 
 @Service
@@ -33,11 +36,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public SupplementDetailVO getProductById(int productId) {
+    @Transactional
+    public SupplementDetailVO getProductById(String productId) {
         SupplementDetailVO productById = productMapper.getProductById(productId);
-        String text = aiServiceImpl.handlerText("You are a professional pharmacist, give me a brief summary."
-                + productById.toString()).getText();
-        productById.setSummary(text);
+        if (productById.getSummary() == null) {
+            String text = aiServiceImpl.handlerText("You are a professional pharmacist, give me a brief summary."
+                    + productById.toString()).getText();
+            productById.setSummary(text);
+            productMapper.updateProductById(productById);
+        }
         return productById;
     }
 }

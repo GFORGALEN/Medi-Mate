@@ -48,7 +48,7 @@ public class ProductController {
             @ApiResponse(responseCode = "200", description = "Product retrieved successfully.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = SupplementDetailVO.class)))
     })
-    public Result<SupplementDetailVO> getProduct(@PathVariable("id") int productId) {
+    public Result<SupplementDetailVO> getProduct(@PathVariable("id") String productId) {
         log.info("User want to retrieve the specific product by product id:{}", productId);
 
         SupplementDetailVO supplementDetailVO = productService.getProductById(productId);

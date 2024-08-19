@@ -9,5 +9,5 @@ public interface ProductService {
 
     PageResult<SupplementListVO> getProductsByName(SupplementPageDTO supplementPageDTO);
 
-    SupplementDetailVO getProductById(int productId);
+    SupplementDetailVO getProductById(String productId);
 }
