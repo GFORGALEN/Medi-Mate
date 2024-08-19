@@ -34,7 +34,6 @@ public class AIController {
     @Autowired
     private AiService aiService;
 
-
     @PostMapping("/text")
     @Operation(summary = "User send message to connect AI model.",
             description = "If the user want to search information from model,it will return a message from model.")
