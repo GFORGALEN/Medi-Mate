@@ -72,7 +72,13 @@ class NetworkService: NetworkServiceProtocol {
     }
     
     func fetchProductDetails(productId: String) async throws -> String {
-            guard let url = URL(string: "\(Constant.apiSting)/api/products/\(productId)") else {
+        guard var urlComponents = URLComponents(string: "\(Constant.apiSting)/api/products/productDetail") else {
+                throw URLError(.badURL)
+            }
+            
+            urlComponents.queryItems = [URLQueryItem(name: "productId", value: productId)]
+            
+            guard let url = urlComponents.url else {
                 throw URLError(.badURL)
             }
             
