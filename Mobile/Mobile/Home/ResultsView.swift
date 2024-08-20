@@ -1,7 +1,5 @@
 import SwiftUI
 
-import SwiftUI
-
 struct ProductSearchResultsView: View {
     @ObservedObject var viewModel: HomeViewModel
     @EnvironmentObject var tabBarManager: TabBarManager
@@ -12,7 +10,15 @@ struct ProductSearchResultsView: View {
                 ForEach(viewModel.products) { product in
                     NavigationLink(destination: ProductDetailsView(productId: product.productId)) {
                         ProductCard(product: product)
+                            .onAppear {
+                                viewModel.loadMoreProductsIfNeeded(currentProduct: product)
+                            }
                     }
+                }
+                
+                if viewModel.isLoading {
+                    ProgressView()
+                        .frame(width: 150, height: 150)
                 }
             }
             .padding()
@@ -21,6 +27,9 @@ struct ProductSearchResultsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             tabBarManager.isVisible = false
+            if viewModel.products.isEmpty {
+                viewModel.loadMoreProductsIfNeeded(currentProduct: nil)
+            }
         }
         .onDisappear {
             tabBarManager.isVisible = false

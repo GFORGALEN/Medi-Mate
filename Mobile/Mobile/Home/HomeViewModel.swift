@@ -15,6 +15,9 @@ class HomeViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let networkService: NetworkServiceProtocol
     
+    private var currentPage = 1
+    private var canLoadMorePages = true
+    
     init(networkService: NetworkServiceProtocol = NetworkService()) {
         self.networkService = networkService
     }
@@ -28,9 +31,11 @@ class HomeViewModel: ObservableObject {
     private func search() async {
         isLoading = true
         errorMessage = nil
+        currentPage = 1
+        canLoadMorePages = true
         do {
             let result = try await networkService.textSearch(
-                page: 1,
+                page: currentPage,
                 pageSize: 10,
                 productName: searchText,
                 manufacture: ""
@@ -44,6 +49,43 @@ class HomeViewModel: ObservableObject {
         isLoading = false
     }
     
+    func loadMoreProductsIfNeeded(currentProduct product: Medicine?) {
+        guard let product = product else {
+            Task {
+                await loadMoreProducts()
+            }
+            return
+        }
+        
+        let thresholdIndex = products.index(products.endIndex, offsetBy: -5)
+        if products.firstIndex(where: { $0.id == product.id }) == thresholdIndex {
+            Task {
+                await loadMoreProducts()
+            }
+        }
+    }
+    
+    private func loadMoreProducts() async {
+        guard !isLoading && canLoadMorePages else {
+            return
+        }
+        
+        isLoading = true
+        do {
+            let result = try await networkService.textSearch(
+                page: currentPage + 1,
+                pageSize: 10,
+                productName: searchText,
+                manufacture: ""
+            )
+            parseMoreSearchResults(result)
+        } catch {
+            errorMessage = error.localizedDescription
+            print("Load more error: \(error)")
+        }
+        isLoading = false
+    }
+    
     private func parseSearchResult(_ jsonString: String) {
         guard let jsonData = jsonString.data(using: .utf8) else {
             errorMessage = "Invalid data format"
@@ -54,12 +96,31 @@ class HomeViewModel: ObservableObject {
             let searchResponse = try JSONDecoder().decode(SearchResponse.self, from: jsonData)
             self.products = searchResponse.data.records
             self.totalProducts = searchResponse.data.total
+            self.currentPage = 1
+            self.canLoadMorePages = self.products.count < self.totalProducts
         } catch {
             errorMessage = "Failed to parse data: \(error.localizedDescription)"
             print("Error parsing search result: \(error)")
         }
     }
     
+    private func parseMoreSearchResults(_ jsonString: String) {
+        guard let jsonData = jsonString.data(using: .utf8) else {
+            errorMessage = "Invalid data format"
+            return
+        }
+        
+        do {
+            let searchResponse = try JSONDecoder().decode(SearchResponse.self, from: jsonData)
+            self.products.append(contentsOf: searchResponse.data.records)
+            self.totalProducts = searchResponse.data.total
+            self.currentPage += 1
+            self.canLoadMorePages = self.products.count < self.totalProducts
+        } catch {
+            errorMessage = "Failed to parse data: \(error.localizedDescription)"
+            print("Error parsing more search results: \(error)")
+        }
+    }
     func uploadImage(_ image: UIImage) async {
         isLoading = true
         do {
