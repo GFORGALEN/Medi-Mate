@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { Table, Input, message, Modal } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
-import { getProductsAPI } from "@/api/user/Products.jsx";
+import {useEffect, useState} from 'react';
+import {Table, Input, message, Modal} from 'antd';
+import {SearchOutlined} from '@ant-design/icons';
+import {getProductsAPI} from "@/api/user/Products.jsx";
 
-const { Search } = Input;
+const {Search} = Input;
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -138,7 +138,7 @@ const Products = () => {
             key: 'directions',
 
             ellipsis: true
-        },        {
+        }, {
             title: 'Summary',
             dataIndex: 'summary',
             key: 'summary',
@@ -156,15 +156,13 @@ const Products = () => {
 
     return (
         <div className="font-poppins p-4 bg-white rounded-lg shadow">
-            <div className="mb-2">
-                <Search
-                    placeholder="Search products"
-                    onSearch={handleSearch}
-                    enterButton={<SearchOutlined />}
-                    size="large"
-                    className="w-full max-w-4xl"
-                />
-            </div>
+            <Search
+                placeholder="Search products"
+                onSearch={handleSearch}
+                enterButton={<SearchOutlined/>}
+                size="large"
+                className="w-full max-w-4xl"
+            />
             <Table
                 columns={columns}
                 dataSource={products}
@@ -177,7 +175,7 @@ const Products = () => {
                     showQuickJumper: true,
                 }}
                 onChange={handleTableChange}
-                scroll={{ x: 'max-content', y: 'calc(100vh - 450px)' }}
+                scroll={{x: 'max-content', y: 'calc(100vh - 450px)'}}
                 rowKey="productId"
                 className="text-base"
                 sticky
@@ -187,7 +185,7 @@ const Products = () => {
                 footer={null}
                 onCancel={() => setModalVisible(false)}
             >
-                <img alt="Product" className="w-full" src={selectedImage} />
+                <img alt="Product" className="w-full" src={selectedImage}/>
             </Modal>
         </div>
     );
