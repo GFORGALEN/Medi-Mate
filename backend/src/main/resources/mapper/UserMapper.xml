@@ -7,7 +7,13 @@
         update user
         <set>
             <if test="password != null">
-                password = #{password}
+                password = #{password},
+            </if>
+            <if test="nickname != null">
+                nickname = #{nickname},
+            </if>
+            <if test="userPic != null">
+                user_pic = #{userPic},
             </if>
         </set>
         where user_id = #{userId};

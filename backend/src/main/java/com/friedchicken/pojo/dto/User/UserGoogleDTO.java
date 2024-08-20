@@ -27,7 +27,7 @@ public class UserGoogleDTO implements Serializable {
     private String googleId;
 
     @NotBlank(message = "Username is mandatory.")
-    private String username;
+    private String nickname;
 
     @NotBlank(message = "UserPic is mandatory.")
     private String userPic;
