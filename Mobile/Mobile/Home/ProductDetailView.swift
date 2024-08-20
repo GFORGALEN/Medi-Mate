@@ -130,10 +130,3 @@ struct ErrorView: View {
     }
 }
 
-// MARK: - Helper Structures
-
-struct APIResponse<T: Codable>: Codable {
-    let code: Int
-    let msg: String?
-    let data: T
-}
