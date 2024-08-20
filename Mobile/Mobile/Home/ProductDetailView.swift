@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+import AVFoundation
 // MARK: - View
 
 struct ProductDetailsView: View {
@@ -23,7 +23,7 @@ struct ProductDetailsView: View {
             case .idle, .loading:
                 ProgressView("Loading...")
             case .loaded(let details):
-                ProductDetailsContent(details: details)
+                ProductDetailsContent(details: details, viewModel: viewModel)
             case .error(let error):
                 ErrorView(error: error, retryAction: { Task { await viewModel.loadProductDetails() } })
             }
@@ -39,6 +39,7 @@ struct ProductDetailsView: View {
 
 struct ProductDetailsContent: View {
     let details: ProductDetails
+    @ObservedObject var viewModel: ProductDetailsViewModel
     
     var body: some View {
         ScrollView {
@@ -61,6 +62,33 @@ struct ProductDetailsContent: View {
                     Text(details.productName).font(.title).fontWeight(.bold)
                     Text("Price: \(details.productPrice)").font(.headline)
                     Text("Manufacturer: \(details.manufacturerName)").font(.subheadline)
+                    Button(action:{
+                        viewModel.toggleSpeaking()
+                    }){
+                        HStack{
+                            Image(systemName: viewModel.isSpeaking ? "stop.circle.fill" : "speaker.wave.2.fill")
+                            Text(viewModel.isSpeaking ? "Stop" : "Read Aloud")
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(viewModel.isSpeaking ? Color.red : Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    HStack {
+                        Text("Speed:")
+                        Button("Normal") { viewModel.updateSpeechRate(AVSpeechUtteranceDefaultSpeechRate) }
+                            .buttonStyle(.bordered)
+                            .tint(viewModel.speechRate == AVSpeechUtteranceDefaultSpeechRate ? .green : .blue)
+                        Button("Fast") { viewModel.updateSpeechRate(AVSpeechUtteranceDefaultSpeechRate * 1.25) }
+                            .buttonStyle(.bordered)
+                            .tint(viewModel.speechRate == AVSpeechUtteranceDefaultSpeechRate * 1.25 ? .green : .blue)
+                        Button("Very Fast") { viewModel.updateSpeechRate(AVSpeechUtteranceDefaultSpeechRate * 1.5) }
+                            .buttonStyle(.bordered)
+                            .tint(viewModel.speechRate == AVSpeechUtteranceDefaultSpeechRate * 1.5 ? .green : .blue)
+                    }
                 }
                 
                 Divider()
