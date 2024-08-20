@@ -1,9 +1,13 @@
-import {useEffect, useState} from 'react';
-import {Table, Input, message, Modal} from 'antd';
-import {SearchOutlined} from '@ant-design/icons';
-import {getProductsAPI} from "@/api/user/Products.jsx";
 
-const {Search} = Input;
+import { useEffect, useState } from 'react';
+import {Table, Input, message, Modal, Button} from 'antd';
+import { PlusCircleOutlined } from '@ant-design/icons';
+import { SearchOutlined } from '@ant-design/icons';
+import { getProductsAPI } from "@/api/user/Products.jsx";
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+const { Search } = Input;
+
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -12,10 +16,12 @@ const Products = () => {
         page: 1,
         pageSize: 15,
         productName: "",
+        productId: "",
     });
     const [total, setTotal] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState('');
+    const navigate = useNavigate();
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -57,6 +63,10 @@ const Products = () => {
         setSelectedImage(imageSrc);
         setModalVisible(true);
     };
+//使用的是/api/products/changeProducts
+    const handleAddNew = () => {
+        navigate(`/products/new`);
+    };
 
     const columns = [
         {
@@ -64,8 +74,9 @@ const Products = () => {
             dataIndex: 'productName',
             key: 'name',
             fixed: 'left',
+            width: 200,
             ellipsis: true,
-            render: (text) => <span className="text-base font-medium">{text}</span>
+            render: (text) => <span className="text-base">{text}</span>
         },
         {
             title: 'Price',
@@ -91,78 +102,95 @@ const Products = () => {
             )
         },
         {
-            title: 'Id',
-            dataIndex: 'productId',
-            key: 'id',
-
-            ellipsis: true
-        },
-        {
             title: 'Manufacturer Name',
             dataIndex: 'manufacturerName',
             key: 'ManufacturerName',
 
-            ellipsis: true
+            ellipsis: true,
+            render: (text) => <span className="text-base">{text}</span>
         },
         {
             title: 'General Information',
             dataIndex: 'generalInformation',
             key: 'generalInformation',
-
-            ellipsis: true
+            width: 200,
+            ellipsis: true,
+            render: (text) => <span className="text-base">{text}</span>
         },
         {
             title: 'Warnings',
             dataIndex: 'warnings',
             key: 'warnings',
+            width: 200,
+            ellipsis: true,
+            render: (text) => <span className="text-base">{text}</span>
 
-            ellipsis: true
         },
         {
             title: 'Common Use',
             dataIndex: 'commonUse',
             key: 'commonUse',
 
-            ellipsis: true
+            ellipsis: true,
+            render: (text) => <span className="text-base">{text}</span>
         },
         {
             title: 'Ingredients',
             dataIndex: 'ingredients',
             key: 'ingredients',
-
+            render: (text) => <span className="text-base">{text}</span>,
             ellipsis: true
         },
         {
             title: 'Directions',
             dataIndex: 'directions',
             key: 'directions',
-
+            render: (text) => <span className="text-base">{text}</span>,
             ellipsis: true
         }, {
             title: 'Summary',
             dataIndex: 'summary',
             key: 'summary',
-
+            render: (text) => <span className="text-base">{text}</span>,
             ellipsis: true
         },
         {
             title: 'Action',
             key: 'operation',
             fixed: 'right',
-            render: () => <a className="text-blue-600 hover:text-blue-800">Details</a>,
+            render: (_, record) => (
+                <span>
+                    <Link to={`/products/productDetail/view/${record.productId}`} className="text-blue-600 hover:text-blue-800 mr-4">
+                        Details
+                    </Link>
+                </span>
+            ),
             ellipsis: true
         },
     ];
 
     return (
         <div className="font-poppins p-4 bg-white rounded-lg shadow">
-            <Search
-                placeholder="Search products"
-                onSearch={handleSearch}
-                enterButton={<SearchOutlined/>}
-                size="large"
-                className="w-full max-w-4xl"
-            />
+            <div className="flex justify-between items-center mb-16">
+                <Search
+                    placeholder="Search products"
+                    onSearch={handleSearch}
+                    enterButton={<SearchOutlined />}
+                    size="large"
+                    className="w-full max-w-4xl"
+
+                />
+                <Button
+                    type="primary"
+                    icon={<PlusCircleOutlined />}
+                    onClick={handleAddNew}
+                    size="large"
+
+                >
+                    Add New Product
+                </Button>
+
+            </div>
             <Table
                 columns={columns}
                 dataSource={products}
@@ -175,10 +203,9 @@ const Products = () => {
                     showQuickJumper: true,
                 }}
                 onChange={handleTableChange}
-                scroll={{x: 'max-content', y: 'calc(100vh - 450px)'}}
+                scroll={{ x: '100vw', y: 'calc(100vh - 450px)' }}
                 rowKey="productId"
                 className="text-base"
-                sticky
             />
             <Modal
                 open={modalVisible}
