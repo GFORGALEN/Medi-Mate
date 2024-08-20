@@ -21,7 +21,7 @@ struct MedicationInfo: Codable {
     let sideEffects: String
 }
 
-struct Product1: Codable, Identifiable {
+struct Medicine: Codable, Identifiable {
     let commonUse: String?
     let directions: String?
     let generalInformation: String?
@@ -43,7 +43,7 @@ struct SearchResponse: Codable {
 }
 
 struct SearchData: Codable {
-    let records: [Product1]
+    let records: [Medicine]
     let total: Int
 }
 

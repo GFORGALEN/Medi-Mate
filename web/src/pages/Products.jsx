@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import {Table, Input, message, Modal, Button} from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
@@ -6,6 +7,7 @@ import { getProductsAPI } from "@/api/user/Products.jsx";
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 const { Search } = Input;
+
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -145,7 +147,7 @@ const Products = () => {
             key: 'directions',
             render: (text) => <span className="text-base">{text}</span>,
             ellipsis: true
-        },        {
+        }, {
             title: 'Summary',
             dataIndex: 'summary',
             key: 'summary',
@@ -189,7 +191,6 @@ const Products = () => {
                 </Button>
 
             </div>
-
             <Table
                 columns={columns}
                 dataSource={products}
@@ -211,7 +212,7 @@ const Products = () => {
                 footer={null}
                 onCancel={() => setModalVisible(false)}
             >
-                <img alt="Product" className="w-full" src={selectedImage} />
+                <img alt="Product" className="w-full" src={selectedImage}/>
             </Modal>
         </div>
     );

@@ -25,7 +25,7 @@ struct Product: Codable, Identifiable{
 }
 
 struct Location: Identifiable, Codable {
-    let id = UUID()
+    let id : Int
     let name_store: String
     let name: String
     let latitude: Double
@@ -59,4 +59,11 @@ enum SearchError: Error {
             return "Invalid response from server"
         }
     }
+}
+
+
+struct APIResponse<T: Codable>: Codable {
+    let code: Int
+    let msg: String?
+    let data: T
 }

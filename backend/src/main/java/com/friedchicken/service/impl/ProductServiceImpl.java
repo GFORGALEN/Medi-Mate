@@ -1,6 +1,7 @@
 package com.friedchicken.service.impl;
 
 import com.friedchicken.mapper.ProductMapper;
+import com.friedchicken.pojo.dto.Medicine.MedicineModifyDTO;
 import com.friedchicken.pojo.dto.Medicine.MedicinePageDTO;
 import com.friedchicken.pojo.vo.Medicine.MedicineDetailVO;
 import com.friedchicken.pojo.vo.Medicine.MedicineListVO;
@@ -9,6 +10,7 @@ import com.friedchicken.service.ProductService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,5 +53,12 @@ public class ProductServiceImpl implements ProductService {
         Page<MedicineDetailVO> page = productMapper.getDetailProducts(medicinePageDTO);
 
         return new PageResult<>(page.getTotal(), page.getResult());
+    }
+
+    @Override
+    public void updateProductInformation(MedicineModifyDTO medicineModifyDTO) {
+        MedicineDetailVO medicineDetailVO = new MedicineDetailVO();
+        BeanUtils.copyProperties(medicineModifyDTO, medicineDetailVO);
+        productMapper.updateProductById(medicineDetailVO);
     }
 }
