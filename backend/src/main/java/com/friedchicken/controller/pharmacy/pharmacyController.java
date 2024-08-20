@@ -39,4 +39,6 @@ public class pharmacyController {
 
         return Result.success(pharmacyInfoVOList);
     }
+
+
 }

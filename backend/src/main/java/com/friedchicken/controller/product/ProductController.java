@@ -1,5 +1,6 @@
 package com.friedchicken.controller.product;
 
+import com.friedchicken.pojo.dto.Medicine.MedicineModifyDTO;
 import com.friedchicken.pojo.dto.Medicine.MedicinePageDTO;
 import com.friedchicken.pojo.vo.Medicine.MedicineDetailVO;
 import com.friedchicken.pojo.vo.Medicine.MedicineListVO;
@@ -36,19 +37,19 @@ public class ProductController {
 
         log.info("User want to retrieve products by product name:{}", medicinePageDTO.getProductName());
 
-        PageResult<MedicineListVO> pageResult=productService.getProductsByName(medicinePageDTO);
+        PageResult<MedicineListVO> pageResult = productService.getProductsByName(medicinePageDTO);
 
         return Result.success(pageResult);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/productDetail")
     @Operation(summary = "Get Detail Products",
             description = "Retrieve a specific product.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Product retrieved successfully.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = MedicineDetailVO.class)))
     })
-    public Result<MedicineDetailVO> getProduct(@PathVariable("id") String productId) {
+    public Result<MedicineDetailVO> getProduct(@RequestParam("productId") String productId) {
         log.info("User want to retrieve the specific product by product id:{}", productId);
 
         MedicineDetailVO medicineDetailVO = productService.getProductById(productId);
@@ -56,7 +57,7 @@ public class ProductController {
         return Result.success(medicineDetailVO);
     }
 
-    @GetMapping("/detailProducts")
+    @GetMapping("/allProductsDetail")
     @Operation(summary = "Get All Products list",
             description = "Retrieve a list of products with pagination and optional filtering by name, ID, or manufacture.")
     @ApiResponses(value = {
@@ -67,8 +68,21 @@ public class ProductController {
 
         log.info("User want to retrieve products by product name or manufacture name:{}", medicinePageDTO);
 
-        PageResult<MedicineDetailVO> pageResult=productService.getDetailProductsByName(medicinePageDTO);
+        PageResult<MedicineDetailVO> pageResult = productService.getDetailProductsByName(medicinePageDTO);
 
         return Result.success(pageResult);
+    }
+
+    @PutMapping("/changeProducts")
+    @Operation(summary = "Modify products information.",
+            description = "Modify products information.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Products modify successfully.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MedicineDetailVO.class)))
+    })
+    public Result<MedicineDetailVO> changeProducts(@RequestBody MedicineModifyDTO medicineModifyDTO) {
+        log.info("User want to change products information.{}", medicineModifyDTO);
+        productService.updateProductInformation(medicineModifyDTO);
+        return Result.success();
     }
 }
