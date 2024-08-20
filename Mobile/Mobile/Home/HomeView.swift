@@ -15,7 +15,7 @@ struct HomeView: View {
                     contentArea
                 }
                 .navigationDestination(isPresented: $viewModel.navigateToResults) {
-                    ProductSearchResultsView(viewModel: viewModel)
+                    ProductSearchResultsView(viewModel: viewModel, showTabBar: $showTabBar)
                         .onAppear {
                             showTabBar = false
                         }

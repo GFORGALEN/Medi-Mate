@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ProductSearchResultsView: View {
     @ObservedObject var viewModel: HomeViewModel
+    @Binding var showTabBar: Bool
     
     var body: some View {
         ScrollView {
@@ -10,6 +11,7 @@ struct ProductSearchResultsView: View {
                     NavigationLink(destination: ProductDetailsView(productId: product.productId)) {
                         ProductCard(product: product)
                     }
+                    
                 }
             }
             .padding()
@@ -20,7 +22,7 @@ struct ProductSearchResultsView: View {
 }
 
 struct ProductCard: View {
-    let product: Product1
+    let product: Medicine
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {

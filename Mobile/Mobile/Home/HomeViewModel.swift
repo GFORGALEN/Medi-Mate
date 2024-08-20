@@ -7,7 +7,7 @@ class HomeViewModel: ObservableObject {
     @Published var searchText = ""
     @Published var image: UIImage?
     @Published var isLoading = false
-    @Published var products: [Product1] = []
+    @Published var products: [Medicine] = []
     @Published var totalProducts: Int = 0
     @Published var errorMessage: String?
     @Published var navigateToResults = false

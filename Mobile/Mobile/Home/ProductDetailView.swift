@@ -12,6 +12,7 @@ import SwiftUI
 struct ProductDetailsView: View {
     @StateObject private var viewModel: ProductDetailsViewModel
     
+    
     init(productId: String) {
         _viewModel = StateObject(wrappedValue: ProductDetailsViewModel(productId: productId))
     }
