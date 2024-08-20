@@ -25,7 +25,7 @@ struct Product: Codable, Identifiable{
 }
 
 struct Location: Identifiable, Codable {
-    let id = UUID()
+    let id : Int
     let name_store: String
     let name: String
     let latitude: Double
