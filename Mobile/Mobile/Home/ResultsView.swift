@@ -2,7 +2,6 @@ import SwiftUI
 
 struct ProductSearchResultsView: View {
     @ObservedObject var viewModel: HomeViewModel
-    @EnvironmentObject var tabBarManager: TabBarManager
 
     var body: some View {
         ScrollView {
@@ -26,13 +25,9 @@ struct ProductSearchResultsView: View {
         .navigationTitle("Results")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            tabBarManager.isVisible = false
             if viewModel.products.isEmpty {
                 viewModel.loadMoreProductsIfNeeded(currentProduct: nil)
             }
-        }
-        .onDisappear {
-            tabBarManager.isVisible = false
         }
     }
 }

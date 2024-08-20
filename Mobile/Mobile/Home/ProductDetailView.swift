@@ -10,7 +10,6 @@ import AVFoundation
 
 struct ProductDetailsView: View {
     @StateObject private var viewModel: ProductDetailsViewModel
-    @EnvironmentObject var tabBarManager: TabBarManager
     @State private var selectedSection: String?
     
     init(productId: String) {
@@ -32,16 +31,6 @@ struct ProductDetailsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .task {
             await viewModel.loadProductDetails()
-        }
-        .onAppear {
-            tabBarManager.isVisible = false
-        }
-        .onDisappear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                if tabBarManager.isVisible == false {
-                    tabBarManager.isVisible = true
-                }
-            }
         }
     }
 }
@@ -115,7 +104,7 @@ struct ProductDetailsContent: View {
                         .padding()
                         .background(
                             ZStack {
-                                LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.6), Color.purple.opacity(0.6)]), startPoint: .topLeading, endPoint: .bottomTrailing)
+                                LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.6),Color.purple.opacity(0.4), Color.red.opacity(0.6)]), startPoint: .topLeading, endPoint: .bottomTrailing)
                                 RoundedRectangle(cornerRadius: 10)
                                     .stroke(Color.white.opacity(0.2), lineWidth: 2)
                             }

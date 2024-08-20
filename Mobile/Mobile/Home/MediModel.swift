@@ -7,20 +7,6 @@
 
 import UIKit
 
-
-
-struct Medication {
-    let image: UIImage?
-    let description: MedicationInfo?
-}
-
-struct MedicationInfo: Codable {
-    let name: String
-    let description: String
-    let commonUse: String
-    let sideEffects: String
-}
-
 struct Medicine: Codable, Identifiable {
     let commonUse: String?
     let directions: String?

@@ -3,7 +3,6 @@ import SwiftUI
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     @State private var isShowingCamera = false
-    @EnvironmentObject var tabBarManager: TabBarManager
     @FocusState private var isSearchFieldFocused: Bool
 
     var body: some View {
@@ -16,9 +15,6 @@ struct HomeView: View {
                 }
                 .navigationDestination(isPresented: $viewModel.navigateToResults) {
                                 ProductSearchResultsView(viewModel: viewModel)
-                                    .onAppear {
-                                        tabBarManager.isVisible = false
-                                    }
                 }
                 .sheet(isPresented: $isShowingCamera) {
                     ImagePicker(image: $viewModel.image, sourceType: .camera)

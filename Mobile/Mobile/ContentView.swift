@@ -14,7 +14,7 @@ struct ContentView: View {
                 case 0:
                     HomeView()
                 case 1:
-                    Text("Cart")
+                    CartView()
                 case 2:
                     NavigationView {
                         StoreLocationsView()
@@ -39,6 +39,7 @@ struct ContentView: View {
                 tabBarManager.selectedIndex = 0
             }
         }
+        .ignoresSafeArea()
     }
 }
 struct ContentView_Previews: PreviewProvider {
