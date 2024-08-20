@@ -14,5 +14,5 @@ public class AICompareDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private int[] productId;
+    private String[] productId;
 }

@@ -12,10 +12,9 @@ public class MedicineComparisonVO implements Serializable {
 
     private String productId;
     private String productName;
-    private String generalInformation;
+    private String productPrice;
     private String warnings;
     private String commonUse;
-    private String ingredients;
-    private String directions;
+    private String difference;
     private String imageSrc;
 }
