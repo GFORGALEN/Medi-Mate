@@ -16,6 +16,7 @@ struct ProductDetailsView: View {
         _viewModel = StateObject(wrappedValue: ProductDetailsViewModel(productId: productId))
     }
     
+    
     var body: some View {
         Group {
             switch viewModel.state {
@@ -136,8 +137,8 @@ struct ProductDetailsContent: View {
                 viewModel.toggleSpeaking()
             }) {
                 HStack {
-                    Image(systemName: viewModel.isSpeaking ? "stop.circle.fill" : "play.circle.fill")
-                    Text(viewModel.isSpeaking ? "Stop Reading" : "Read Aloud")
+                    Image(systemName: viewModel.isSpeaking ? "stop.circle.fill" : "play.circle.fill").font(.title2)
+                    Text(viewModel.isSpeaking ? "Stop Reading" : "Read Aloud").font(.title2).fontWeight(.semibold)
                 }
                 .padding()
                 .frame(maxWidth: .infinity)
@@ -147,14 +148,16 @@ struct ProductDetailsContent: View {
             }
             .buttonStyle(PlainButtonStyle())
             
-            HStack {
-                Text("Speed:")
-                ForEach(["Normal", "Fast", "Very Fast"], id: \.self) { speed in
-                    Button(speed) {
-                        viewModel.updateSpeechRate(forSpeed: speed)
+            if viewModel.isSpeaking {
+                HStack {
+                    Text("Speed:")
+                    ForEach(["Normal", "Fast", "Very Fast"], id: \.self) { speed in
+                        Button(speed) {
+                            viewModel.updateSpeechRate(forSpeed: speed)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(viewModel.currentSpeedLabel == speed ? .green : .blue)
                     }
-                    .buttonStyle(.bordered)
-                    .tint(viewModel.currentSpeedLabel == speed ? .green : .blue)
                 }
             }
         }
