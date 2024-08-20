@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ProductSearchResultsView: View {
+struct ResultsView: View {
     @ObservedObject var viewModel: HomeViewModel
 
     var body: some View {

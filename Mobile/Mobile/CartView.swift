@@ -11,19 +11,19 @@ struct CartView: View {
     var body: some View {
         NavigationView {
             VStack {
-                Text("主页面")
+                Text("Cart")
                     .font(.largeTitle)
                     .padding()
                 
                 NavigationLink(destination: SubView()) {
-                    Text("点击进入子页面")
+                    Text("Click to subpage")
                         .padding()
                         .background(Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
             }
-            .navigationTitle("主页")
+            .navigationTitle("cart")
         }
     }
 }
@@ -31,10 +31,10 @@ struct CartView: View {
 struct SubView: View {
     var body: some View {
         VStack {
-            Text("这是子页面")
+            Text("subpage")
                 .font(.title)
         }
-        .navigationTitle("子页面")
+        .navigationTitle("subpage")
     }
 }
 

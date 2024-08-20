@@ -14,7 +14,7 @@ struct HomeView: View {
                     contentArea
                 }
                 .navigationDestination(isPresented: $viewModel.navigateToResults) {
-                                ProductSearchResultsView(viewModel: viewModel)
+                                ResultsView(viewModel: viewModel)
                 }
                 .sheet(isPresented: $isShowingCamera) {
                     ImagePicker(image: $viewModel.image, sourceType: .camera)
