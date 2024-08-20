@@ -6,6 +6,7 @@ import com.friedchicken.pojo.dto.User.UserChangePasswordDTO;
 import com.friedchicken.pojo.dto.User.UserGoogleDTO;
 import com.friedchicken.pojo.dto.User.UserLoginDTO;
 import com.friedchicken.pojo.dto.User.UserRegisterDTO;
+import com.friedchicken.pojo.vo.User.UserGoogleVO;
 import com.friedchicken.pojo.vo.User.UserLoginVO;
 import com.friedchicken.result.Result;
 import com.friedchicken.service.UserService;
@@ -60,9 +61,9 @@ public class UserController {
             description = "If the user want to use Google to login, it will use this API.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Google successfully.",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserGoogleDTO.class)))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserGoogleVO.class)))
     })
-    public Result<UserLoginVO> googleLogin(
+    public Result<UserGoogleVO> googleLogin(
             @Parameter(description = "Google information", required = true)
             @RequestBody UserGoogleDTO userGoogleLoginDTO
     ) {
@@ -75,7 +76,7 @@ public class UserController {
             throw new AccountNotFoundException(MessageConstant.WRONG_INPUT);
         }
 
-        UserLoginVO userLoginVO = userService.googleLogin(userGoogleLoginDTO);
+        UserGoogleVO userLoginVO = userService.googleLogin(userGoogleLoginDTO);
         return Result.success(userLoginVO);
     }
 

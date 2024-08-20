@@ -11,6 +11,7 @@ import com.friedchicken.pojo.dto.User.UserGoogleDTO;
 import com.friedchicken.pojo.dto.User.UserLoginDTO;
 import com.friedchicken.pojo.dto.User.UserRegisterDTO;
 import com.friedchicken.pojo.entity.User.User;
+import com.friedchicken.pojo.vo.User.UserGoogleVO;
 import com.friedchicken.pojo.vo.User.UserLoginVO;
 import com.friedchicken.properties.JwtProperties;
 import com.friedchicken.service.UserService;
@@ -49,50 +50,63 @@ public class UserServiceImpl implements UserService {
         if (userByEmail == null) {
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
-        if (!userByEmail.getPassword().equals(userLoginDTO.getPassword())) {
+        if (!userByEmail.getPassword().equals(password)) {
             throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
         }
 
         Map<String, Object> claims = new HashMap<>();
-        return generateUserLoginVO(userByEmail, claims);
+        String token = generateUserLoginVO(userByEmail, claims);
+
+        UserLoginVO userLoginVO = new UserLoginVO();
+        BeanUtils.copyProperties(userLoginDTO, userLoginVO);
+        userLoginVO.setToken(token);
+        return userLoginVO;
     }
 
     @Override
     @Transactional
-    public UserLoginVO googleLogin(UserGoogleDTO userGoogleLoginDTO) {
+    public UserGoogleVO googleLogin(UserGoogleDTO userGoogleLoginDTO) {
         String email = userGoogleLoginDTO.getEmail();
         String googleId = userGoogleLoginDTO.getGoogleId();
 
-        User userByEmail = userMapper.getUserByEmail(email);
-        User user = new User();
-        if (userByEmail == null) {
+        User user = userMapper.getUserByEmail(email);
+
+        if (user == null) {
             user = User.builder()
                     .userId(uniqueIdUtil.generateUniqueId())
                     .password(BCryptUtil.hashPassword(RandomStringUtil.generateRandomString(16)))
+                    .username(RandomStringUtil.generateRandomString(6))
+                    .nickname(userGoogleLoginDTO.getNickname())
                     .build();
             BeanUtils.copyProperties(userGoogleLoginDTO, user);
             userMapper.register(user);
             userMapper.addUserInfo(user);
-        } else if (!userByEmail.getGoogleId().equals(googleId)) {
+        } else if (!user.getGoogleId().equals(googleId)) {
             throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
+        } else {
+            user.setNickname(userGoogleLoginDTO.getNickname());
+            userMapper.update(user);
         }
         Map<String, Object> claims = new HashMap<>();
-        return generateUserLoginVO(user, claims);
+        String token = generateUserLoginVO(user, claims);
+        log.info("user{}", user);
+        return UserGoogleVO.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .googleId(userGoogleLoginDTO.getGoogleId())
+                .userPic(userGoogleLoginDTO.getUserPic())
+                .username(user.getUsername())
+                .nickname(userGoogleLoginDTO.getNickname())
+                .token(token)
+                .build();
     }
 
-
-    private UserLoginVO generateUserLoginVO(User user, Map<String, Object> claims) {
+    private String generateUserLoginVO(User user, Map<String, Object> claims) {
         claims.put(JwtClaimsConstant.USER_ID, user.getUserId());
         claims.put(JwtClaimsConstant.USERNAME, user.getUsername());
         String token = JwtUtil.genToken(claims, jwtProperties.getUserTtl(), jwtProperties.getUserSecretKey());
         stringRedisTemplate.opsForValue().set(token, token, 30, TimeUnit.DAYS);
-        return UserLoginVO.builder()
-                .userId(user.getUserId())
-                .username(user.getUsername())
-                .userPic(user.getUserPic())
-                .email(user.getEmail())
-                .token(token)
-                .build();
+        return token;
     }
 
     @Override
