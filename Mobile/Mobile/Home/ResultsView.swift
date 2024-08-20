@@ -1,9 +1,11 @@
 import SwiftUI
 
+import SwiftUI
+
 struct ProductSearchResultsView: View {
     @ObservedObject var viewModel: HomeViewModel
-    @Binding var showTabBar: Bool
-    
+    @EnvironmentObject var tabBarManager: TabBarManager
+
     var body: some View {
         ScrollView {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 170), spacing: 20)], spacing: 20) {
@@ -11,13 +13,18 @@ struct ProductSearchResultsView: View {
                     NavigationLink(destination: ProductDetailsView(productId: product.productId)) {
                         ProductCard(product: product)
                     }
-                    
                 }
             }
             .padding()
         }
         .navigationTitle("Results")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            tabBarManager.isVisible = false
+        }
+        .onDisappear {
+            tabBarManager.isVisible = false
+        }
     }
 }
 

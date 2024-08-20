@@ -7,12 +7,12 @@
 
 import SwiftUI
 import AVFoundation
-// MARK: - View
+// MARK: - Views
 
 struct ProductDetailsView: View {
     @StateObject private var viewModel: ProductDetailsViewModel
-    
-    
+    @EnvironmentObject var tabBarManager: TabBarManager
+
     init(productId: String) {
         _viewModel = StateObject(wrappedValue: ProductDetailsViewModel(productId: productId))
     }
@@ -32,6 +32,16 @@ struct ProductDetailsView: View {
         .task {
             await viewModel.loadProductDetails()
         }
+        .onAppear {
+                    tabBarManager.isVisible = false
+                }
+                .onDisappear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        if tabBarManager.isVisible == false {
+                            tabBarManager.isVisible = true
+                        }
+                    }
+                }
     }
 }
 

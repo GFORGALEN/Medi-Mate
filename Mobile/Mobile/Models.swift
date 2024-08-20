@@ -60,3 +60,10 @@ enum SearchError: Error {
         }
     }
 }
+
+
+struct APIResponse<T: Codable>: Codable {
+    let code: Int
+    let msg: String?
+    let data: T
+}

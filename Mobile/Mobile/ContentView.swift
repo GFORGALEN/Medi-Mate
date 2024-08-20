@@ -1,14 +1,8 @@
 import SwiftUI
-import AnimatedTabBar
 
 struct ContentView: View {
-    @State private var selectedIndex = 0
     @StateObject private var authViewModel = AuthenticationView()
-    @State private var showTabBar = true
-
-
-
-    let icons = ["house", "storefront", "map", "person.crop.circle"]  // Icons for each tab
+    @StateObject private var tabBarManager = TabBarManager()
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -16,16 +10,15 @@ struct ContentView: View {
             
             VStack {
                 Spacer()
-                switch selectedIndex {
+                switch tabBarManager.selectedIndex {
                 case 0:
-                    HomeView(showTabBar: $showTabBar)  // Assuming HomeView exists
+                    HomeView()
                 case 1:
-                    //ShopView(authViewModel:authViewModel)  // Placeholder for Shop content
                     Text("Cart")
                 case 2:
                     NavigationView {
                         StoreLocationsView()
-                    } // Placeholder for Cart content
+                    }
                 case 3:
                     if authViewModel.isLoginSuccessed {
                         AccountView(authViewModel: authViewModel)
@@ -33,50 +26,21 @@ struct ContentView: View {
                         LoginView(authViewModel: authViewModel)
                     }
                 default:
-                    Text("Unknown Content")  // Fallback for undefined tabs
+                    Text("Unknown Content")
                 }
                 Spacer()
             }
             
-            // AnimatedTabBar
-            if showTabBar {
-                HStack {
-                    Spacer(minLength: 20) // Left padding
-                    AnimatedTabBar(selectedIndex: $selectedIndex, views: icons.indices.map { index in
-                        wiggleButtonAt(index)
-                    })
-                    .barColor(Color("bar"))
-                    .cornerRadius(30)
-                    .selectedColor(Color("select"))
-                    .unselectedColor(Color("unSelect"))
-                    .ballColor(Color("bar"))
-                    .verticalPadding(20)
-                    .ballTrajectory(.parabolic)
-                    .ballAnimation(.easeOut(duration: 0.4))
-                    Spacer(minLength: 20) // Right padding
-                }
-                .padding(.bottom, 20)
-                .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
-            }
+            CustomTabBar()
         }
+        .environmentObject(tabBarManager)
         .onChange(of: authViewModel.isLoginSuccessed) { oldValue, newValue in
             if newValue {
-                selectedIndex = 0  // Set to home page when login succeeds
+                tabBarManager.selectedIndex = 0
             }
         }
     }
-    
-
-    // Helper function to generate each WiggleButton with appropriate settings
-    func wiggleButtonAt(_ index: Int) -> some View {
-        WiggleButton(image: Image(systemName: icons[index]), maskImage: Image(systemName: "\(icons[index]).fill"), isSelected: index == selectedIndex)
-            .scaleEffect(1.2)
-            .onTapGesture {
-                selectedIndex = index  // Update selected index when tab is tapped
-            }
-    }
 }
-
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
