@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var authViewModel = AuthenticationView()
     @StateObject private var tabBarManager = TabBarManager()
+    @AppStorage("isOlderMode") private var isOlderMode = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -35,14 +36,17 @@ struct ContentView: View {
             CustomTabBar()
         }
         .environmentObject(tabBarManager)
+        .environmentObject(authViewModel)
         .onChange(of: authViewModel.isLoginSuccessed) { oldValue, newValue in
             if newValue {
                 tabBarManager.selectedIndex = 0
             }
         }
+        .environment(\.fontSizeMultiplier, isOlderMode ? 1.25 : 1.0)
         .ignoresSafeArea()
     }
 }
+
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()

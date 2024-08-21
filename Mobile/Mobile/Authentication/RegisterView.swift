@@ -9,21 +9,21 @@ import SwiftUI
 
 struct RegisterView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
 
     @StateObject private var viewModel = RegisterViewModel()
         
     private var showSuccessAlert: Binding<Bool> {
-            Binding(
-                get: { viewModel.isRegistered },
-                set: { _ in viewModel.resetRegistrationStatus() }
-            )
-        }
+        Binding(
+            get: { viewModel.isRegistered },
+            set: { _ in viewModel.resetRegistrationStatus() }
+        )
+    }
 
     var body: some View {
         VStack {
             Text("Create Account")
-                .font(.largeTitle)
-                .fontWeight(.bold)
+                .scalableFont(size: 34, weight: .bold)
                 .foregroundColor(.black)
                 .padding(.top, 50)
             
@@ -41,7 +41,7 @@ struct RegisterView: View {
                 }
             } label: {
                 Text("Register")
-                    .fontWeight(.semibold)
+                    .scalableFont(size: 18, weight: .semibold)
                     .frame(minWidth: 0, maxWidth: .infinity)
                     .padding()
                     .background(Color.black)
@@ -58,29 +58,34 @@ struct RegisterView: View {
             
             if let errorMessage = viewModel.errorMessage {
                 Text(errorMessage)
+                    .scalableFont(size: 14)
                     .foregroundColor(.red)
                     .padding()
             }
             Spacer()
         }
         .background(Color.white.edgesIgnoringSafeArea(.all))
-        
         .alert("Registration Successful", isPresented: showSuccessAlert) {
-                    Button("OK") {dismiss()}
-                }
+            Button("OK") { dismiss() }
+        }
     }
 }
-
-// CustomTextField and CustomSecureField 
 
 struct CustomTextField: View {
     var placeholder: String
     @Binding var text: String
+    @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
     
     var body: some View {
         ZStack(alignment: .leading) {
-            if text.isEmpty { Text(placeholder).foregroundStyle(Color.gray).padding(.leading, 10) }
+            if text.isEmpty {
+                Text(placeholder)
+                    .scalableFont(size: 16)
+                    .foregroundStyle(Color.gray)
+                    .padding(.leading, 10)
+            }
             TextField("", text: $text)
+                .scalableFont(size: 16)
                 .foregroundColor(.black)
                 .padding(12)
                 .background(Color.gray.opacity(0.2))
@@ -92,11 +97,18 @@ struct CustomTextField: View {
 struct CustomSecureField: View {
     var placeholder: String
     @Binding var text: String
+    @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
     
     var body: some View {
         ZStack(alignment: .leading) {
-            if text.isEmpty { Text(placeholder).foregroundStyle(Color.gray).padding(.leading, 10) }
+            if text.isEmpty {
+                Text(placeholder)
+                    .scalableFont(size: 16)
+                    .foregroundStyle(Color.gray)
+                    .padding(.leading, 10)
+            }
             SecureField("", text: $text)
+                .scalableFont(size: 16)
                 .foregroundColor(.black)
                 .padding(12)
                 .background(Color.gray.opacity(0.2))
@@ -104,7 +116,6 @@ struct CustomSecureField: View {
         }
     }
 }
-
 
 #Preview {
     RegisterView()

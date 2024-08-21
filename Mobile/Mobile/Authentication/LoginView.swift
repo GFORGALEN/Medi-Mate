@@ -8,14 +8,16 @@ struct LoginView: View {
     @StateObject private var viewModel = LoginViewModel()
     @ObservedObject var authViewModel: AuthenticationView
     @State private var showRegister = false
+    @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
     
     var body: some View {
         ZStack {
             VStack(spacing: 20) {
                 Text("Welcome to Medimate")
-                    .font(.title)
+                    .scalableFont(size: 28, weight: .bold)
                 
                 TextField("Email", text: $viewModel.email)
+                    .scalableFont(size: 16)
                     .padding()
                     .background(Color.white)
                     .cornerRadius(10)
@@ -23,6 +25,7 @@ struct LoginView: View {
                     .padding(.horizontal, 20)
                 
                 SecureField("Password", text: $viewModel.password)
+                    .scalableFont(size: 16)
                     .padding()
                     .background(Color.white)
                     .cornerRadius(10)
@@ -35,6 +38,7 @@ struct LoginView: View {
                     }
                 } label: {
                     Text("Sign In")
+                        .scalableFont(size: 18, weight: .semibold)
                         .foregroundColor(.white)
                         .frame(width: 200, height: 40)
                         .background(Color.blue)
@@ -53,8 +57,8 @@ struct LoginView: View {
                             .frame(width: 25)
                         
                         Text("Sign in with Google")
+                            .scalableFont(size: 16, weight: .bold)
                             .foregroundColor(.black)
-                            .bold()
                     }
                     .frame(width: 250, height: 50)
                     .background(Color.white)
@@ -65,6 +69,7 @@ struct LoginView: View {
                 
                 if !viewModel.loginError.isEmpty {
                     Text(viewModel.loginError)
+                        .scalableFont(size: 14)
                         .foregroundColor(.red)
                         .padding()
                 }
@@ -73,7 +78,7 @@ struct LoginView: View {
                     showRegister.toggle()
                 } label: {
                     Text("Not have an account? Register")
-                        .bold()
+                        .scalableFont(size: 16, weight: .bold)
                         .foregroundColor(.black)
                 }
                 .padding(.top)
@@ -83,6 +88,7 @@ struct LoginView: View {
                 RegisterView()
             }
         }
+        .environment(\.fontSizeMultiplier, fontSizeMultiplier)
     }
 }
 

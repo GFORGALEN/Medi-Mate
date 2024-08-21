@@ -2,6 +2,7 @@ import SwiftUI
 
 struct AccountView: View {
     @ObservedObject var authViewModel: AuthenticationView
+    @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
 
     @State private var showingEditProfile = false
     @State private var showingSettings = false
@@ -9,7 +10,7 @@ struct AccountView: View {
     var body: some View {
         NavigationView {
             List {
-                Section(header: Text("Profile")) {
+                Section(header: Text("Profile").scalableFont(size: 14, weight: .semibold)) {
                     HStack {
                         if let profileImageURL = authViewModel.userPicURL {
                             AsyncImage(url: profileImageURL) { image in
@@ -32,9 +33,9 @@ struct AccountView: View {
                         
                         VStack(alignment: .leading) {
                             Text(authViewModel.userName)
-                                .font(.headline)
+                                .scalableFont(size: 16, weight: .semibold)
                             Text(authViewModel.userEmail)
-                                .font(.subheadline)
+                                .scalableFont(size: 14)
                                 .foregroundColor(.gray)
                         }
                     }
@@ -43,28 +44,20 @@ struct AccountView: View {
                     Button("Edit Profile") {
                         showingEditProfile = true
                     }
+                    .scalableFont(size: 16)
                 }
 
-//                Section(header: Text("Account")) {
-//                    NavigationLink(destination: Text("Order History")) {
-//                        Label("Order History", systemImage: "list.bullet")
-//                    }
-//                    NavigationLink(destination: Text("Payment Methods")) {
-//                        Label("Payment Methods", systemImage: "creditcard")
-//                    }
-//                    NavigationLink(destination: Text("Address Book")) {
-//                        Label("Address Book", systemImage: "book")
-//                    }
-//                }
-
-                Section(header: Text("Preferences")) {
+                Section(header: Text("Preferences").scalableFont(size: 14, weight: .semibold)) {
                     Button(action: {
                         showingSettings = true
                     }) {
-                        Label("Settings", systemImage: "gear")
+                        Label {
+                            Text("Settings")
+                                .scalableFont(size: 16)
+                        } icon: {
+                            Image(systemName: "gear")
+                        }
                     }
-//                    Toggle("Notifications", isOn: .constant(true))
-//                    Toggle("Dark Mode", isOn: .constant(false))
                 }
 
                 Section {
@@ -77,19 +70,30 @@ struct AccountView: View {
                             }
                         }
                     }
+                    .scalableFont(size: 16)
                 }
             }
             .listStyle(InsetGroupedListStyle())
             .navigationTitle("Account")
+            .scalableFont(size: 20, weight: .bold) // For the navigation title
             .sheet(isPresented: $showingEditProfile) {
-                Text("Edit Profile View")
-                    .navigationTitle("Edit Profile")
+                NavigationView {
+                    Text("Edit Profile View")
+                        .scalableFont(size: 16)
+                        .navigationTitle("Edit Profile")
+                        .navigationBarTitleDisplayMode(.inline)
+                }
             }
             .sheet(isPresented: $showingSettings) {
-                Text("Settings View")
-                    .navigationTitle("Settings")
+                NavigationView {
+                    Text("Settings View")
+                        .scalableFont(size: 16)
+                        .navigationTitle("Settings")
+                        .navigationBarTitleDisplayMode(.inline)
+                }
             }
         }
+        .environment(\.fontSizeMultiplier, fontSizeMultiplier)
     }
 }
 
