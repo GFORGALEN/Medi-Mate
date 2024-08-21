@@ -12,7 +12,7 @@ struct ProductDetailsView: View {
     @StateObject private var viewModel: ProductDetailsViewModel
     @State private var selectedSection: String?
     @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
-    @AppStorage("isOlderMode") private var isOlderMode = false
+    @AppStorage("isCareMode") private var isOlderMode = false
     
     init(productId: String) {
         _viewModel = StateObject(wrappedValue: ProductDetailsViewModel(productId: productId))
@@ -43,7 +43,7 @@ struct ProductDetailsContent: View {
     @ObservedObject var viewModel: ProductDetailsViewModel
     @Binding var selectedSection: String?
     @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
-    @AppStorage("isOlderMode") private var isOlderMode = false
+    @AppStorage("isCareMode") private var isOlderMode = false
     
     var body: some View {
         ScrollView {
@@ -206,7 +206,7 @@ struct ErrorView: View {
     let error: Error
     let retryAction: () -> Void
     @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
-    @AppStorage("isOlderMode") private var isOlderMode = false
+    @AppStorage("isCareMode") private var isOlderMode = false
     
     var body: some View {
         VStack {

@@ -3,7 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var authViewModel = AuthenticationView()
     @StateObject private var tabBarManager = TabBarManager()
-    @AppStorage("isOlderMode") private var isOlderMode = false
+    @AppStorage("isCareMode") private var isOlderMode = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
