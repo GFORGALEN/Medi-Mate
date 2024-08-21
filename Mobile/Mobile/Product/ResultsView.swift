@@ -19,7 +19,7 @@ struct ResultsView: View {
                                         toggleSelection(for: product.id)
                                     }
                             } else {
-                                NavigationLink(value: product.id) {
+                                NavigationLink(destination: ProductDetailsView(productId: product.id)) {
                                     ProductCard(product: product)
                                 }
                             }
@@ -65,9 +65,9 @@ struct ResultsView: View {
                 .padding(.trailing, 20)
                 .disabled(isSelectionMode && selectedProducts.isEmpty)
             }
-            .navigationDestination(for: String.self) { productId in
-                ProductDetailsView(productId: productId)
-            }
+//            .navigationDestination(for: String.self) { productId in
+//                ProductDetailsView(productId: productId)
+//            }
             .navigationDestination(isPresented: $navigateToComparison) {
                 ComparisonView(viewModel: comparisonViewModel, productIds: Array(selectedProducts))
             }
