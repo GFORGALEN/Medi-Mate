@@ -84,4 +84,6 @@ public class ProductController {
         productService.updateProductInformation(medicineModifyDTO);
         return Result.success();
     }
+
+
 }
