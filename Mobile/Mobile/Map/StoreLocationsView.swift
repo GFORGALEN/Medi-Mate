@@ -10,9 +10,7 @@ struct StoreLocationsView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     ForEach(viewModel.locations) { location in
-                        NavigationLink(destination: LocationDetailView(location: location)) {
-                            locationPreview(for: location, in: geo)
-                        }
+                        locationPreview(location: location, geometry: geo)
                     }
                 }
                 .padding()
@@ -23,7 +21,8 @@ struct StoreLocationsView: View {
         .background(Color(UIColor.systemGroupedBackground))
     }
     
-    private func locationPreview(for location: Location, in geometry: GeometryProxy) -> some View {
+    @ViewBuilder
+    private func locationPreview(location: Location, geometry: GeometryProxy) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(location.name_store)
                 .scalableFont(size: 18, weight: .semibold)
@@ -33,23 +32,31 @@ struct StoreLocationsView: View {
                 .scalableFont(size: 14)
                 .foregroundColor(.secondary)
             
-            MapView(location: location)
-                .frame(height: 150)
-                .clipShape(RoundedRectangle(cornerRadius: 15))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 15)
-                        .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
-                )
+            NavigationLink(destination: LocationDetailView(location: location)) {
+                MapView(location: location)
+                    .frame(height: 150)
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 15)
+                            .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
+                    )
+            }
             
-            HStack {
-                Image(systemName: "location.fill")
-                    .foregroundColor(.blue)
-                Text("View Details")
-                    .scalableFont(size: 12)
-                    .foregroundColor(.blue)
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.secondary)
+            Button(action: {
+                let url = URL(string: "maps://?q=\(location.coordinate.latitude),\(location.coordinate.longitude)")!
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }) {
+                HStack {
+                    Image(systemName: "map.fill")
+                        .foregroundColor(.blue)
+                    Text("Open in Maps")
+                        .scalableFont(size: 12)
+                        .foregroundColor(.blue)
+                    Spacer()
+                }
+                .padding()
+                .background(Color(UIColor.secondarySystemBackground))
+                .cornerRadius(10)
             }
         }
         .padding()

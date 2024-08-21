@@ -1,10 +1,3 @@
-//
-//  MapView.swift
-//  Mobile
-//
-//  Created by Lykheang Taing on 14/08/2024.
-//
-
 import Foundation
 import SwiftUI
 import MapKit
@@ -47,6 +40,10 @@ struct MapView: UIViewRepresentable {
             if annotationView == nil {
                 annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
                 annotationView?.canShowCallout = true
+                
+                // Add a detail disclosure button to the callout.
+                let btn = UIButton(type: .detailDisclosure)
+                annotationView?.rightCalloutAccessoryView = btn
             } else {
                 annotationView?.annotation = annotation
             }
@@ -55,6 +52,15 @@ struct MapView: UIViewRepresentable {
             annotationView?.image = pinImage
             
             return annotationView
+        }
+        
+        func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+            guard let annotation = view.annotation else { return }
+            let lat = annotation.coordinate.latitude
+            let lon = annotation.coordinate.longitude
+            let mapURL = URL(string: "maps://?q=\(lat),\(lon)")!
+            
+            UIApplication.shared.open(mapURL, options: [:], completionHandler: nil)
         }
     }
 }
