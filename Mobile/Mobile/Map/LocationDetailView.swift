@@ -1,25 +1,11 @@
 import SwiftUI
 import MapKit
 
-struct LocationCarouselView: View {
-    let locations: [Location]
-    
-    var body: some View {
-        TabView {
-            ForEach(locations) { location in
-                LocationDetailView(location: location)
-            }
-        }
-        .tabViewStyle(.page)
-        .indexViewStyle(.page(backgroundDisplayMode: .always))
-    }
-}
-
 struct LocationDetailView: View {
     let location: Location
     @State private var position: MapCameraPosition
     @State private var satellite = false
-    
+
     init(location: Location) {
         self.location = location
         self._position = State(initialValue: .region(MKCoordinateRegion(
