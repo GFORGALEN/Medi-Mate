@@ -1,10 +1,3 @@
-//
-//  ComparisonView.swift
-//  Mobile
-//
-//  Created by Jabin on 2024/8/21.
-//
-
 import SwiftUI
 
 struct ComparisonView: View {
@@ -17,27 +10,16 @@ struct ComparisonView: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                Text("Product Comparison")
-                    .font(.largeTitle)
-                    .padding()
-                
-                if viewModel.comparisons.isEmpty {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(alignment: .top, spacing: 20) {
-                            ForEach(viewModel.comparisons, id: \.productId) { product in
-                                ProductComparisonCard(product: product)
-                            }
-                        }
-                        .padding()
-                    }
-                    
-                    ComparisonTable(comparisons: viewModel.comparisons)
-                }
+        VStack(spacing: 0) {
+            Text("Product Comparison")
+                .font(.headline)
+                .padding()
+            
+            if viewModel.comparisons.isEmpty {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                SideBySideComparisonView(comparisons: viewModel.comparisons)
             }
         }
         .onAppear {
@@ -48,68 +30,70 @@ struct ComparisonView: View {
     }
 }
 
-struct ProductComparisonCard: View {
-    let product: Comparison
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            AsyncImage(url: URL(string: product.imageSrc)) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            } placeholder: {
-                ProgressView()
-            }
-            .frame(width: 150, height: 150)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            
-            Text(product.productName)
-                .font(.headline)
-                .lineLimit(2)
-            
-            Text("$\(product.productPrice)")
-                .font(.subheadline)
-                .foregroundColor(.blue)
-        }
-        .frame(width: 170)
-        .padding()
-        .background(Color.white)
-        .cornerRadius(15)
-        .shadow(radius: 5)
-    }
-}
-
-struct ComparisonTable: View {
+struct SideBySideComparisonView: View {
     let comparisons: [Comparison]
+    let attributes: [(String, (Comparison) -> String)] = [
+        ("Image", { _ in "" }),
+        ("Name", { $0.productName }),
+        ("Price", { "$" + $0.productPrice }),
+        ("Common Use", { $0.commonUse }),
+        ("Warnings", { $0.warnings }),
+        ("Difference", { $0.difference })
+    ]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            ComparisonRow(title: "Common Use", values: comparisons.map { $0.commonUse })
-            ComparisonRow(title: "Warnings", values: comparisons.map { $0.warnings })
-            ComparisonRow(title: "Difference", values: comparisons.map { $0.difference })
-        }
-        .padding()
-    }
-}
-
-struct ComparisonRow: View {
-    let title: String
-    let values: [String]
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(title)
-                .font(.headline)
-            
-            ForEach(values.indices, id: \.self) { index in
-                HStack(alignment: .top) {
-                    Text("\(index + 1).")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                    Text(values[index])
-                        .font(.subheadline)
+        ScrollView {
+            HStack(alignment: .top, spacing: 0) {
+                VStack(alignment: .leading, spacing: 0) {
+                    ForEach(attributes, id: \.0) { attribute, _ in
+                        AttributeCell(text: attribute, isHeader: true)
+                    }
+                }
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .top, spacing: 0) {
+                        ForEach(comparisons, id: \.productId) { product in
+                            VStack(spacing: 0) {
+                                ForEach(attributes, id: \.0) { _, getValue in
+                                    if getValue(product) == "" {
+                                        ProductImage(imageSrc: product.imageSrc)
+                                    } else {
+                                        AttributeCell(text: getValue(product), isHeader: false)
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 }
+
+struct AttributeCell: View {
+    let text: String
+    let isHeader: Bool
+    
+    var body: some View {
+        Text(text)
+            .padding(10)
+            .frame(width: isHeader ? 100 : 150, height: 100, alignment: .topLeading)
+            .background(isHeader ? Color.gray.opacity(0.2) : Color.white)
+            .border(Color.gray.opacity(0.5), width: 0.5)
+    }
+}
+
+struct ProductImage: View {
+    let imageSrc: String
+    
+    var body: some View {
+        AsyncImage(url: URL(string: imageSrc)) { image in
+            image.resizable().aspectRatio(contentMode: .fit)
+        } placeholder: {
+            ProgressView()
+        }
+        .frame(width: 150, height: 100)
+        .border(Color.gray.opacity(0.5), width: 0.5)
+    }
+}
+

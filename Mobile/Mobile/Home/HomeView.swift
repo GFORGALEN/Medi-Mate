@@ -12,7 +12,6 @@ struct HomeView: View {
                 VStack {
                     titleView
                     searchArea
-//                    contentArea
                 }
                 .navigationDestination(isPresented: $viewModel.navigateToResults) {
                     SearchResultsContainer(viewModel: viewModel)
@@ -48,11 +47,8 @@ struct HomeView: View {
                         .allowsHitTesting(true)
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    modeToggleButton
-                }
-            }
+            modeToggleButton
+
         }
         .disabled(viewModel.isLoading)
         .animation(.easeInOut, value: isCareMode)
@@ -63,12 +59,18 @@ struct HomeView: View {
         Button(action: {
             isCareMode.toggle()
         }) {
-            Image(systemName: isCareMode ? "textformat.size.larger" : "textformat.size")
-                .foregroundColor(.primary)
-                .font(.system(size: isCareMode ? 24 : 20))
-                .frame(width: isCareMode ? 44 : 40, height: isCareMode ? 44 : 40)
+            Image(systemName: isCareMode ? "person.fill.checkmark" : "person")
+            Text("Care Mode")
+                .bold()
+
         }
+        .padding(20)
+        .background(isCareMode ? Color.green.opacity(0.2) : Color.gray.opacity(0.2))
+        .cornerRadius(10)
+        .foregroundColor(.primary)
+        .scalableFont(size: isCareMode ? 20 : 16, weight: .medium)
     }
+
 
     private var titleView: some View {
         Text("Medimate")
@@ -135,16 +137,6 @@ struct HomeView: View {
             .background(isCareMode ? Color.green : Color.white)
             .cornerRadius(isCareMode ? 30 : 10)
         }
-//    private var contentArea: some View {
-//        VStack {
-//            Text("Main Content Area")
-//                .scalableFont(size: 20)
-//            
-//            Text("Current Mode: \(isOlderMode ? "Older" : "Normal")")
-//                .scalableFont(size: 16)
-//                .padding()
-//        }
-//    }
 
     private func performSearch() {
         viewModel.performSearch()

@@ -8,69 +8,70 @@ struct ResultsView: View {
     @State private var navigateToComparison = false
 
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 170), spacing: 20)], spacing: 20) {
-                    ForEach(viewModel.products) { product in
-                        if isSelectionMode {
-                            ProductCard(product: product, isSelected: selectedProducts.contains(product.id))
-                                .onTapGesture {
-                                    toggleSelection(for: product.id)
+        NavigationStack {
+            ZStack(alignment: .bottomTrailing) {
+                ScrollView {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 170), spacing: 20)], spacing: 20) {
+                        ForEach(viewModel.products) { product in
+                            if isSelectionMode {
+                                ProductCard(product: product, isSelected: selectedProducts.contains(product.id))
+                                    .onTapGesture {
+                                        toggleSelection(for: product.id)
+                                    }
+                            } else {
+                                NavigationLink(value: product.id) {
+                                    ProductCard(product: product)
                                 }
-                        } else {
-                            NavigationLink(destination: ProductDetailsView(productId: product.id)) {
-                                ProductCard(product: product)
                             }
                         }
+                        
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .frame(width: 150, height: 150)
+                        }
                     }
-                    
-                    if viewModel.isLoading {
-                        ProgressView()
-                            .frame(width: 150, height: 150)
-                    }
-                }
-                .padding()
-            }
-            .navigationTitle("Results")
-            .navigationBarTitleDisplayMode(.inline)
-            .onAppear {
-                if viewModel.products.isEmpty {
-                    viewModel.loadMoreProductsIfNeeded(currentProduct: nil)
-                }
-            }
-            
-            Button(action: {
-                if isSelectionMode && !selectedProducts.isEmpty {
-                    Task {
-                        await comparisonViewModel.fetchComparisons(productIds: Array(selectedProducts))
-                        navigateToComparison = true
-                    }
-                } else {
-                    isSelectionMode.toggle()
-                    selectedProducts.removeAll()
-                }
-            }) {
-                Text(isSelectionMode ? "Compare (\(selectedProducts.count))" : "Compare")
-                    .font(.title2)
-                    .bold()
-                    .foregroundColor(.white)
                     .padding()
-                    .frame(width: 200, height: 60)
-                    .background(isSelectionMode ? Color.blue : Color.black)
-                    .cornerRadius(25)
-                    .shadow(color: .gray, radius: 3, x: 1, y: 1)
+                }
+                .navigationTitle("Results")
+                .navigationBarTitleDisplayMode(.inline)
+                .onAppear {
+                    if viewModel.products.isEmpty {
+                        viewModel.loadMoreProductsIfNeeded(currentProduct: nil)
+                    }
+                }
+                
+                Button(action: {
+                    if isSelectionMode && !selectedProducts.isEmpty {
+                        Task {
+                            await comparisonViewModel.fetchComparisons(productIds: Array(selectedProducts))
+                            navigateToComparison = true
+                        }
+                    } else {
+                        isSelectionMode.toggle()
+                        selectedProducts.removeAll()
+                    }
+                }) {
+                    Text(isSelectionMode ? "Compare (\(selectedProducts.count))" : "Compare")
+                        .font(.title2)
+                        .bold()
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(width: 200, height: 60)
+                        .background(isSelectionMode ? Color.blue : Color.black)
+                        .cornerRadius(25)
+                        .shadow(color: .gray, radius: 3, x: 1, y: 1)
+                }
+                .padding(.bottom, 50)
+                .padding(.trailing, 20)
+                .disabled(isSelectionMode && selectedProducts.isEmpty)
             }
-            .padding(.bottom, 50)
-            .padding(.trailing, 20)
-            .disabled(isSelectionMode && selectedProducts.isEmpty)
+            .navigationDestination(for: String.self) { productId in
+                ProductDetailsView(productId: productId)
+            }
+            .navigationDestination(isPresented: $navigateToComparison) {
+                ComparisonView(viewModel: comparisonViewModel, productIds: Array(selectedProducts))
+            }
         }
-        .background(
-            NavigationLink(destination: ComparisonView(viewModel: comparisonViewModel, productIds: Array(selectedProducts)),
-                isActive: $navigateToComparison
-            ) {
-                EmptyView()
-            }
-        )
     }
     
     private func toggleSelection(for id: String) {
@@ -82,7 +83,7 @@ struct ResultsView: View {
     }
 }
 
-
+// ProductCard struct remains unchanged
 struct ProductCard: View {
     let product: Medicine
     var isSelected: Bool = false
@@ -129,4 +130,3 @@ struct ProductCard: View {
             )
     }
 }
-

@@ -36,5 +36,3 @@ struct ComparisonData: Codable {
 struct ComparisonRequest: Codable {
     let comparisons: [Comparison]
 }
-
-// 注意：Comparison 结构体已在 ProductModel.swift 中定义，所以这里不需要重复定义
