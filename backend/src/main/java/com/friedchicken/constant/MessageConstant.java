@@ -13,4 +13,5 @@ public class MessageConstant {
     public static final String USER_NOT_LOGIN = "User Not Login!";
     public static final String WRONG_INPUT = "Wrong Input!";
     public static final String FILE_UPLOAD_ERROR = "File Upload Error!";
+    public static final String UNRECOGNIZED_MEDICINE = "No medication detected. Please try again!";
 }

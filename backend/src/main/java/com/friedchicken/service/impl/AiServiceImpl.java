@@ -3,6 +3,8 @@ package com.friedchicken.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.friedchicken.constant.MessageConstant;
+import com.friedchicken.controller.AI.exception.UnrecognizedMedicineException;
 import com.friedchicken.mapper.AiInfoMapper;
 import com.friedchicken.pojo.dto.AI.AICompareDTO;
 import com.friedchicken.pojo.dto.AI.AIimageDTO;
@@ -97,6 +99,12 @@ public class AiServiceImpl implements AiService {
             throw new RuntimeException(e);
         }
         String name = medicineInfo.getName();
+
+        log.info("here{}", name);
+        if (name == null || name.isEmpty()) {
+            throw new UnrecognizedMedicineException(MessageConstant.UNRECOGNIZED_MEDICINE);
+        }
+
         List<String> keywords = Arrays.asList(name.split("\\s+"));
 
         String cacheKey = "medicine_search:" + String.join("_", keywords);
@@ -132,7 +140,6 @@ public class AiServiceImpl implements AiService {
             throw new RuntimeException(e);
         }
 
-        log.info("here:{}", aicomparisonVO);
         return aicomparisonVO;
     }
 

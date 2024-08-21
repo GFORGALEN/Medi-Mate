@@ -18,7 +18,7 @@ public class OpenAIProperties {
                 "properties": {
                     "name": {
                         "type": "string",
-                        "description": "The main name of the product. Including the brand."
+                        "description": "The main name of the product. Including the brand. If you cannot identify any drug, return an empty name. "
                     }
                 },
                 "required": ["name"],
