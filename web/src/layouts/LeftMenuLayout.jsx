@@ -1,37 +1,38 @@
-import {
-    DesktopOutlined,
-    PieChartOutlined,
-} from '@ant-design/icons';
-import {Menu} from 'antd';
-import {useNavigate} from "react-router-dom";
+// LeftMenuLayout.jsx
+import { Menu } from 'antd';
+import { DesktopOutlined, PieChartOutlined } from '@ant-design/icons';
+import { useNavigate, useLocation } from "react-router-dom";
 
 const items = [
     {
         key: '/analytics',
-        icon: <PieChartOutlined/>,
+        icon: <PieChartOutlined />,
         label: 'Analytics',
     },
     {
         key: '/products',
-        icon: <DesktopOutlined/>,
+        icon: <DesktopOutlined />,
         label: 'Products',
     }
 ];
-const App = () => {
+
+const LeftMenu = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+
     const clickHandler = (e) => {
-        navigate(e.key, {replace: true})
+        navigate(e.key, { replace: true })
     }
+
     return (
-        <div>
-            <Menu
-                defaultSelectedKeys={['1']}
-                defaultOpenKeys={['sub1']}
-                mode="inline"
-                items={items}
-                onClick={clickHandler}
-            />
-        </div>
+        <Menu
+            theme="dark"
+            defaultSelectedKeys={[location.pathname]}
+            mode="inline"
+            items={items}
+            onClick={clickHandler}
+        />
     );
 };
-export default App;
+
+export default LeftMenu;
