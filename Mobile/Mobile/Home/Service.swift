@@ -12,6 +12,7 @@ protocol NetworkServiceProtocol {
     func textSearch(page: Int, pageSize: Int, productName: String, manufacture: String) async throws -> String
     func imageSearch(image: UIImage) async throws -> String
     func fetchProductDetails(productId: String) async throws -> String
+    func compareProducts(productIds: [String]) async throws -> String
 }
 
 class NetworkService: NetworkServiceProtocol {
@@ -91,6 +92,27 @@ class NetworkService: NetworkServiceProtocol {
             guard let httpResponse = response as? HTTPURLResponse, 200...299 ~= httpResponse.statusCode else {
                 throw URLError(.badServerResponse)
             }
+            return String(data: data, encoding: .utf8) ?? ""
+        }
+    
+    func compareProducts(productIds: [String]) async throws -> String {
+            guard let url = URL(string: "\(Constant.apiSting)/api/message/comparison") else {
+                throw URLError(.badURL)
+            }
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            
+            let body = ["productId": productIds]
+            request.httpBody = try JSONSerialization.data(withJSONObject: body)
+            
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse, 200...299 ~= httpResponse.statusCode else {
+                throw URLError(.badServerResponse)
+            }
+            
             return String(data: data, encoding: .utf8) ?? ""
         }
 }

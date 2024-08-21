@@ -2,39 +2,91 @@ import SwiftUI
 
 struct ResultsView: View {
     @ObservedObject var viewModel: HomeViewModel
+    @StateObject private var comparisonViewModel = ComparisonViewModel()
+    @State private var isSelectionMode = false
+    @State private var selectedProducts: Set<String> = []
+    @State private var navigateToComparison = false
 
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 170), spacing: 20)], spacing: 20) {
-                ForEach(viewModel.products) { product in
-                    NavigationLink(destination: ProductDetailsView(productId: product.productId)) {
-                        ProductCard(product: product)
-                            .onAppear {
-                                viewModel.loadMoreProductsIfNeeded(currentProduct: product)
+        ZStack(alignment: .bottomTrailing) {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 170), spacing: 20)], spacing: 20) {
+                    ForEach(viewModel.products) { product in
+                        if isSelectionMode {
+                            ProductCard(product: product, isSelected: selectedProducts.contains(product.id))
+                                .onTapGesture {
+                                    toggleSelection(for: product.id)
+                                }
+                        } else {
+                            NavigationLink(destination: ProductDetailsView(productId: product.id)) {
+                                ProductCard(product: product)
                             }
+                        }
+                    }
+                    
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .frame(width: 150, height: 150)
                     }
                 }
-                
-                if viewModel.isLoading {
-                    ProgressView()
-                        .frame(width: 150, height: 150)
+                .padding()
+            }
+            .navigationTitle("Results")
+            .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                if viewModel.products.isEmpty {
+                    viewModel.loadMoreProductsIfNeeded(currentProduct: nil)
                 }
             }
-            .padding()
-        }
-        .navigationTitle("Results")
-        .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            if viewModel.products.isEmpty {
-                viewModel.loadMoreProductsIfNeeded(currentProduct: nil)
+            
+            Button(action: {
+                if isSelectionMode && !selectedProducts.isEmpty {
+                    Task {
+                        await comparisonViewModel.fetchComparisons(productIds: Array(selectedProducts))
+                        navigateToComparison = true
+                    }
+                } else {
+                    isSelectionMode.toggle()
+                    selectedProducts.removeAll()
+                }
+            }) {
+                Text(isSelectionMode ? "Compare (\(selectedProducts.count))" : "Compare")
+                    .font(.title2)
+                    .bold()
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(width: 200, height: 60)
+                    .background(isSelectionMode ? Color.blue : Color.black)
+                    .cornerRadius(25)
+                    .shadow(color: .gray, radius: 3, x: 1, y: 1)
             }
+            .padding(.bottom, 50)
+            .padding(.trailing, 20)
+            .disabled(isSelectionMode && selectedProducts.isEmpty)
+        }
+        .background(
+            NavigationLink(destination: ComparisonView(viewModel: comparisonViewModel, productIds: Array(selectedProducts)),
+                isActive: $navigateToComparison
+            ) {
+                EmptyView()
+            }
+        )
+    }
+    
+    private func toggleSelection(for id: String) {
+        if selectedProducts.contains(id) {
+            selectedProducts.remove(id)
+        } else if selectedProducts.count < 5 {
+            selectedProducts.insert(id)
         }
     }
 }
 
+
 struct ProductCard: View {
     let product: Medicine
-    
+    var isSelected: Bool = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             AsyncImage(url: URL(string: product.imageSrc)) { phase in
@@ -69,5 +121,12 @@ struct ProductCard: View {
         .background(Color.white)
         .cornerRadius(20)
         .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
+        .overlay(
+                isSelected ?
+                RoundedRectangle(cornerRadius: 15)
+                    .stroke(Color.blue, lineWidth: 3)
+                    : nil
+            )
     }
 }
+

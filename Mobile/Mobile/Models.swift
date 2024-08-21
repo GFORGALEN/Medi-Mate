@@ -107,3 +107,14 @@ struct ProductDetails: Codable {
     let imageSrc: String
     let summary: String
 }
+
+
+struct Comparison: Codable{
+    let productId: String
+    let productName: String
+    let imageSrc: String
+    let productPrice: String
+    let commonUse: String
+    let warnings: String
+    let difference: String
+}

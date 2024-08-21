@@ -14,7 +14,7 @@ struct HomeView: View {
                     contentArea
                 }
                 .navigationDestination(isPresented: $viewModel.navigateToResults) {
-                                ResultsView(viewModel: viewModel)
+                    ResultsView(viewModel: viewModel)
                 }
                 .sheet(isPresented: $isShowingCamera) {
                     ImagePicker(image: $viewModel.image, sourceType: .camera)
@@ -84,7 +84,6 @@ struct HomeView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 30, height: 30)
             }
-            .background(Color.white)
             .cornerRadius(10)
         }
         .padding()

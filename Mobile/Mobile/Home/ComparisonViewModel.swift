@@ -5,14 +5,36 @@
 //  Created by Jabin on 2024/8/21.
 //
 
-import SwiftUI
+import Foundation
 
-struct ComparisonViewModel: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+class ComparisonViewModel: ObservableObject {
+    @Published var comparisons: [Comparison] = []
+    private let networkService: NetworkServiceProtocol
+    
+    init(networkService: NetworkServiceProtocol = NetworkService()) {
+        self.networkService = networkService
+    }
+    
+    func fetchComparisons(productIds: [String]) async {
+        do {
+            let jsonString = try await networkService.compareProducts(productIds: productIds)
+            let decodedData = try JSONDecoder().decode(APIResponse<ComparisonData>.self, from: Data(jsonString.utf8))
+            
+            DispatchQueue.main.async {
+                self.comparisons = decodedData.data.comparisonRequest.comparisons
+            }
+        } catch {
+            print("Error fetching comparison data: \(error)")
+        }
     }
 }
 
-#Preview {
-    ComparisonViewModel()
+struct ComparisonData: Codable {
+    let comparisonRequest: ComparisonRequest
 }
+
+struct ComparisonRequest: Codable {
+    let comparisons: [Comparison]
+}
+
+// 注意：Comparison 结构体已在 ProductModel.swift 中定义，所以这里不需要重复定义
