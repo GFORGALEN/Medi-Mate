@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/pharmacy")
 @Slf4j
-public class pharmacyController {
+public class PharmacyController {
 
     @Autowired
     private PharmacyService pharmacyService;
@@ -29,7 +29,7 @@ public class pharmacyController {
     @Operation(summary = "Get All pharmacy.",
             description = "Retrieve a list of pharmacy.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Pharmacty retrieved successfully.",
+            @ApiResponse(responseCode = "200", description = "Pharmacy retrieved successfully.",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pharmacy.class)))
     })
     public Result<List<PharmacyInfoVO>> getAllPharmacy() {
@@ -39,6 +39,5 @@ public class pharmacyController {
 
         return Result.success(pharmacyInfoVOList);
     }
-
 
 }
