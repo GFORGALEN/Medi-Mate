@@ -72,12 +72,12 @@ public class UserController {
         String email = userGoogleLoginDTO.getEmail();
         String googleId = userGoogleLoginDTO.getGoogleId();
 
-        if(email == null || googleId == null) {
+        if (email == null || googleId == null) {
             throw new AccountNotFoundException(MessageConstant.WRONG_INPUT);
         }
 
-        UserGoogleVO userLoginVO = userService.googleLogin(userGoogleLoginDTO);
-        return Result.success(userLoginVO);
+        UserGoogleVO userGoogleVO = userService.googleLogin(userGoogleLoginDTO);
+        return Result.success(userGoogleVO);
     }
 
     @PostMapping("/register")

@@ -105,10 +105,10 @@ public class AiServiceImpl implements AiService {
 
     @Override
     public AIcomparisonVO compareImage(AICompareDTO aiCompareDTO) {
-        List<Medicine> medicineList = aiInfoMapper.findProductByIds(Arrays.stream(aiCompareDTO.getProductId()).boxed().toList());
+        List<Medicine> medicineList = aiInfoMapper.findProductByIds(Arrays.stream(aiCompareDTO.getProductId()).toList());
 
         UserMessage userMessage = new UserMessage(
-                "I will give you a set of drug information, please summarize briefly the differences between them.The information returned is mainly the differences."
+                "You are a professional pharmacist. I will give you a set of drug information, please summarize briefly the differences between them.The information returned is mainly the differences."
                         + medicineList.toString());
 
         ChatResponse chatResponse = getAiClass(userMessage, openAIProperties.getJsonSchemaForComparison());

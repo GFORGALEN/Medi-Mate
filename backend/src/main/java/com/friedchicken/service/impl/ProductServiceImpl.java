@@ -12,8 +12,11 @@ import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -24,14 +27,24 @@ public class ProductServiceImpl implements ProductService {
     private ProductMapper productMapper;
     @Autowired
     private AiServiceImpl aiServiceImpl;
+    @Autowired
+    private RedisTemplate<String, PageResult<MedicineListVO>> pageResultRedisTemplate;
 
     @Override
     public PageResult<MedicineListVO> getProductsByName(MedicinePageDTO medicinePageDTO) {
+        String cacheKey = medicinePageDTO.toString();
+        PageResult<MedicineListVO> cachedResult = pageResultRedisTemplate.opsForValue().get(cacheKey);
 
-        PageHelper.startPage(medicinePageDTO.getPage(), medicinePageDTO.getPageSize());
-        Page<MedicineListVO> page = productMapper.getProducts(medicinePageDTO);
+        if (cachedResult == null) {
+            PageHelper.startPage(medicinePageDTO.getPage(), medicinePageDTO.getPageSize());
+            Page<MedicineListVO> page = productMapper.getProducts(medicinePageDTO);
 
-        return new PageResult<>(page.getTotal(), page.getResult());
+            cachedResult = new PageResult<>(page.getTotal(), page.getResult());
+
+            pageResultRedisTemplate.opsForValue().set(cacheKey, cachedResult, 10, TimeUnit.MINUTES);
+        }
+
+        return cachedResult;
     }
 
     @Override
