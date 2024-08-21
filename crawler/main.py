@@ -124,7 +124,7 @@ def main():
         fetch_page(driver, link)
         product_info = parse_product_details(driver)
         all_products_info.append(product_info)
-        time.sleep(3)
+        time.sleep(4)
 
     save_to_csv(all_products_info)
     driver.quit()

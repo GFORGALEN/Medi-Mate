@@ -11,10 +11,11 @@ import java.io.Serializable;
 public class DetailInventoryVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    private String inventoryId;
-    private String pharmacyId;
-    private String productId;
+    private String productName;
+    private Double productPrice;
+    private String manufacturerName;
+    private String imageSrc;
     private String stockQuantity;
     private String shelfNumber;
-    private String shelfLevel;
+    private int shelfLevel;
 }
