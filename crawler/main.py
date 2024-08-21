@@ -112,7 +112,7 @@ def main():
         try:
             next_button = driver.find_element(By.CLASS_NAME, 'pager__button.pager__button--next')
             next_button.click()
-            time.sleep(2)
+            time.sleep(3)
             html = driver.page_source
         except Exception as e:
             print(f"No more pages or error finding next page button: {e}")
@@ -124,7 +124,7 @@ def main():
         fetch_page(driver, link)
         product_info = parse_product_details(driver)
         all_products_info.append(product_info)
-        time.sleep(2)
+        time.sleep(3)
 
     save_to_csv(all_products_info)
     driver.quit()
