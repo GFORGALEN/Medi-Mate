@@ -2,6 +2,7 @@ package com.friedchicken.service;
 
 import com.friedchicken.pojo.dto.Medicine.MedicineModifyDTO;
 import com.friedchicken.pojo.dto.Medicine.MedicinePageDTO;
+import com.friedchicken.pojo.vo.Medicine.ManufactureNameListVO;
 import com.friedchicken.pojo.vo.Medicine.MedicineDetailVO;
 import com.friedchicken.pojo.vo.Medicine.MedicineListVO;
 import com.friedchicken.result.PageResult;
@@ -16,4 +17,5 @@ public interface ProductService {
 
     void updateProductInformation(MedicineModifyDTO medicineModifyDTO);
 
+    ManufactureNameListVO getAllManufactureName();
 }

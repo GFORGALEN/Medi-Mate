@@ -3,6 +3,7 @@ package com.friedchicken.service.impl;
 import com.friedchicken.mapper.ProductMapper;
 import com.friedchicken.pojo.dto.Medicine.MedicineModifyDTO;
 import com.friedchicken.pojo.dto.Medicine.MedicinePageDTO;
+import com.friedchicken.pojo.vo.Medicine.ManufactureNameListVO;
 import com.friedchicken.pojo.vo.Medicine.MedicineDetailVO;
 import com.friedchicken.pojo.vo.Medicine.MedicineListVO;
 import com.friedchicken.result.PageResult;
@@ -16,6 +17,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -73,5 +75,10 @@ public class ProductServiceImpl implements ProductService {
         MedicineDetailVO medicineDetailVO = new MedicineDetailVO();
         BeanUtils.copyProperties(medicineModifyDTO, medicineDetailVO);
         productMapper.updateProductById(medicineDetailVO);
+    }
+
+    @Override
+    public ManufactureNameListVO getAllManufactureName() {
+        return ManufactureNameListVO.builder().manufacturerName(productMapper.getAllManufactureName()).build();
     }
 }

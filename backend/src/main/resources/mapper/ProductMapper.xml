@@ -48,8 +48,8 @@
             <if test="productName != null and productName != ''">
                 product_name like concat('%',#{productName},'%')
             </if>
-            <if test="manufacture != null and manufacture != ''">
-                manufacturer_name like concat('%',#{manufacture},'%')
+            <if test="manufacturerName != null and manufacturerName != ''">
+                manufacturer_name like concat('%',#{manufacturerName},'%')
             </if>
         </where>
     </select>
@@ -67,9 +67,12 @@
             <if test="productName != null and productName != ''">
                 product_name like concat('%',#{productName},'%')
             </if>
-            <if test="manufacture != null and manufacture != ''">
-                manufacturer_name like concat('%',#{manufacture},'%')
+            <if test="manufacturerName != null and manufacturerName != ''">
+                manufacturer_name like concat('%',#{manufacturerName},'%')
             </if>
         </where>
+    </select>
+    <select id="getAllManufactureName" resultType="java.lang.String">
+        select distinct manufacturer_name from medicine
     </select>
 </mapper>
