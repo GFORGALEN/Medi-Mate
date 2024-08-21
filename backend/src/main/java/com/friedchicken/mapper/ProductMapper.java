@@ -6,6 +6,8 @@ import com.friedchicken.pojo.vo.Medicine.MedicineListVO;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 
 @Mapper
 public interface ProductMapper {
@@ -17,4 +19,6 @@ public interface ProductMapper {
     void updateProductById(MedicineDetailVO medicineDetailVO);
 
     Page<MedicineDetailVO> getDetailProducts(MedicinePageDTO medicinePageDTO);
+
+    List<String> getAllManufactureName();
 }
