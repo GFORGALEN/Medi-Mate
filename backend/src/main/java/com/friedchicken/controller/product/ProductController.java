@@ -2,6 +2,7 @@ package com.friedchicken.controller.product;
 
 import com.friedchicken.pojo.dto.Medicine.MedicineModifyDTO;
 import com.friedchicken.pojo.dto.Medicine.MedicinePageDTO;
+import com.friedchicken.pojo.vo.Medicine.ManufactureNameListVO;
 import com.friedchicken.pojo.vo.Medicine.MedicineDetailVO;
 import com.friedchicken.pojo.vo.Medicine.MedicineListVO;
 import com.friedchicken.result.PageResult;
@@ -66,7 +67,7 @@ public class ProductController {
     })
     public Result<PageResult<MedicineDetailVO>> getDetailProducts(MedicinePageDTO medicinePageDTO) {
 
-        log.info("User want to retrieve products by product name or manufacture name:{}", medicinePageDTO);
+        log.info("User want to retrieve products by product name or manufacturer name:{}", medicinePageDTO);
 
         PageResult<MedicineDetailVO> pageResult = productService.getDetailProductsByName(medicinePageDTO);
 
@@ -82,7 +83,22 @@ public class ProductController {
     })
     public Result<MedicineDetailVO> changeProducts(@RequestBody MedicineModifyDTO medicineModifyDTO) {
         log.info("User want to change products information.{}", medicineModifyDTO);
+
         productService.updateProductInformation(medicineModifyDTO);
+
         return Result.success();
+    }
+
+    @GetMapping("/manufactureName")
+    @Operation(summary = "Get all manufacture.",
+            description = "Get all manufacture.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully get all manufacture name.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ManufactureNameListVO.class)))
+    })
+    public Result<ManufactureNameListVO> getAllManufacture() {
+        log.info("User want to get all manufacture name.");
+
+        return Result.success(productService.getAllManufactureName());
     }
 }

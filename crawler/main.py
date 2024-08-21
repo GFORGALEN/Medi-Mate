@@ -94,7 +94,7 @@ def save_to_csv(data, filename='C:\\Users\\TZQ\\OneDrive\\桌面\\UOA\\778\\Frie
 def main():
     # base_url = "https://www.chemistwarehouse.co.nz/shop-online/81/vitamins-supplements"
 
-    base_url = "https://www.chemistwarehouse.co.nz/shop-online/1093/cold-flu"
+    base_url = "https://www.chemistwarehouse.co.nz/shop-online/258/medicines"
 
     options = Options()
     options.headless = True  # 无头模式

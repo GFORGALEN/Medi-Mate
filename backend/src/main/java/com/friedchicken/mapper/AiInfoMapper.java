@@ -13,5 +13,5 @@ public interface AiInfoMapper {
 
     Page<MedicineListVO> findByMultipleWords(List<String> keywords);
 
-    List<Medicine> findProductByIds(List<Integer> productId);
+    List<Medicine> findProductByIds(List<String> productId);
 }

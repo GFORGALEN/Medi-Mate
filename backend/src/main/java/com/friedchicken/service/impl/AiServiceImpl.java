@@ -27,11 +27,13 @@ import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeTypeUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -39,10 +41,10 @@ public class AiServiceImpl implements AiService {
 
     @Autowired
     private OpenAIProperties openAIProperties;
-
     @Autowired
     private AiInfoMapper aiInfoMapper;
-
+    @Autowired
+    private RedisTemplate<String, PageResult<MedicineListVO>> redisTemplate;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -96,19 +98,29 @@ public class AiServiceImpl implements AiService {
         }
         String name = medicineInfo.getName();
         List<String> keywords = Arrays.asList(name.split("\\s+"));
-        log.info("name:{}", keywords.toString());
-        PageHelper.startPage(1, 100);
-        Page<MedicineListVO> page = aiInfoMapper.findByMultipleWords(keywords);
 
-        return new PageResult<>(page.getTotal(), page.getResult());
+        String cacheKey = "medicine_search:" + String.join("_", keywords);
+
+        PageResult<MedicineListVO> cachedResult = redisTemplate.opsForValue().get(cacheKey);
+
+        if (cachedResult == null) {
+            PageHelper.startPage(1, 100);
+            Page<MedicineListVO> page = aiInfoMapper.findByMultipleWords(keywords);
+
+            cachedResult = new PageResult<>(page.getTotal(), page.getResult());
+
+            redisTemplate.opsForValue().set(cacheKey, cachedResult, 10, TimeUnit.MINUTES);
+        }
+
+        return cachedResult;
     }
 
     @Override
     public AIcomparisonVO compareImage(AICompareDTO aiCompareDTO) {
-        List<Medicine> medicineList = aiInfoMapper.findProductByIds(Arrays.stream(aiCompareDTO.getProductId()).boxed().toList());
+        List<Medicine> medicineList = aiInfoMapper.findProductByIds(Arrays.stream(aiCompareDTO.getProductId()).toList());
 
         UserMessage userMessage = new UserMessage(
-                "I will give you a set of drug information, please summarize briefly the differences between them.The information returned is mainly the differences."
+                "You are a professional pharmacist. I will give you a set of drug information, please summarize briefly the differences between them.The information returned is mainly the differences."
                         + medicineList.toString());
 
         ChatResponse chatResponse = getAiClass(userMessage, openAIProperties.getJsonSchemaForComparison());

@@ -89,7 +89,6 @@ public class UserServiceImpl implements UserService {
         }
         Map<String, Object> claims = new HashMap<>();
         String token = generateUserLoginVO(user, claims);
-        log.info("user{}", user);
         return UserGoogleVO.builder()
                 .userId(user.getUserId())
                 .email(user.getEmail())
