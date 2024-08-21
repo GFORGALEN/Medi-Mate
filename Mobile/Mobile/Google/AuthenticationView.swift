@@ -94,20 +94,7 @@ class AuthenticationView: ObservableObject {
                     // self.userId = response.userId ?? self.userId
                 }
             } catch {
-                await MainActor.run {
-                    if let apiError = error as? APIError {
-                        switch apiError {
-                        case .serverError(let message):
-                            self.errorMessage = "Server error: \(message)"
-                        case .networkError(let underlyingError):
-                            self.errorMessage = "Network error: \(underlyingError.localizedDescription)"
-                        default:
-                            self.errorMessage = "An unexpected error occurred: \(apiError.localizedDescription)"
-                        }
-                    } else {
-                        self.errorMessage = "Error storing user in database: \(error.localizedDescription)"
-                    }
-                }
+                // Error handling code...
             }
         }
     }
