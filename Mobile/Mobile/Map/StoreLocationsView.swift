@@ -3,6 +3,7 @@ import MapKit
 
 struct StoreLocationsView: View {
     @StateObject private var viewModel = LocationViewModel()
+    @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
     
     var body: some View {
         GeometryReader { geo in
@@ -18,17 +19,18 @@ struct StoreLocationsView: View {
             }
         }
         .navigationTitle("MediMate Locations")
+        .scalableFont(size: 20, weight: .bold) // For the navigation title
         .background(Color(UIColor.systemGroupedBackground))
     }
     
     private func locationPreview(for location: Location, in geometry: GeometryProxy) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(location.name_store)
-                .font(.headline)
+                .scalableFont(size: 18, weight: .semibold)
                 .foregroundColor(.primary)
             
             Text(location.name)
-                .font(.subheadline)
+                .scalableFont(size: 14)
                 .foregroundColor(.secondary)
             
             MapView(location: location)
@@ -43,7 +45,7 @@ struct StoreLocationsView: View {
                 Image(systemName: "location.fill")
                     .foregroundColor(.blue)
                 Text("View Details")
-                    .font(.footnote)
+                    .scalableFont(size: 12)
                     .foregroundColor(.blue)
                 Spacer()
                 Image(systemName: "chevron.right")

@@ -11,17 +11,19 @@ import AVFoundation
 struct ProductDetailsView: View {
     @StateObject private var viewModel: ProductDetailsViewModel
     @State private var selectedSection: String?
+    @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
+    @AppStorage("isOlderMode") private var isOlderMode = false
     
     init(productId: String) {
         _viewModel = StateObject(wrappedValue: ProductDetailsViewModel(productId: productId))
     }
-    
     
     var body: some View {
         Group {
             switch viewModel.state {
             case .idle, .loading:
                 ProgressView("Loading...")
+                    .scalableFont(size: 18)
             case .loaded(let details):
                 ProductDetailsContent(details: details, viewModel: viewModel, selectedSection: $selectedSection)
             case .error(let error):
@@ -40,22 +42,24 @@ struct ProductDetailsContent: View {
     let details: ProductDetails
     @ObservedObject var viewModel: ProductDetailsViewModel
     @Binding var selectedSection: String?
+    @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
+    @AppStorage("isOlderMode") private var isOlderMode = false
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            VStack(spacing: isOlderMode ? 30 : 20) {
                 headerSection
                 summarySection
                 readAloudSection
                 contentSections
             }
-            .padding()
+            .padding(isOlderMode ? 20 : 15)
         }
         .background(Color(UIColor.systemBackground))
     }
     
     private var headerSection: some View {
-        VStack(spacing: 15) {
+        VStack(spacing: isOlderMode ? 20 : 15) {
             AsyncImage(url: URL(string: details.imageSrc)) { phase in
                 switch phase {
                 case .empty:
@@ -68,95 +72,99 @@ struct ProductDetailsContent: View {
                     EmptyView()
                 }
             }
-            .frame(height: 200)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .shadow(radius: 5)
+            .frame(height: isOlderMode ? 250 : 200)
+            .clipShape(RoundedRectangle(cornerRadius: isOlderMode ? 15 : 10))
+            .shadow(radius: isOlderMode ? 8 : 5)
             
             Text(details.productName)
-                .font(.title2)
-                .fontWeight(.bold)
+                .scalableFont(size: isOlderMode ? 28 : 22, weight: .bold)
                 .multilineTextAlignment(.center)
             
             Text("Price: \(details.productPrice)")
-                .font(.headline)
+                .scalableFont(size: isOlderMode ? 24 : 18, weight: .semibold)
                 .foregroundColor(.secondary)
             
             Text("Manufacturer: \(details.manufacturerName)")
-                .font(.subheadline)
+                .scalableFont(size: isOlderMode ? 20 : 16)
                 .foregroundColor(.secondary)
         }
     }
     
     private var summarySection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: isOlderMode ? 15 : 10) {
             Text("AI Generated Summary")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .foregroundStyle(
+                .scalableFont(size: isOlderMode ? 26 : 20, weight: .bold)
+                .foregroundStyle(
                     LinearGradient(
                         colors: [.purple, .blue],
                         startPoint: .leading,
                         endPoint: .trailing
-                        )
                     )
-                    
-                    Text(details.summary)
-                        .font(.body)
-                        .padding()
-                        .background(
-                            ZStack {
-                                LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.6),Color.purple.opacity(0.4), Color.red.opacity(0.6)]), startPoint: .topLeading, endPoint: .bottomTrailing)
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(Color.white.opacity(0.2), lineWidth: 2)
-                            }
-                        )
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
-                    HStack {
-                            Text("Powered by AI")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            
-                            Spacer()
-                            
-                            Link("Disclaimer", destination: URL(string: "https://bevel-terrier-8ea.notion.site/Disclaimer-for-Medimat-07344876198445109e7f671666fb3a54")!)
-                                .font(.caption)
-                                .foregroundColor(.blue)
-                        }
-                        .padding(.top, 5)
-                }
+                )
+            
+            Text(details.summary)
+                .scalableFont(size: isOlderMode ? 20 : 16)
                 .padding()
-                .background(Color.black.opacity(0.05))
-                .cornerRadius(15)
+                .background(
+                    ZStack {
+                        LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.6), Color.purple.opacity(0.4), Color.red.opacity(0.6)]), startPoint: .topLeading, endPoint: .bottomTrailing)
+                        RoundedRectangle(cornerRadius: isOlderMode ? 15 : 10)
+                            .stroke(Color.white.opacity(0.2), lineWidth: isOlderMode ? 3 : 2)
+                    }
+                )
+                .foregroundColor(.white)
+                .cornerRadius(isOlderMode ? 15 : 10)
+                .shadow(color: Color.black.opacity(0.1), radius: isOlderMode ? 8 : 5, x: 0, y: 5)
+            
+            HStack {
+                Text("Powered by AI")
+                    .scalableFont(size: isOlderMode ? 16 : 12)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+                
+                Link("Disclaimer", destination: URL(string: "https://bevel-terrier-8ea.notion.site/Disclaimer-for-Medimat-07344876198445109e7f671666fb3a54")!)
+                    .scalableFont(size: isOlderMode ? 16 : 12)
+                    .foregroundColor(.blue)
+            }
+            .padding(.top, isOlderMode ? 10 : 5)
+        }
+        .padding()
+        .background(Color.black.opacity(0.05))
+        .cornerRadius(isOlderMode ? 20 : 15)
     }
     
     private var readAloudSection: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: isOlderMode ? 15 : 10) {
             Button(action: {
                 viewModel.toggleSpeaking()
             }) {
                 HStack {
-                    Image(systemName: viewModel.isSpeaking ? "stop.circle.fill" : "play.circle.fill").font(.title2)
-                    Text(viewModel.isSpeaking ? "Stop Reading" : "Read Aloud").font(.title2).fontWeight(.semibold)
+                    Image(systemName: viewModel.isSpeaking ? "stop.circle.fill" : "play.circle.fill")
+                        .font(.system(size: isOlderMode ? 30 : 24))
+                    Text(viewModel.isSpeaking ? "Stop Reading" : "Read Aloud")
+                        .scalableFont(size: isOlderMode ? 24 : 20, weight: .semibold)
                 }
                 .padding()
                 .frame(maxWidth: .infinity)
+                .frame(height: isOlderMode ? 70 : 50)
                 .background(viewModel.isSpeaking ? Color.red : Color.blue)
                 .foregroundColor(.white)
-                .cornerRadius(10)
+                .cornerRadius(isOlderMode ? 15 : 10)
             }
             .buttonStyle(PlainButtonStyle())
             
             if viewModel.isSpeaking {
                 HStack {
                     Text("Speed:")
+                        .scalableFont(size: isOlderMode ? 20 : 16)
                     ForEach(["Normal", "Fast", "Very Fast"], id: \.self) { speed in
                         Button(speed) {
                             viewModel.updateSpeechRate(forSpeed: speed)
                         }
                         .buttonStyle(.bordered)
                         .tint(viewModel.currentSpeedLabel == speed ? .green : .blue)
+                        .scalableFont(size: isOlderMode ? 18 : 14)
                     }
                 }
             }
@@ -164,7 +172,7 @@ struct ProductDetailsContent: View {
     }
     
     private var contentSections: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: isOlderMode ? 25 : 20) {
             ForEach([
                 ("General Information", details.generalInformation),
                 ("Warnings", details.warnings),
@@ -179,16 +187,16 @@ struct ProductDetailsContent: View {
                     )
                 ) {
                     Text(content)
-                        .font(.body)
+                        .scalableFont(size: isOlderMode ? 18 : 16)
                         .padding(.vertical)
                 } label: {
                     Text(title)
-                        .font(.headline)
+                        .scalableFont(size: isOlderMode ? 22 : 18, weight: .semibold)
                         .foregroundColor(.primary)
                 }
                 .padding()
                 .background(Color(UIColor.secondarySystemBackground))
-                .cornerRadius(10)
+                .cornerRadius(isOlderMode ? 15 : 10)
             }
         }
     }
@@ -197,17 +205,22 @@ struct ProductDetailsContent: View {
 struct ErrorView: View {
     let error: Error
     let retryAction: () -> Void
+    @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
+    @AppStorage("isOlderMode") private var isOlderMode = false
     
     var body: some View {
         VStack {
             Text("Error: \(error.localizedDescription)")
+                .scalableFont(size: isOlderMode ? 20 : 16)
                 .multilineTextAlignment(.center)
                 .padding()
             Button("Retry", action: retryAction)
+                .scalableFont(size: isOlderMode ? 22 : 18, weight: .semibold)
                 .padding()
+                .frame(height: isOlderMode ? 60 : 44)
                 .background(Color.blue)
                 .foregroundColor(.white)
-                .cornerRadius(10)
+                .cornerRadius(isOlderMode ? 15 : 10)
         }
     }
 }
