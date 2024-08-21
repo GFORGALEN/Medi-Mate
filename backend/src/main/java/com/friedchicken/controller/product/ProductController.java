@@ -38,7 +38,6 @@ public class ProductController {
         log.info("User want to retrieve products by product name:{}", medicinePageDTO.getProductName());
 
         PageResult<MedicineListVO> pageResult = productService.getProductsByName(medicinePageDTO);
-
         return Result.success(pageResult);
     }
 
