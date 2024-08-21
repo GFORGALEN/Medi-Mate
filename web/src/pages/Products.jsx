@@ -1,13 +1,13 @@
 
 import { useEffect, useState } from 'react';
-import {Table, Input, message, Modal, Button} from 'antd';
+import {Table, Input, message, Modal, Button,Select } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { SearchOutlined } from '@ant-design/icons';
-import { getProductsAPI } from "@/api/user/Products.jsx";
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-const { Search } = Input;
+import { getProductsAPI, getAllManufacturersAPI } from "@/api/user/Products.jsx";
+import { Link, useNavigate } from 'react-router-dom';
 
+const { Search } = Input;
+const { Option } = Select;
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -17,10 +17,13 @@ const Products = () => {
         pageSize: 15,
         productName: "",
         productId: "",
+        manufacturerName: "",
     });
     const [total, setTotal] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState('');
+    const [manufacturers, setManufacturers] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
 
     const fetchProducts = async () => {
@@ -28,8 +31,20 @@ const Products = () => {
         try {
             const response = await getProductsAPI(params);
             if (response && response.data) {
-                setProducts(response.data.records);
-                setTotal(response.data.total);
+                const filteredProducts = response.data.records.filter(product =>
+                    (!params.manufacturerName || product.manufacturerName === params.manufacturerName) &&
+                    (!params.productName || product.productName.toLowerCase().includes(params.productName.toLowerCase()))
+                );
+                setProducts(() => {
+                    return filteredProducts
+                });
+                setTotal(()=>{
+                    return response.data.total
+                }); // 使用API返回的总数
+
+                if (params.productName && params.manufacturerName && filteredProducts.length === 0) {
+                    message.warning(`No products found for "${params.productName}" under the selected manufacturer.`);
+                }
             }
         } catch (error) {
             console.error('Error fetching products:', error);
@@ -39,9 +54,28 @@ const Products = () => {
         }
     };
 
+    const fetchManufacturers = async () => {
+        try {
+            const response = await getAllManufacturersAPI();
+            if (response && response.data && Array.isArray(response.data.records)) {
+                const uniqueManufacturers = [...new Set(response.data.records.map(item => item.manufacturerName))];
+                setManufacturers(uniqueManufacturers);
+            } else {
+                throw new Error("Data is not in the expected format");
+            }
+        } catch (error) {
+            console.error('Error fetching manufacturers:', error);
+            message.error(`Failed to fetch manufacturers: ${error.message}`);
+        }
+    };
+
     useEffect(() => {
         fetchProducts();
     }, [params]);
+
+    useEffect(() => {
+        fetchManufacturers();
+    }, []);
 
     const handleTableChange = (pagination) => {
         setParams(prev => ({
@@ -52,6 +86,7 @@ const Products = () => {
     };
 
     const handleSearch = (value) => {
+        setSearchTerm(value);
         setParams(prev => ({
             ...prev,
             page: 1,
@@ -59,11 +94,20 @@ const Products = () => {
         }));
     };
 
+    const handleManufacturerChange = (value) => {
+        setParams(prev => ({
+            ...prev,
+            page: 1,
+            manufacturerName: value,
+            productName: searchTerm, // Keep the current search term
+        }));
+    };
+
     const showImage = (imageSrc) => {
         setSelectedImage(imageSrc);
         setModalVisible(true);
     };
-//使用的是/api/products/changeProducts
+
     const handleAddNew = () => {
         navigate(`/products/new`);
     };
@@ -172,24 +216,35 @@ const Products = () => {
     return (
         <div className="font-poppins p-4 bg-white rounded-lg shadow">
             <div className="flex justify-between items-center mb-16">
-                <Search
-                    placeholder="Search products"
-                    onSearch={handleSearch}
-                    enterButton={<SearchOutlined />}
-                    size="large"
-                    className="w-full max-w-4xl"
-
-                />
+                <div className="flex items-center space-x-4 w-full max-w-4xl">
+                    <Search
+                        placeholder="Search products"
+                        onSearch={handleSearch}
+                        enterButton={<SearchOutlined />}
+                        size="large"
+                        className="flex-grow"
+                    />
+                    <Select
+                        style={{ width: 200 }}
+                        placeholder="Select Manufacturer"
+                        onChange={handleManufacturerChange}
+                        value={params.manufacturerName}
+                        size="large"
+                    >
+                        <Option value="">All Manufacturers</Option>
+                        {manufacturers.map(manufacturer => (
+                            <Option key={manufacturer} value={manufacturer}>{manufacturer}</Option>
+                        ))}
+                    </Select>
+                </div>
                 <Button
                     type="primary"
                     icon={<PlusCircleOutlined />}
                     onClick={handleAddNew}
                     size="large"
-
                 >
                     Add New Product
                 </Button>
-
             </div>
             <Table
                 columns={columns}
@@ -203,7 +258,7 @@ const Products = () => {
                     showQuickJumper: true,
                 }}
                 onChange={handleTableChange}
-                scroll={{ x: '100vw', y: 'calc(100vh - 450px)' }}
+                scroll={{ x: '100vw', y: 'calc(100vh - 410px)' }}
                 rowKey="productId"
                 className="text-base"
             />

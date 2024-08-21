@@ -1,7 +1,9 @@
+
+
 const HeaderLayout = () => {
     return (
-        <div className={"shadow-2xl h-full"}>
-
+        <div className="flex-grow text-center">
+            Dashboard
         </div>
     );
 };

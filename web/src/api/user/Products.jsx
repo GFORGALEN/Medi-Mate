@@ -23,3 +23,15 @@ export function updateProductAPI(productId, productData) {
         data: productData
     });
 }
+export function getAllManufacturersAPI() {
+    return requestProduct({
+        method: 'GET',
+        url: "/allProductsDetail",
+        params: {
+            page: 1,
+            pageSize: 1000,  // 假设制造商数量不会超过1000
+            productName: "",
+            manufacture: ""
+        }
+    })
+}
