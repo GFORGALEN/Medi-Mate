@@ -1,10 +1,12 @@
 package com.friedchicken.controller.product;
 
+import com.friedchicken.pojo.dto.Medicine.MedicineLocationDTO;
 import com.friedchicken.pojo.dto.Medicine.MedicineModifyDTO;
 import com.friedchicken.pojo.dto.Medicine.MedicinePageDTO;
 import com.friedchicken.pojo.vo.Medicine.ManufactureNameListVO;
 import com.friedchicken.pojo.vo.Medicine.MedicineDetailVO;
 import com.friedchicken.pojo.vo.Medicine.MedicineListVO;
+import com.friedchicken.pojo.vo.Medicine.MedicineLocationVO;
 import com.friedchicken.result.PageResult;
 import com.friedchicken.result.Result;
 import com.friedchicken.service.ProductService;
@@ -100,5 +102,20 @@ public class ProductController {
         log.info("User want to get all manufacture name.");
 
         return Result.success(productService.getAllManufactureName());
+    }
+
+    @PostMapping("/productLocation")
+    @Operation(summary = "Get a product's location.",
+            description = "Get a product's detail location by product id and pharmacy id.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully get the detail location.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MedicineLocationVO.class)))
+    })
+    public Result<MedicineLocationVO> getProductLocation(@RequestBody MedicineLocationDTO medicineLocationDTO) {
+        log.info("User wants to get the product location.{}", medicineLocationDTO);
+
+        MedicineLocationVO medicineLocationVO = productService.getProductLocation(medicineLocationDTO);
+
+        return Result.success(medicineLocationVO);
     }
 }

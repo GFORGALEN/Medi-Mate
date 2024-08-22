@@ -75,4 +75,11 @@
     <select id="getAllManufactureName" resultType="java.lang.String">
         select distinct manufacturer_name from medicine
     </select>
+    <select id="getProductLocation" resultType="com.friedchicken.pojo.vo.Medicine.MedicineLocationVO">
+        select p.pharmacy_name,pi.stock_quantity,pi.shelf_number,pi.shelf_level
+        from pharmacy p
+                 natural join pharmacy_inventory pi
+        where pi.pharmacy_id = #{pharmacyId}
+          and pi.product_id = #{productId}
+    </select>
 </mapper>
