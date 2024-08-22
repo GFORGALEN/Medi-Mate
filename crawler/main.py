@@ -49,6 +49,7 @@ def parse_product_details(driver):
 
     try:
         product_id = driver.find_element(By.CLASS_NAME, 'product-id.product-information').text.strip()
+        print(f"Product ID: {product_id}")
     except Exception as e:
         print(f"Error finding product ID: {e}")
 
@@ -73,8 +74,9 @@ def parse_product_details(driver):
         print(f"Error finding directions: {e}")
 
     try:
-        image_src = driver.find_element(By.CLASS_NAME, 'hero_image.zoomer_harvey.product-thumbnail').get_attribute(
-            'src')
+        image_element = driver.find_element(By.CSS_SELECTOR, '.hero_image.zoomer_harvey.product-thumbnail')
+        image_src = image_element.get_attribute('src')
+        print(f"Image source: {image_src}")
     except Exception as e:
         print(f"Error finding image src: {e}")
 
@@ -112,7 +114,7 @@ def main():
         try:
             next_button = driver.find_element(By.CLASS_NAME, 'pager__button.pager__button--next')
             next_button.click()
-            time.sleep(3)
+            time.sleep(1)
             html = driver.page_source
         except Exception as e:
             print(f"No more pages or error finding next page button: {e}")
@@ -124,7 +126,7 @@ def main():
         fetch_page(driver, link)
         product_info = parse_product_details(driver)
         all_products_info.append(product_info)
-        time.sleep(4)
+        time.sleep(1)
 
     save_to_csv(all_products_info)
     driver.quit()

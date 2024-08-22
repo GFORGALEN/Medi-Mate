@@ -47,7 +47,7 @@ public class AiServiceImpl implements AiService {
     private AiInfoMapper aiInfoMapper;
     @Autowired
     private RedisTemplate<String, PageResult<MedicineListVO>> redisTemplate;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public AItextVO handlerText(String message) {
