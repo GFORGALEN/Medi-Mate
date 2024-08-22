@@ -27,8 +27,9 @@
             (#{userId}, #{username}, #{email}, #{password}, #{googleId}, #{userPic}, #{createdAt}, #{updatedAt})
     </insert>
 
-    <insert id="addUserInfo">
+    <insert id="addUserInfo" parameterType="User">
         INSERT INTO user_info
-        (user_id, birth_year, user_weight, user_height) VALUES (#{userId}, 2024, 0, 0)
+            (user_id, birth_year, user_weight, user_height)
+        VALUES (#{userId}, 2024, 0, 0)
     </insert>
 </mapper>
