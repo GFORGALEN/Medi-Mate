@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout, Card, Spin, Select, message } from 'antd';
 import ReactECharts from 'echarts-for-react';
 import { getProductsAPI, getAllManufacturersAPI } from "@/api/user/Products.jsx";
@@ -50,36 +50,49 @@ const ProductAnalytics = () => {
     const handleManufacturerChange = (value) => {
         setSelectedManufacturer(value);
     };
+
+    const filteredProducts = selectedManufacturer
+        ? products.filter(product => product.manufacturerName === selectedManufacturer)
+        : products;
+
     const get3DScatterOption = () => {
-        const data = filteredProducts.map(product => [
-            parseFloat(product.productPrice),
-            product.generalInformation ? product.generalInformation.length : 0,
-            1, // 初始值为1，后面会更新
-            product.productName // 用于tooltip显示
-        ]);
-        const priceCount = {};
-        data.forEach(item => {
-            const price = item[0];
-            priceCount[price] = (priceCount[price] || 0) + 1;
-        });
-        data.forEach(item => {
-            item[2] = priceCount[item[0]];
+        const data = filteredProducts.map(product => {
+            const price = parseFloat(product.productPrice);
+            const infoLength = product.generalInformation ? product.generalInformation.length : 0;
+            const ingredientsCount = product.ingredients ? product.ingredients.split(',').length : 0;
+            return [price, infoLength, ingredientsCount, product.productName];
         });
 
+        const maxPrice = Math.max(...data.map(item => item[0]));
+        const maxInfoLength = Math.max(...data.map(item => item[1]));
+        const maxIngredientsCount = Math.max(...data.map(item => item[2]));
+
         return {
-            title: { text: '3D View: Price, Info Length & Product Count', left: 'center' },
+            title: { text: '3D View: Price, Info Length & Ingredients Count', left: 'center' },
             tooltip: {
                 formatter: (params) => {
                     const data = params.data;
-                    return `Product: ${data[3]}<br/>Price: $${data[0]}<br/>Info Length: ${data[1]}<br/>Product Count: ${data[2]}`;
+                    return `Product: ${data[3]}<br/>Price: $${data[0].toFixed(2)}<br/>Info Length: ${data[1]}<br/>Ingredients Count: ${data[2]}`;
                 }
             },
-            xAxis3D: { name: 'Price ($)', type: 'value' },
-            yAxis3D: { name: 'Info Length', type: 'value' },
-            zAxis3D: { name: 'Product Count', type: 'value' },
+            xAxis3D: { name: 'Price ($)', type: 'value', max: maxPrice },
+            yAxis3D: { name: 'Info Length', type: 'value', max: maxInfoLength },
+            zAxis3D: { name: 'Ingredients Count', type: 'value', max: maxIngredientsCount },
             grid3D: {
                 viewControl: {
-                    projection: 'orthographic'
+                    projection: 'orthographic',
+                    autoRotate: true,
+                    autoRotateSpeed: 10,
+                    damping: 0.8
+                },
+                light: {
+                    main: {
+                        intensity: 1.2,
+                        shadow: true
+                    },
+                    ambient: {
+                        intensity: 0.3
+                    }
                 }
             },
             series: [{
@@ -88,21 +101,26 @@ const ProductAnalytics = () => {
                 symbolSize: 5,
                 itemStyle: {
                     color: (params) => {
-                        // 基于价格设置颜色
                         const price = params.data[0];
-                        return new echarts.graphic.RadialGradient(0.4, 0.3, 1, [{
-                            offset: 0, color: 'rgb(129, 227, 238)'
+                        const normalizedPrice = price / maxPrice;
+                        return new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                            offset: 0, color: `rgba(0, 255, 255, ${normalizedPrice})`
                         }, {
-                            offset: 1, color: `rgb(25, 183, 207)`
+                            offset: 1, color: `rgba(0, 0, 255, ${normalizedPrice})`
                         }]);
+                    },
+                    opacity: 0.8,
+                    shadowBlur: 10,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                },
+                emphasis: {
+                    itemStyle: {
+                        opacity: 1
                     }
                 }
             }]
         };
     };
-    const filteredProducts = selectedManufacturer
-        ? products.filter(product => product.manufacturerName === selectedManufacturer)
-        : products;
 
     const getPriceDistributionOption = () => {
         const priceRanges = [0, 10, 20, 50, 100, 200, 500, 1000];
@@ -114,7 +132,6 @@ const ProductAnalytics = () => {
             }).length;
             return { range: `$${range}${nextRange === Infinity ? '+' : ` - $${nextRange}`}`, count };
         });
-
 
         return {
             title: { text: 'Product Price Distribution', left: 'center' },

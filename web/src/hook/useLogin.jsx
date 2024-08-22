@@ -22,7 +22,7 @@ function useLogin() {
             const response = await sendUserDataAPI({email, password});
             if (response.data.token) {
                 setUserToken(response.data.token);
-                navigate('/');
+                navigate('/analytics');
             } else {
                 setError('Login failed');
             }
