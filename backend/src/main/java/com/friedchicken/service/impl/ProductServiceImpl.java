@@ -1,11 +1,13 @@
 package com.friedchicken.service.impl;
 
 import com.friedchicken.mapper.ProductMapper;
+import com.friedchicken.pojo.dto.Medicine.MedicineLocationDTO;
 import com.friedchicken.pojo.dto.Medicine.MedicineModifyDTO;
 import com.friedchicken.pojo.dto.Medicine.MedicinePageDTO;
 import com.friedchicken.pojo.vo.Medicine.ManufactureNameListVO;
 import com.friedchicken.pojo.vo.Medicine.MedicineDetailVO;
 import com.friedchicken.pojo.vo.Medicine.MedicineListVO;
+import com.friedchicken.pojo.vo.Medicine.MedicineLocationVO;
 import com.friedchicken.result.PageResult;
 import com.friedchicken.service.ProductService;
 import com.github.pagehelper.Page;
@@ -80,5 +82,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ManufactureNameListVO getAllManufactureName() {
         return ManufactureNameListVO.builder().manufacturerName(productMapper.getAllManufactureName()).build();
+    }
+
+    @Override
+    public MedicineLocationVO getProductLocation(MedicineLocationDTO medicineLocationDTO) {
+        return productMapper.getProductLocation(medicineLocationDTO);
     }
 }
