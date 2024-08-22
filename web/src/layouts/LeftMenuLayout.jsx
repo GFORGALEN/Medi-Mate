@@ -2,6 +2,7 @@
 import { Menu } from 'antd';
 import { DesktopOutlined, PieChartOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from "react-router-dom";
+import Inventory from "@/pages/Inventory.jsx";
 
 const items = [
     {
@@ -13,7 +14,12 @@ const items = [
         key: '/products',
         icon: <DesktopOutlined />,
         label: 'Products',
-    }
+    },
+    {
+        key: '/inventory',
+        label: 'Inventory',
+    },
+
 ];
 
 const LeftMenu = () => {
