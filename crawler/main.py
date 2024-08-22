@@ -24,7 +24,7 @@ def parse_product_list(driver):
     return product_links
 
 
-def parse_product_details(driver):
+def parse_product_details(driver, url):
     # 定义默认值
     product_name = product_price = manufacturer_name = general_information = product_id = common_uses = 'N/A'
     warnings = directions = image_src = ingredients = 'N/A'
@@ -84,18 +84,25 @@ def parse_product_details(driver):
             )
             image_element = driver.find_element(By.CSS_SELECTOR, '.hero_image.zoomer_harvey.product-thumbnail')
             image_src = image_element.get_attribute('src')
-            print(f"Image source: {image_src}")
-            break  # 成功获取到图片链接，跳出循环
+
+            if image_src:  # 如果成功获取到图片链接，跳出循环
+                print(f"Image source: {image_src}")
+                break
+            else:
+                raise Exception("Image src is empty")  # 如果图片链接为空，抛出异常
         except Exception as e:
             print(f"Attempt {attempt + 1} failed: Error finding image src: {e}")
-            time.sleep(10)  # 等待5秒后重试
+            if attempt < max_retries - 1:
+                print(f"Reloading page and retrying... (Attempt {attempt + 2})")
+                fetch_page(driver, url)  # 重新加载页面
+            time.sleep(10)  # 等待10秒后重试
             image_src = 'N/A'  # 如果最终还是失败，就设置为默认值
 
     return [product_name, product_price, manufacturer_name, product_id, general_information, warnings,
             common_uses, ingredients, directions, image_src]
 
 
-def save_to_csv(data, filename):
+def save_to_csv(data, filename='C:\\Users\\products_info.csv'):
     with open(filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(
@@ -106,18 +113,16 @@ def save_to_csv(data, filename):
 
 def main():
     base_urls = [
-        "https://www.chemistwarehouse.co.nz/shop-online/542/fragrances",
-        "https://www.chemistwarehouse.co.nz/shop-online/665/skin-care",
-        "https://www.chemistwarehouse.co.nz/shop-online/648/cosmetics",
+        "https://www.chemistwarehouse.co.nz/shop-online/81/vitamins-supplements",
+        "https://www.chemistwarehouse.co.nz/shop-online/1255/sports-nutrition",
+        "https://www.chemistwarehouse.co.nz/shop-online/258/medicines",
         "https://www.chemistwarehouse.co.nz/shop-online/517/weight-management",
         "https://www.chemistwarehouse.co.nz/shop-online/20/baby-care",
-        "https://www.chemistwarehouse.co.nz/shop-online/89/sexual-health",
         "https://www.chemistwarehouse.co.nz/shop-online/1093/cold-flu",
         "https://www.chemistwarehouse.co.nz/shop-online/159/oral-hygiene-and-dental-care",
         "https://www.chemistwarehouse.co.nz/shop-online/792/household",
         "https://www.chemistwarehouse.co.nz/shop-online/129/hair-care",
-        "https://www.chemistwarehouse.co.nz/shop-online/3240/clearance",
-        "https://www.chemistwarehouse.co.nz/shop-online/257/beauty"
+        "https://www.chemistwarehouse.co.nz/shop-online/3240/clearance"
     ]
 
     options = Options()
@@ -149,7 +154,7 @@ def main():
 
         for link in all_product_links:
             fetch_page(driver, link)
-            product_info = parse_product_details(driver)
+            product_info = parse_product_details(driver, link)
             all_products_info.append(product_info)
             time.sleep(1)
 
