@@ -2,6 +2,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import csv
 import time
@@ -73,18 +75,27 @@ def parse_product_details(driver):
     except Exception as e:
         print(f"Error finding directions: {e}")
 
-    try:
-        image_element = driver.find_element(By.CSS_SELECTOR, '.hero_image.zoomer_harvey.product-thumbnail')
-        image_src = image_element.get_attribute('src')
-        print(f"Image source: {image_src}")
-    except Exception as e:
-        print(f"Error finding image src: {e}")
+    # 增加重试机制
+    max_retries = 5
+    for attempt in range(max_retries):
+        try:
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, '.hero_image.zoomer_harvey.product-thumbnail'))
+            )
+            image_element = driver.find_element(By.CSS_SELECTOR, '.hero_image.zoomer_harvey.product-thumbnail')
+            image_src = image_element.get_attribute('src')
+            print(f"Image source: {image_src}")
+            break  # 成功获取到图片链接，跳出循环
+        except Exception as e:
+            print(f"Attempt {attempt + 1} failed: Error finding image src: {e}")
+            time.sleep(10)  # 等待5秒后重试
+            image_src = 'N/A'  # 如果最终还是失败，就设置为默认值
 
     return [product_name, product_price, manufacturer_name, product_id, general_information, warnings,
             common_uses, ingredients, directions, image_src]
 
 
-def save_to_csv(data, filename='C:\\Users\\TZQ\\OneDrive\\桌面\\UOA\\778\\FriedChicken\\products_info.csv'):
+def save_to_csv(data, filename):
     with open(filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(
@@ -94,39 +105,53 @@ def save_to_csv(data, filename='C:\\Users\\TZQ\\OneDrive\\桌面\\UOA\\778\\Frie
 
 
 def main():
-    # base_url = "https://www.chemistwarehouse.co.nz/shop-online/81/vitamins-supplements"
-
-    base_url = "https://www.chemistwarehouse.co.nz/shop-online/258/medicines"
+    base_urls = [
+        "https://www.chemistwarehouse.co.nz/shop-online/542/fragrances",
+        "https://www.chemistwarehouse.co.nz/shop-online/665/skin-care",
+        "https://www.chemistwarehouse.co.nz/shop-online/648/cosmetics",
+        "https://www.chemistwarehouse.co.nz/shop-online/517/weight-management",
+        "https://www.chemistwarehouse.co.nz/shop-online/20/baby-care",
+        "https://www.chemistwarehouse.co.nz/shop-online/89/sexual-health",
+        "https://www.chemistwarehouse.co.nz/shop-online/1093/cold-flu",
+        "https://www.chemistwarehouse.co.nz/shop-online/159/oral-hygiene-and-dental-care",
+        "https://www.chemistwarehouse.co.nz/shop-online/792/household",
+        "https://www.chemistwarehouse.co.nz/shop-online/129/hair-care",
+        "https://www.chemistwarehouse.co.nz/shop-online/3240/clearance",
+        "https://www.chemistwarehouse.co.nz/shop-online/257/beauty"
+    ]
 
     options = Options()
-    options.headless = True  # 无头模式
-    options.add_argument("--disable-notifications")  # 禁用通知
+    options.headless = True
+    options.add_argument("--disable-notifications")
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-    all_product_links = []
-    html = fetch_page(driver, base_url)
-
-    while True:
-        if html:
-            product_links = parse_product_list(driver)
-            all_product_links.extend(product_links)
-
-        try:
-            next_button = driver.find_element(By.CLASS_NAME, 'pager__button.pager__button--next')
-            next_button.click()
-            time.sleep(1)
-            html = driver.page_source
-        except Exception as e:
-            print(f"No more pages or error finding next page button: {e}")
-            break
-
-    print(all_product_links)
     all_products_info = []
-    for link in all_product_links:
-        fetch_page(driver, link)
-        product_info = parse_product_details(driver)
-        all_products_info.append(product_info)
-        time.sleep(1)
+
+    for base_url in base_urls:
+        all_product_links = []
+        html = fetch_page(driver, base_url)
+
+        while True:
+            if html:
+                product_links = parse_product_list(driver)
+                all_product_links.extend(product_links)
+
+            try:
+                next_button = driver.find_element(By.CLASS_NAME, 'pager__button.pager__button--next')
+                next_button.click()
+                time.sleep(1)
+                html = driver.page_source
+            except Exception as e:
+                print(f"No more pages or error finding next page button: {e}")
+                break
+
+        print(f"Collected {len(all_product_links)} links from {base_url}")
+
+        for link in all_product_links:
+            fetch_page(driver, link)
+            product_info = parse_product_details(driver)
+            all_products_info.append(product_info)
+            time.sleep(1)
 
     save_to_csv(all_products_info)
     driver.quit()
