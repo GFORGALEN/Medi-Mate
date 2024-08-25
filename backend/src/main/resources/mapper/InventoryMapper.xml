@@ -3,9 +3,10 @@
 
 <mapper namespace="com.friedchicken.mapper.InventoryMapper">
     <select id="getInventoryFromPharmacyId" resultType="com.friedchicken.pojo.vo.Inventory.DetailInventoryVO">
-        select *
+        select m.product_name,m.product_price,m.manufacturer_name,m.image_src,stock_quantity,shelf_number,shelf_level
         from pharmacy_inventory pi
                  left join pharmacy p on p.pharmacy_id = pi.pharmacy_id
+                 left join medicine m on pi.product_id = m.product_id
         where pi.pharmacy_id = #{pharmacyId}
     </select>
 </mapper>

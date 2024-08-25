@@ -109,6 +109,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void register(UserRegisterDTO userRegisterDTO) {
         String email = userRegisterDTO.getEmail();
 
@@ -120,7 +121,9 @@ public class UserServiceImpl implements UserService {
             BeanUtils.copyProperties(userRegisterDTO, user);
             user.setUserId(uniqueIdUtil.generateUniqueId());
             user.setUsername(RandomStringUtil.generateRandomString(6));
+            log.info("here{}", user);
             userMapper.register(user);
+            userMapper.addUserInfo(user);
         }
     }
 

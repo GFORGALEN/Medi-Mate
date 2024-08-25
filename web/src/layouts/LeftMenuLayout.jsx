@@ -1,6 +1,6 @@
-// LeftMenuLayout.jsx
+import React from 'react';
 import { Menu } from 'antd';
-import { DesktopOutlined, PieChartOutlined } from '@ant-design/icons';
+import { DesktopOutlined, PieChartOutlined, InboxOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from "react-router-dom";
 
 const items = [
@@ -13,10 +13,15 @@ const items = [
         key: '/products',
         icon: <DesktopOutlined />,
         label: 'Products',
-    }
+    },
+    {
+        key: '/inventory',
+        icon: <InboxOutlined />,
+        label: 'Inventory',
+    },
 ];
 
-const LeftMenu = () => {
+const LeftMenuLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -35,4 +40,4 @@ const LeftMenu = () => {
     );
 };
 
-export default LeftMenu;
+export default LeftMenuLayout;
