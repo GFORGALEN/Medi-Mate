@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Layout, Card, Spin, Select, message } from 'antd';
+import {useState, useEffect} from 'react';
+import {Layout, Card, Spin, Select, message} from 'antd';
 import ReactECharts from 'echarts-for-react';
-import { getProductsAPI, getAllManufacturersAPI } from "@/api/user/Products.jsx";
+import {getProductsAPI, getAllManufacturersAPI} from "@/api/user/products.jsx";
 import * as echarts from 'echarts';
 import 'echarts-gl';
 
-const { Content } = Layout;
-const { Option } = Select;
+const {Content} = Layout;
+const {Option} = Select;
 
 const ProductAnalytics = () => {
     const [loading, setLoading] = useState(true);
@@ -22,7 +22,7 @@ const ProductAnalytics = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await getProductsAPI({ page: 1, pageSize: 1000 });
+            const response = await getProductsAPI({page: 1, pageSize: 1000});
             if (response && response.data && response.data.records) {
                 setProducts(response.data.records);
             }
@@ -68,16 +68,16 @@ const ProductAnalytics = () => {
         const maxIngredientsCount = Math.max(...data.map(item => item[2]));
 
         return {
-            title: { text: '3D View: Price, Info Length & Ingredients Count', left: 'center' },
+            title: {text: '3D View: Price, Info Length & Ingredients Count', left: 'center'},
             tooltip: {
                 formatter: (params) => {
                     const data = params.data;
                     return `Product: ${data[3]}<br/>Price: $${data[0].toFixed(2)}<br/>Info Length: ${data[1]}<br/>Ingredients Count: ${data[2]}`;
                 }
             },
-            xAxis3D: { name: 'Price ($)', type: 'value', max: maxPrice },
-            yAxis3D: { name: 'Info Length', type: 'value', max: maxInfoLength },
-            zAxis3D: { name: 'Ingredients Count', type: 'value', max: maxIngredientsCount },
+            xAxis3D: {name: 'Price ($)', type: 'value', max: maxPrice},
+            yAxis3D: {name: 'Info Length', type: 'value', max: maxInfoLength},
+            zAxis3D: {name: 'Ingredients Count', type: 'value', max: maxIngredientsCount},
             grid3D: {
                 viewControl: {
                     projection: 'orthographic',
@@ -130,19 +130,19 @@ const ProductAnalytics = () => {
                 const price = parseFloat(product.productPrice);
                 return price >= range && price < nextRange;
             }).length;
-            return { range: `$${range}${nextRange === Infinity ? '+' : ` - $${nextRange}`}`, count };
+            return {range: `$${range}${nextRange === Infinity ? '+' : ` - $${nextRange}`}`, count};
         });
 
         return {
-            title: { text: 'Product Price Distribution', left: 'center' },
-            tooltip: { trigger: 'axis' },
-            xAxis: { type: 'category', data: distribution.map(d => d.range) },
-            yAxis: { type: 'value', name: 'Number of Products' },
+            title: {text: 'Product Price Distribution', left: 'center'},
+            tooltip: {trigger: 'axis'},
+            xAxis: {type: 'category', data: distribution.map(d => d.range)},
+            yAxis: {type: 'value', name: 'Number of Products'},
             series: [{
                 name: 'Products',
                 type: 'bar',
                 data: distribution.map(d => d.count),
-                itemStyle: { color: '#5470c6' }
+                itemStyle: {color: '#5470c6'}
             }]
         };
     };
@@ -158,15 +158,15 @@ const ProductAnalytics = () => {
             .slice(0, 10);
 
         return {
-            title: { text: 'Top 10 Manufacturers by Product Count', left: 'center' },
-            tooltip: { trigger: 'axis' },
-            xAxis: { type: 'value', name: 'Number of Products' },
-            yAxis: { type: 'category', data: sortedManufacturers.map(m => m[0]) },
+            title: {text: 'Top 10 Manufacturers by Product Count', left: 'center'},
+            tooltip: {trigger: 'axis'},
+            xAxis: {type: 'value', name: 'Number of Products'},
+            yAxis: {type: 'category', data: sortedManufacturers.map(m => m[0])},
             series: [{
                 name: 'Products',
                 type: 'bar',
                 data: sortedManufacturers.map(m => m[1]),
-                itemStyle: { color: '#91cc75' }
+                itemStyle: {color: '#91cc75'}
             }]
         };
     };
@@ -183,16 +183,16 @@ const ProductAnalytics = () => {
             .sort((a, b) => a[0] - b[0]);
 
         return {
-            title: { text: 'Price vs Product Count', left: 'center' },
-            tooltip: { trigger: 'axis' },
-            xAxis: { type: 'value', name: 'Price ($)', min: 'dataMin', max: 'dataMax' },
-            yAxis: { type: 'value', name: 'Number of Products' },
+            title: {text: 'Price vs Product Count', left: 'center'},
+            tooltip: {trigger: 'axis'},
+            xAxis: {type: 'value', name: 'Price ($)', min: 'dataMin', max: 'dataMax'},
+            yAxis: {type: 'value', name: 'Number of Products'},
             series: [{
                 name: 'Products',
                 type: 'scatter',
                 data: data,
                 symbolSize: 10,
-                itemStyle: { color: '#ee6666' }
+                itemStyle: {color: '#ee6666'}
             }]
         };
     };
@@ -202,7 +202,7 @@ const ProductAnalytics = () => {
             <Content className="p-6">
                 <h1 className="text-2xl font-bold mb-6">Product Analytics</h1>
                 <Select
-                    style={{ width: 200, marginBottom: 20 }}
+                    style={{width: 200, marginBottom: 20}}
                     placeholder="Select Manufacturer"
                     onChange={handleManufacturerChange}
                     value={selectedManufacturer}
@@ -213,22 +213,22 @@ const ProductAnalytics = () => {
                     ))}
                 </Select>
                 {loading ? (
-                    <Spin size="large" />
+                    <Spin size="large"/>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <Card title="Price Distribution">
-                            <ReactECharts option={getPriceDistributionOption()} style={{ height: '400px' }} />
+                            <ReactECharts option={getPriceDistributionOption()} style={{height: '400px'}}/>
                         </Card>
                         <Card title="Top 10 Manufacturers">
-                            <ReactECharts option={getTopManufacturersOption()} style={{ height: '400px' }} />
+                            <ReactECharts option={getTopManufacturersOption()} style={{height: '400px'}}/>
                         </Card>
                         <Card title="Price vs Product Count" className="col-span-1 md:col-span-2">
-                            <ReactECharts option={getPriceVsProductCountOption()} style={{ height: '400px' }} />
+                            <ReactECharts option={getPriceVsProductCountOption()} style={{height: '400px'}}/>
                         </Card>
                         <Card title="3D Scatter Plot" className="col-span-1 md:col-span-2">
                             <ReactECharts
                                 option={get3DScatterOption()}
-                                style={{ height: '600px' }}
+                                style={{height: '600px'}}
                                 echarts={echarts}
                             />
                         </Card>
