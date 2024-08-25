@@ -7,6 +7,7 @@ import ViewProduct from "@/pages/ViewProduct.jsx";
 import NewProductForm from "@/pages/NewAddProduct.jsx";
 import ProductAnalytics from "@/pages/Analytics.jsx";
 import Inventory from "@/pages/Inventory.jsx";
+import Pharmacies from "@/pages/Pharmacies.jsx";
 
 const router = createBrowserRouter([
     {
@@ -45,6 +46,11 @@ const router = createBrowserRouter([
                 path: 'inventory',
                 element: <Inventory />,
             },
+            {
+                path: 'pharmacies',
+                element: <Pharmacies />,
+            },
+
         ],
     },
 ]);
