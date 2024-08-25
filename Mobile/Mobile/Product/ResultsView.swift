@@ -6,7 +6,7 @@ struct ResultsView: View {
     @State private var isSelectionMode = false
     @State private var selectedProducts: Set<String> = []
     @State private var navigateToComparison = false
-
+    
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottomTrailing) {
@@ -42,10 +42,7 @@ struct ResultsView: View {
                 
                 Button(action: {
                     if isSelectionMode && !selectedProducts.isEmpty {
-                        Task {
-                            await comparisonViewModel.fetchComparisons(productIds: Array(selectedProducts))
-                            navigateToComparison = true
-                        }
+                        navigateToComparison = true
                     } else {
                         isSelectionMode.toggle()
                         selectedProducts.removeAll()
@@ -64,16 +61,15 @@ struct ResultsView: View {
                 .padding(.bottom, 50)
                 .padding(.trailing, 20)
                 .disabled(isSelectionMode && selectedProducts.isEmpty)
-            }
-//            .navigationDestination(for: String.self) { productId in
-//                ProductDetailsView(productId: productId)
-//            }
-            .navigationDestination(isPresented: $navigateToComparison) {
-                ComparisonView(viewModel: comparisonViewModel, productIds: Array(selectedProducts))
+                .navigationDestination(for: String.self) { productId in
+                    ProductDetailsView(productId: productId)
+                }
+                .navigationDestination(isPresented: $navigateToComparison) {
+                    ComparisonView(viewModel: ComparisonViewModel(), productIds: Array(selectedProducts))
+                }
             }
         }
     }
-    
     private func toggleSelection(for id: String) {
         if selectedProducts.contains(id) {
             selectedProducts.remove(id)
@@ -81,52 +77,52 @@ struct ResultsView: View {
             selectedProducts.insert(id)
         }
     }
-}
-
-// ProductCard struct remains unchanged
-struct ProductCard: View {
-    let product: Medicine
-    var isSelected: Bool = false
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            AsyncImage(url: URL(string: product.imageSrc)) { phase in
-                switch phase {
-                case .empty:
-                    ProgressView()
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                case .failure(_):
-                    Image(systemName: "photo")
-                        .foregroundColor(.gray)
-                @unknown default:
-                    EmptyView()
+    
+    // ProductCard struct remains unchanged
+    struct ProductCard: View {
+        let product: Medicine
+        var isSelected: Bool = false
+        
+        var body: some View {
+            VStack(alignment: .leading, spacing: 10) {
+                AsyncImage(url: URL(string: product.imageSrc)) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    case .failure(_):
+                        Image(systemName: "photo")
+                            .foregroundColor(.gray)
+                    @unknown default:
+                        EmptyView()
+                    }
                 }
+                .frame(width: 150, height: 150)
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+                
+                Text(product.productName)
+                    .font(.system(size: 15, weight: .semibold))
+                    .lineLimit(2)
+                    .frame(height: 40)
+                
+                Text("Price: \(product.productPrice)")
+                    .font(.system(size: 13, weight: .regular))
+                    .foregroundColor(.gray)
             }
-            .frame(width: 150, height: 150)
-            .clipShape(RoundedRectangle(cornerRadius: 15))
-            
-            Text(product.productName)
-                .font(.system(size: 15, weight: .semibold))
-                .lineLimit(2)
-                .frame(height: 40)
-            
-            Text("Price: \(product.productPrice)")
-                .font(.system(size: 13, weight: .regular))
-                .foregroundColor(.gray)
-        }
-        .frame(width: 150)
-        .padding(10)
-        .background(Color.white)
-        .cornerRadius(20)
-        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
-        .overlay(
+            .frame(width: 150)
+            .padding(10)
+            .background(Color.white)
+            .cornerRadius(20)
+            .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
+            .overlay(
                 isSelected ?
                 RoundedRectangle(cornerRadius: 15)
                     .stroke(Color.blue, lineWidth: 3)
-                    : nil
+                : nil
             )
+        }
     }
 }

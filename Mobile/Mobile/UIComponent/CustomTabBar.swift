@@ -8,7 +8,7 @@ class TabBarManager: ObservableObject {
 struct CustomTabBar: View {
     @EnvironmentObject var tabBarManager: TabBarManager
     @AppStorage("isOlderMode") private var isOlderMode = false
-    let icons = ["house", "storefront", "map", "person.crop.circle"]
+    let icons = ["house", "book.pages", "map", "person.crop.circle"]
     
     var body: some View {
         HStack {
