@@ -58,8 +58,9 @@ public class UserServiceImpl implements UserService {
         String token = generateUserLoginVO(userByEmail, claims);
 
         UserLoginVO userLoginVO = new UserLoginVO();
-        BeanUtils.copyProperties(userLoginDTO, userLoginVO);
+        BeanUtils.copyProperties(userByEmail, userLoginVO);
         userLoginVO.setToken(token);
+
         return userLoginVO;
     }
 
