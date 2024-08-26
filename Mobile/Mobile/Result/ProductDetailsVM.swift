@@ -2,7 +2,7 @@ import SwiftUI
 import AVFoundation
 
 @MainActor
-class ProductDetailsViewModel: ObservableObject {
+class ProductDetailsVM: ObservableObject {
     @Published private(set) var state: LoadingState = .idle
     @Published private(set) var productDetails: ProductDetails?
     private let networkService: NetworkServiceProtocol

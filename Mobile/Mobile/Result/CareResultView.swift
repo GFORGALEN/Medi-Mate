@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct OlderModeResultsView: View {
+struct CareResultView: View {
     @ObservedObject var HomeVM: HomeVM
     
     var body: some View {

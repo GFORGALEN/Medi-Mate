@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CartView: View {
+struct CardView: View {
     @State private var currentIndex = 0
     @State private var dragOffset: CGFloat = 0
     let places: [Place] = [
@@ -86,5 +86,5 @@ struct Place: Identifiable {
 }
 
 #Preview {
-    CartView()
+    CardView()
 }
