@@ -9,13 +9,13 @@ import SwiftUI
 import AVFoundation
 
 struct ProductDetailsView: View {
-    @StateObject private var viewModel: ProductDetailsViewModel
+    @StateObject private var viewModel: ProductDetailsVM
     @State private var selectedSection: String?
     @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
     @AppStorage("isCareMode") private var isOlderMode = false
     
     init(productId: String) {
-        _viewModel = StateObject(wrappedValue: ProductDetailsViewModel(productId: productId))
+        _viewModel = StateObject(wrappedValue: ProductDetailsVM(productId: productId))
     }
     
     var body: some View {
@@ -40,7 +40,7 @@ struct ProductDetailsView: View {
 
 struct ProductDetailsContent: View {
     let details: ProductDetails
-    @ObservedObject var viewModel: ProductDetailsViewModel
+    @ObservedObject var viewModel: ProductDetailsVM
     @Binding var selectedSection: String?
     @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
     @AppStorage("isCareMode") private var isOlderMode = false
@@ -225,7 +225,7 @@ struct ErrorView: View {
     }
 }
 
-extension ProductDetailsViewModel {
+extension ProductDetailsVM {
     func updateSpeechRate(forSpeed speed: String) {
         switch speed {
         case "Normal":

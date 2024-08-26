@@ -15,7 +15,7 @@ struct ContentView: View {
                 case 0:
                     HomeView()
                 case 1:
-                    CartView()
+                    CardView()
                 case 2:
                     NavigationView {
                         StoreLocationsView()
