@@ -57,9 +57,8 @@ const Products = () => {
     const fetchManufacturers = async () => {
         try {
             const response = await getAllManufacturersAPI();
-            if (response && response.data && Array.isArray(response.data.records)) {
-                const uniqueManufacturers = [...new Set(response.data.records.map(item => item.manufacturerName))];
-                setManufacturers(uniqueManufacturers);
+            if (response && response.data && Array.isArray(response.data.manufacturerName)) {
+                setManufacturers(response.data.manufacturerName);
             } else {
                 throw new Error("Data is not in the expected format");
             }

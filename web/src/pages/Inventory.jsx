@@ -1,102 +1,146 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Table, Image, Pagination, Select, message, Spin } from 'antd';
+import { getInventoryAPI } from '@/api/user/inventory';
 
-const pharmacyData = [
-    { id: 1, name: '阳光大药房', modelUrl: 'asserts/models/pharmacy1.glb' },
-    { id: 2, name: '康德乐大药房',modelUrl: 'asserts/models/pharmacy2.glb' },
+const { Option } = Select;
 
-];
-
-const PharmacyModel = ({ modelUrl }) => {
-    const groupRef = useRef();
-    const gltf = useLoader(GLTFLoader, modelUrl);
-
-    useFrame(() => {
-        if (groupRef.current) {
-            groupRef.current.rotation.y += 0.005;
-        }
+const InventoryPage = () => {
+    const [inventory, setInventory] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 10,
+        total: 0
     });
+    const [selectedPharmacy, setSelectedPharmacy] = useState(1);
+
+    const pharmacies = [
+        { id: 1, name: 'MediMate Manakau' },
+        { id: 2, name: 'MediMate NewMarket' },
+        { id: 3, name: 'MediMate Mount Albert' },
+        { id: 4, name: 'MediMate Albany' },
+        { id: 5, name: 'MediMate CBD' },
+    ];
 
     useEffect(() => {
-        if (gltf.scene) {
-            gltf.scene.scale.set(4, 4, 4);
-            gltf.scene.position.set(0, -1, 0);
+        fetchInventory();
+    }, [selectedPharmacy, pagination.current, pagination.pageSize]);
+
+    const fetchInventory = async () => {
+        setLoading(true);
+        try {
+            const response = await getInventoryAPI(selectedPharmacy, pagination.current, pagination.pageSize);
+            console.log('API Response:', response);
+
+            if (response && response.code === 1 && response.data) {
+                setInventory(response.data.records);
+                setPagination(prev => ({
+                    ...prev,
+                    total: response.data.total
+                }));
+            } else {
+                console.error('Unexpected response structure:', response);
+                message.error('获取库存信息失败：响应结构异常');
+            }
+        } catch (error) {
+            console.error('Error fetching inventory:', error);
+            message.error('获取库存信息失败，请稍后再试。');
+        } finally {
+            setLoading(false);
         }
-    }, [gltf]);
+    };
 
-    return (
-        <group ref={groupRef}>
-            <primitive object={gltf.scene} />
-        </group>
-    );
-};
+    const columns = [
+        {
+            title: '产品图片',
+            dataIndex: 'imageSrc',
+            key: 'imageSrc',
+            render: (imageSrc) => <Image src={imageSrc} width={50} />,
+        },
+        {
+            title: '产品名称',
+            dataIndex: 'productName',
+            key: 'productName',
+        },
+        {
+            title: '价格',
+            dataIndex: 'productPrice',
+            key: 'productPrice',
+            render: (price) => `$${price.toFixed(2)}`,
+        },
+        {
+            title: '制造商',
+            dataIndex: 'manufacturerName',
+            key: 'manufacturerName',
+        },
+        {
+            title: '库存数量',
+            dataIndex: 'stockQuantity',
+            key: 'stockQuantity',
+        },
+        {
+            title: '货架号',
+            dataIndex: 'shelfNumber',
+            key: 'shelfNumber',
+        },
+        {
+            title: '货架层级',
+            dataIndex: 'shelfLevel',
+            key: 'shelfLevel',
+        },
+    ];
 
-const PharmacyCard = ({ pharmacy, isSelected, onClick }) => {
-    return (
-        <div
-            className={`pharmacy-card ${isSelected ? 'selected' : ''}`}
-            onClick={onClick}
-            style={{
-                width: '300px',
-                height: '400px',
-                margin: '10px',
-                border: isSelected ? '2px solid yellow' : '1px solid #ccc',
-                borderRadius: '10px',
-                overflow: 'hidden',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column'
-            }}
-        >
-            <div style={{ height: '300px' }}>
-                <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
-                    <ambientLight intensity={0.7} />
-                    <pointLight position={[10, 10, 10]} intensity={1} />
-                    <PharmacyModel modelUrl={pharmacy.modelUrl} />
-                    <OrbitControls enablePan={false} enableZoom={false} />
-                </Canvas>
-            </div>
-            <div style={{
-                padding: '10px',
-                textAlign: 'center',
-                backgroundColor: isSelected ? '#f0f0f0' : 'white'
-            }}>
-                <h3>{pharmacy.name}</h3>
-            </div>
-        </div>
-    );
-};
+    const handlePageChange = (page, pageSize) => {
+        setPagination(prev => ({
+            ...prev,
+            current: page,
+            pageSize: pageSize
+        }));
+    };
 
-const PharmacySelector = () => {
-    const [selectedPharmacy, setSelectedPharmacy] = useState(null);
-    const navigate = useNavigate();
-
-    const handleStoreClick = (id) => {
-        setSelectedPharmacy(id);
-        // 可以在这里添加导航逻辑
-        // navigate(`/pharmacy/${id}`);
+    const handlePharmacyChange = (value) => {
+        setSelectedPharmacy(value);
+        setPagination(prev => ({
+            ...prev,
+            current: 1
+        }));
     };
 
     return (
-        <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            padding: '20px'
-        }}>
-            {pharmacyData.map((pharmacy) => (
-                <PharmacyCard
-                    key={pharmacy.id}
-                    pharmacy={pharmacy}
-                    isSelected={selectedPharmacy === pharmacy.id}
-                    onClick={() => handleStoreClick(pharmacy.id)}
-                />
-            ))}
+        <div style={{ padding: '20px' }}>
+            <h1>药房库存管理</h1>
+            <Select
+                style={{ width: 200, marginBottom: 20 }}
+                value={selectedPharmacy}
+                onChange={handlePharmacyChange}
+            >
+                {pharmacies.map(pharmacy => (
+                    <Option key={pharmacy.id} value={pharmacy.id}>{pharmacy.name}</Option>
+                ))}
+            </Select>
+            <Spin spinning={loading}>
+                {inventory.length > 0 ? (
+                    <>
+                        <Table
+                            columns={columns}
+                            dataSource={inventory}
+                            rowKey="productName"
+                            pagination={false}
+                        />
+                        <Pagination
+                            current={pagination.current}
+                            pageSize={pagination.pageSize}
+                            total={pagination.total}
+                            onChange={handlePageChange}
+                            style={{ marginTop: '20px', textAlign: 'right' }}
+                        />
+                    </>
+                ) : (
+                    <div>No inventory data available</div>
+                )}
+            </Spin>
         </div>
     );
 };
 
-export default PharmacySelector;
+export default InventoryPage;

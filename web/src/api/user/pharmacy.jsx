@@ -1,4 +1,4 @@
-import {requestPharmacy} from "@/axios/requestPharmacy.jsx";
+import { requestPharmacy } from "@/axios/requestPharmacy.jsx";
 
 export function getPharmaciesAPI() {
     return requestPharmacy({
@@ -6,3 +6,4 @@ export function getPharmaciesAPI() {
         url: "/detailPharmacy"
     });
 }
+
