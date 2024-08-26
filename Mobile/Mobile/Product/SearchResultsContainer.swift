@@ -7,7 +7,7 @@ struct SearchResultsContainer: View {
     var body: some View {
         Group {
             if isOlderMode {
-                //OlderModeResultsView(HomeVM: viewModel)
+                OlderModeResultsView(HomeVM: viewModel)
             } else {
                 ResultsView(HomeVM: viewModel)
             }

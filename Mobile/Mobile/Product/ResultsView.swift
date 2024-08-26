@@ -11,26 +11,32 @@ struct ResultsView: View {
         NavigationStack {
             ZStack(alignment: .bottomTrailing) {
                 ScrollView {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 170), spacing: 20)], spacing: 20) {
-                        ForEach(HomeVM.products) { product in
-                            if isSelectionMode {
-                                ProductCard(product: product, isSelected: selectedProducts.contains(product.id))
-                                    .onTapGesture {
-                                        toggleSelection(for: product.id)
+                    VStack{
+                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 170), spacing: 20)], spacing: 20) {
+                            ForEach(HomeVM.products) { product in
+                                if isSelectionMode {
+                                    ProductCard(product: product, isSelected: selectedProducts.contains(product.id))
+                                        .onTapGesture {
+                                            toggleSelection(for: product.id)
+                                        }
+                                } else {
+                                    NavigationLink(destination: ProductDetailsView(productId: product.id)) {
+                                        ProductCard(product: product)
                                     }
-                            } else {
-                                NavigationLink(destination: ProductDetailsView(productId: product.id)) {
-                                    ProductCard(product: product)
                                 }
                             }
+                            
+                            if HomeVM.isLoading {
+                                CustomLoadingView()
+                                    .frame(width: 150, height: 150)
+                            }
                         }
+                        .padding()
                         
-                        if HomeVM.isLoading {
-                            CustomLoadingView()
-                                .frame(width: 150, height: 150)
-                        }
+                        //添加底部间距
+                        Spacer()
+                            .frame(height: 100)
                     }
-                    .padding()
                 }
                 .navigationTitle("Results")
                 .navigationBarTitleDisplayMode(.inline)
@@ -67,6 +73,7 @@ struct ResultsView: View {
                 .navigationDestination(isPresented: $navigateToComparison) {
                     ComparisonView(viewModel: ComparisonViewModel(), productIds: Array(selectedProducts))
                 }
+                
             }
         }
     }
