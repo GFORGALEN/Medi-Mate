@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ResultsView: View {
-    @ObservedObject var viewModel: HomeViewModel
+    @ObservedObject var HomeVM: HomeVM
     @StateObject private var comparisonViewModel = ComparisonViewModel()
     @State private var isSelectionMode = false
     @State private var selectedProducts: Set<String> = []
@@ -12,7 +12,7 @@ struct ResultsView: View {
             ZStack(alignment: .bottomTrailing) {
                 ScrollView {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 170), spacing: 20)], spacing: 20) {
-                        ForEach(viewModel.products) { product in
+                        ForEach(HomeVM.products) { product in
                             if isSelectionMode {
                                 ProductCard(product: product, isSelected: selectedProducts.contains(product.id))
                                     .onTapGesture {
@@ -25,8 +25,8 @@ struct ResultsView: View {
                             }
                         }
                         
-                        if viewModel.isLoading {
-                            ProgressView()
+                        if HomeVM.isLoading {
+                            CustomLoadingView()
                                 .frame(width: 150, height: 150)
                         }
                     }
@@ -35,8 +35,8 @@ struct ResultsView: View {
                 .navigationTitle("Results")
                 .navigationBarTitleDisplayMode(.inline)
                 .onAppear {
-                    if viewModel.products.isEmpty {
-                        viewModel.loadMoreProductsIfNeeded(currentProduct: nil)
+                    if HomeVM.products.isEmpty {
+                        HomeVM.loadMoreProductsIfNeeded(currentProduct: nil)
                     }
                 }
                 

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SeniorFriendlyResultsView: View {
-    @ObservedObject var viewModel: HomeViewModel
+    @ObservedObject var viewModel: HomeVM
 
     var body: some View {
         ScrollView {

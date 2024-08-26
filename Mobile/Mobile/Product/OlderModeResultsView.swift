@@ -1,21 +1,21 @@
 import SwiftUI
 
 struct OlderModeResultsView: View {
-    @ObservedObject var viewModel: HomeViewModel
+    @ObservedObject var HomeVM: HomeVM
     
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 30) {  // Increased spacing between cards
-                ForEach(viewModel.products) { product in
+                ForEach(HomeVM.products) { product in
                     NavigationLink(destination: ProductDetailsView(productId: product.productId)) {
                         OlderModeProductCard(product: product)
                     }
                     .onAppear {
-                        viewModel.loadMoreProductsIfNeeded(currentProduct: product)
+                        HomeVM.loadMoreProductsIfNeeded(currentProduct: product)
                     }
                 }
                 
-                if viewModel.isLoading {
+                if HomeVM.isLoading {
                     ProgressView()
                         .frame(height: 100)
                 }

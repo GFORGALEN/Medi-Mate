@@ -3,7 +3,7 @@ import UIKit
 import Combine
 
 @MainActor
-class HomeViewModel: ObservableObject {
+class HomeVM: ObservableObject {
     @Published var searchText = ""
     @Published var image: UIImage?
     @Published var isLoading = false

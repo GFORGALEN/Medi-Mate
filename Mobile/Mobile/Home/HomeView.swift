@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @StateObject private var viewModel = HomeViewModel()
+    @StateObject private var viewModel = HomeVM()
     @State private var isShowingCamera = false
     @FocusState private var isSearchFieldFocused: Bool
     @AppStorage("isCareMode") private var isCareMode = false
@@ -12,6 +12,7 @@ struct HomeView: View {
                 VStack {
                     titleView
                     searchArea
+                    modeToggleButton
                 }
                 .navigationDestination(isPresented: $viewModel.navigateToResults) {
                     SearchResultsContainer(viewModel: viewModel)
@@ -44,10 +45,10 @@ struct HomeView: View {
                         .overlay(
                             CustomLoadingView()
                         )
-                        .allowsHitTesting(true)
+                        .allowsHitTesting(true)                    //阻止用户和遮罩层下的ui元素互动
                 }
             }
-            modeToggleButton
+            
 
         }
         .disabled(viewModel.isLoading)
