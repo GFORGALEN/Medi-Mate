@@ -157,7 +157,7 @@
 			path = CoreApp;
 			sourceTree = "<group>";
 		};
-		611802CD2C769C1700994A83 /* Product */ = {
+		611802CD2C769C1700994A83 /* Result */ = {
 			isa = PBXGroup;
 			children = (
 				D9D44CAA2C6B157000AEA850 /* ResultsView.swift */,
@@ -167,7 +167,7 @@
 				61620A9D2C7597B400C12BEF /* SearchResultsContainer.swift */,
 				61620A9B2C75978A00C12BEF /* OlderModeResultsView.swift */,
 			);
-			path = Product;
+			path = Result;
 			sourceTree = "<group>";
 		};
 		6181D9BF2C6ACD0400CE11CB /* TabBar */ = {
@@ -248,7 +248,7 @@
 				611802CB2C769BB300994A83 /* CoreApp */,
 				611802CA2C769B7C00994A83 /* UIComponent */,
 				611802C92C769B3F00994A83 /* Shop */,
-				611802CD2C769C1700994A83 /* Product */,
+				611802CD2C769C1700994A83 /* Result */,
 				611802C82C769B0B00994A83 /* Comparision */,
 				619AC2E12C6C63520064D8F1 /* Home */,
 				619AC2E02C6C62AB0064D8F1 /* Authentication */,
