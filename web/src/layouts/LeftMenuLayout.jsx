@@ -19,6 +19,11 @@ const items = [
         icon: <InboxOutlined />,
         label: 'Inventory',
     },
+    {
+        key: '/pharmacies',
+        icon: <InboxOutlined />,
+        label: 'Pharmacies',
+    },
 ];
 
 const LeftMenuLayout = () => {
