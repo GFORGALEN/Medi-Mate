@@ -102,8 +102,8 @@ def parse_product_details(driver, url):
             common_uses, ingredients, directions, image_src]
 
 
-def save_to_csv(data, filename='C:\\Users\\products_info.csv'):
-    with open(filename, mode='w', newline='', encoding='utf-8') as file:
+def save_to_csv(data, filename):
+    with open(filename, mode='a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(
             ['Product Name', 'Product Price', 'Manufacturer Name', 'Product ID', 'General Information',
@@ -120,8 +120,6 @@ def main():
         "https://www.chemistwarehouse.co.nz/shop-online/20/baby-care",
         "https://www.chemistwarehouse.co.nz/shop-online/1093/cold-flu",
         "https://www.chemistwarehouse.co.nz/shop-online/159/oral-hygiene-and-dental-care",
-        "https://www.chemistwarehouse.co.nz/shop-online/792/household",
-        "https://www.chemistwarehouse.co.nz/shop-online/129/hair-care",
         "https://www.chemistwarehouse.co.nz/shop-online/3240/clearance"
     ]
 
@@ -130,7 +128,11 @@ def main():
     options.add_argument("--disable-notifications")
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-    all_products_info = []
+    # CSV文件路径
+    csv_filename = 'C:\\Users\\TZQ\\OneDrive\\桌面\\UOA\\778\\FriedChicken\\products_info.csv'
+
+    # 首次运行时创建CSV文件并写入标题行
+    save_to_csv([], csv_filename)  # 确保CSV文件存在
 
     for base_url in base_urls:
         all_product_links = []
@@ -155,10 +157,11 @@ def main():
         for link in all_product_links:
             fetch_page(driver, link)
             product_info = parse_product_details(driver, link)
-            all_products_info.append(product_info)
+
+            # 立即保存每个产品的信息
+            save_to_csv([product_info], csv_filename)
             time.sleep(1)
 
-    save_to_csv(all_products_info)
     driver.quit()
 
 

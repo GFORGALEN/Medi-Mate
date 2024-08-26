@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Form, Input, InputNumber, Button, Spin, message, Image } from 'antd';
-import { getProductByIdAPI, updateProductAPI } from "@/api/user/Products.jsx";
+import { getProductByIdAPI, updateProductAPI } from "@/api/user/products.jsx";
 import { useParams, useNavigate } from 'react-router-dom';
 
 const { TextArea } = Input;

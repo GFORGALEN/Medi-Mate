@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import {Table, Input, message, Modal, Button,Select } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { SearchOutlined } from '@ant-design/icons';
-import { getProductsAPI, getAllManufacturersAPI } from "@/api/user/Products.jsx";
+import { getProductsAPI, getAllManufacturersAPI } from "@/api/user/products.jsx";
 import { Link, useNavigate } from 'react-router-dom';
 
 const { Search } = Input;

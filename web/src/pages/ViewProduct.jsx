@@ -2,7 +2,7 @@ import { Card, Typography, Descriptions, Image, Divider, Button } from 'antd';
 import { useState, useEffect } from 'react';
 import { Spin, message } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
-import { getProductByIdAPI } from "@/api/user/Products.jsx";
+import { getProductByIdAPI } from "@/api/user/products.jsx";
 import { useNavigate, useParams } from 'react-router-dom';
 
 const { Title, Paragraph } = Typography;

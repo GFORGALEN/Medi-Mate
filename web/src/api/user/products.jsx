@@ -29,7 +29,7 @@ export function getAllManufacturersAPI() {
         url: "/allProductsDetail",
         params: {
             page: 1,
-            pageSize: 1000,  // 假设制造商数量不会超过1000
+            pageSize: 10,  // 假设制造商数量不会超过1000
             productName: "",
             manufacture: ""
         }
