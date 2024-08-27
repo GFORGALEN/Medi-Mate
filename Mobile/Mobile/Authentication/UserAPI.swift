@@ -37,7 +37,7 @@ class UserAPIService {
         
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
-            
+            print(data, response)
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw APIError.invalidResponse
             }
