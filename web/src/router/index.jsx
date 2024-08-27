@@ -1,4 +1,5 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
+import TLogin from "@/pages/TLogin.jsx";
 import Login from "@/pages/Login.jsx";
 import DashBoardLayout from "@/layouts/DashBoardLayout.jsx";
 import Products from "@/pages/Products.jsx";
@@ -16,7 +17,7 @@ const router = createBrowserRouter([
     },
     {
         path: '/login',
-        element: <Login />,
+        element: <TLogin />,
     },
     {
         path: '/',
