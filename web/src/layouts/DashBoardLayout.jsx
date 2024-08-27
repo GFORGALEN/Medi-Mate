@@ -62,6 +62,7 @@ const DashboardLayout = () => {
             <HeaderLayout />
           </Header>
 
+
           <Layout className="overflow-hidden">
             <Content className="p-6 m-4 bg-white rounded-lg shadow-md overflow-y-auto h-[calc(100vh-112px)]">
               <Outlet />
