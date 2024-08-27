@@ -66,7 +66,7 @@ const DashBoardLayout = () => {
         >
             <Layout className="min-h-screen">
                 <Sider collapsible collapsed={leftCollapsed} onCollapse={toggleLeftCollapsed}>
-                    <div className="logo p-4">
+                    <div className="logo p-4 ">
                         <img
                             src={logo}
                             alt="Company Logo"

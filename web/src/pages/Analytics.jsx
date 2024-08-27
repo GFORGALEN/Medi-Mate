@@ -9,10 +9,10 @@ const {Content} = Layout;
 const {Option} = Select;
 
 const ProductAnalytics = () => {
-    const [loading, setLoading] = useState(true);
-    const [products, setProducts] = useState([]);
-    const [manufacturers, setManufacturers] = useState([]);
-    const [selectedManufacturer, setSelectedManufacturer] = useState("");
+    const [loading, setLoading] = useState(true); // loading state  
+    const [products, setProducts] = useState([]); // products state
+    const [manufacturers, setManufacturers] = useState([]); // manufacturers state
+    const [selectedManufacturer, setSelectedManufacturer] = useState(""); // selected manufacturer state
 
     useEffect(() => {
         fetchData();
@@ -171,29 +171,75 @@ const ProductAnalytics = () => {
         };
     };
 
-    const getPriceVsProductCountOption = () => {
-        const priceGroups = filteredProducts.reduce((acc, product) => {
-            const price = Math.floor(parseFloat(product.productPrice) / 10) * 10;
-            acc[price] = (acc[price] || 0) + 1;
-            return acc;
-        }, {});
-
-        const data = Object.entries(priceGroups)
-            .map(([price, count]) => [parseFloat(price), count])
-            .sort((a, b) => a[0] - b[0]);
-
+    const getPriceBoxPlotOption = () => {
+        // 提取所有价格
+        const prices = filteredProducts.map(product => parseFloat(product.productPrice)).sort((a, b) => a - b);
+        
+        // 计算四分位数和中位数
+        const q1 = prices[Math.floor(prices.length * 0.25)];
+        const median = prices[Math.floor(prices.length * 0.5)];
+        const q3 = prices[Math.floor(prices.length * 0.75)];
+        const iqr = q3 - q1;
+        
+        // 计算上下须的范围
+        const lowerWhisker = Math.max(q1 - 1.5 * iqr, prices[0]);
+        const upperWhisker = Math.min(q3 + 1.5 * iqr, prices[prices.length - 1]);
+        
+        // 找出异常值
+        const outliers = prices.filter(price => price < lowerWhisker || price > upperWhisker);
+    
         return {
-            title: {text: 'Price vs Product Count', left: 'center'},
-            tooltip: {trigger: 'axis'},
-            xAxis: {type: 'value', name: 'Price ($)', min: 'dataMin', max: 'dataMax'},
-            yAxis: {type: 'value', name: 'Number of Products'},
-            series: [{
-                name: 'Products',
-                type: 'scatter',
-                data: data,
-                symbolSize: 10,
-                itemStyle: {color: '#ee6666'}
-            }]
+            title: {text: 'Price Distribution', left: 'center'},
+            tooltip: {
+                formatter: function(params) {
+                    if (params.seriesIndex === 1) {
+                        return `$${params.data.toFixed(2)}`;
+                    }
+                    return `
+                        Upper Whisker: $${upperWhisker.toFixed(2)}<br/>
+                        Q3: $${q3.toFixed(2)}<br/>
+                        Median: $${median.toFixed(2)}<br/>
+                        Q1: $${q1.toFixed(2)}<br/>
+                        Lower Whisker: $${lowerWhisker.toFixed(2)}
+                    `;
+                }
+            },
+            yAxis: {
+                type: 'category',
+                data: ['Price Distribution'],
+                boundaryGap: true,
+                nameGap: 30,
+                splitArea: {show: false},
+                axisLabel: {show: false},
+                splitLine: {show: false}
+            },
+            xAxis: {
+                type: 'value',
+                name: 'Price ($)',
+                splitArea: {show: true}
+            },
+            series: [
+                {
+                    name: 'boxplot',
+                    type: 'boxplot',
+                    data: [
+                        [lowerWhisker, q1, median, q3, upperWhisker]
+                    ],
+                    itemStyle: {
+                        color: '#91cc75',
+                        borderColor: '#5470c6'
+                    },
+                    layout: 'horizontal'
+                },
+                {
+                    name: 'outliers',
+                    type: 'scatter',
+                    data: outliers,
+                    itemStyle: {
+                        color: '#ee6666'
+                    }
+                }
+            ]
         };
     };
 
@@ -222,8 +268,8 @@ const ProductAnalytics = () => {
                         <Card title="Top 10 Manufacturers">
                             <ReactECharts option={getTopManufacturersOption()} style={{height: '400px'}}/>
                         </Card>
-                        <Card title="Price vs Product Count" className="col-span-1 md:col-span-2">
-                            <ReactECharts option={getPriceVsProductCountOption()} style={{height: '400px'}}/>
+                        <Card title="Price Distribution" className="col-span-1 md:col-span-2">
+                            <ReactECharts option={getPriceBoxPlotOption()} style={{height: '400px'}}/>
                         </Card>
                         <Card title="3D Scatter Plot" className="col-span-1 md:col-span-2">
                             <ReactECharts
