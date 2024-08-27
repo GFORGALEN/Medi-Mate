@@ -44,13 +44,9 @@ const DataFetchingProductForm = () => {
     const onFinish = async (values) => {
         setSubmitting(true);
         try {
-            const response = await updateProductAPI(productId, values);
-            if (response && response.data) {
-                message.success('Product updated successfully');
-                navigate(`/products/productDetail/${productId}`); // Redirect to product detail page
-            } else {
-                message.error('Failed to update product');
-            }
+await updateProductAPI(productId, values);
+            message.success('Product updated successfully');
+            navigate(`/products/productDetail/view/${productId}`); // Redirect to product detail page
         } catch (error) {
             console.error('Error updating product:', error);
             message.error('Failed to update product');
