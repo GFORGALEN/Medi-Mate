@@ -43,7 +43,7 @@ public class UserInfoController {
         return Result.success(userInfoService.getUserInfo(userInfoDTO));
     }
 
-    @PostMapping("/updateUserInfo")
+    @PutMapping("/updateUserInfo")
     @Operation(summary = "Change User detail information.",
             description = "Change User detail information by user ID.",
             security = @SecurityRequirement(name = "bearerAuth"))

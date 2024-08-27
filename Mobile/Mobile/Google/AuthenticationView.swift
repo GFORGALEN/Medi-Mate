@@ -7,11 +7,14 @@ import FirebaseAuth
 
 class AuthenticationView: ObservableObject {
     @Published var isLoginSuccessed = false
+    @Published var loginError = ""
     @Published var currentUser: User?
     @Published var userEmail: String = ""
     @Published var userName: String = ""
     @Published var userPicURL: URL?
     @Published var userId: String = ""
+    @Published var token: String = ""
+    
     @Published var errorMessage: String?
     
     private let apiService = UserAPIService.shared
@@ -77,7 +80,8 @@ class AuthenticationView: ObservableObject {
         
         Task {
             do {
-                let _: GoogleLoginResponse = try await apiService.request(
+                let response: GoogleLoginResponseAPI = try await apiService.request(
+                    
                     endpoint: "google-login",
                     method: "POST",
                     body: [
@@ -88,15 +92,63 @@ class AuthenticationView: ObservableObject {
                     ]
                 )
                 await MainActor.run {
-                    print("User successfully stored in database")
-                    // Update user information if needed based on the response
-                    // For example:
-                    // self.userId = response.userId ?? self.userId
+                    if response.code == 1 { // Assuming code 1 means success
+                        // Store response data
+                        self.userId = response.data.userId
+                        self.userName = response.data.username
+                        self.userEmail = response.data.email
+//                        self.userPicURL = response.data.userPicUR< ?? ""
+                        self.token = response.data.token
+                        
+//                        // Update AuthenticationView properties
+//                        authViewModel.isLoginSuccessed = true
+//                        authViewModel.userEmail = self.userEmail
+//                        authViewModel.userName = self.username
+//                        authViewModel.userPicURL = URL(string: self.userPic)
+//                        authViewModel.userId = self.userId
+                        
+                        // Print response data to console
+                        self.printLoginResponse()
+                    } else {
+                        // Handle case where login was not successful
+                        loginError = response.msg ?? "Login failed for unknown reason"
+                        print("Login Error: \(loginError)")
+                    }
                 }
             } catch {
-                // Error handling code...
+                await MainActor.run {
+                    self.handleLoginError(error)
+                }
             }
+//                await MainActor.run {
+//                    print("User successfully stored in database")
+//                    print("Google Login Response: \(response)")
+//                    // Update user information if needed based on the response
+//                    // For example:
+//                    // self.userId = response.userId ?? self.userId
+//                }
+//            } catch {
+//                // Error handling code...
+//            }
         }
+    }
+    private func handleLoginError(_ error: Error) {
+        if let apiError = error as? APIError {
+            switch apiError {
+            case .serverError(let message):
+                loginError = "Server error: \(message)"
+            case .invalidResponse:
+                loginError = "Invalid response from server"
+            case .decodingError:
+                loginError = "Error decoding server response"
+            default:
+                loginError = "An unexpected error occurred"
+            }
+        } else {
+            loginError = "An unexpected error occurred: \(error.localizedDescription)"
+        }
+        print("Login Error: \(loginError)")
+        print("Full error details: \(error)")
     }
     
     func logout() async throws {
@@ -111,10 +163,38 @@ class AuthenticationView: ObservableObject {
         userId = ""
         errorMessage = nil
     }
+    private func printLoginResponse() {
+        let responseData = """
+        Login Successful!
+        User ID: \(userId)
+        Username: \(userName)
+        Email: \(userEmail)
+
+        Token: \(token)
+        """
+        print(responseData)
+    }
+    
+    
 }
+
+
 
 struct GoogleLoginResponse: Codable {
     let userId: String?
     let email: String?
+    let googleId : String?
+    let username : String?
+    let nickname: String?
+    let userPic : String?
+    let token : String?
+    
     // Add other fields as needed based on your API response
 }
+
+struct GoogleLoginResponseAPI: Codable {
+    let code: Int
+    let msg: String?
+    let data: UserData
+}
+

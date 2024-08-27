@@ -33,9 +33,11 @@ class ProductDetailsVM: ObservableObject {
     }
     
     private func parseProductDetails(from jsonString: String) throws -> ProductDetails {
+        
         guard let jsonData = jsonString.data(using: .utf8) else {
             throw NSError(domain: "ParsingError", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid JSON string"])
         }
+        
         
         let decoder = JSONDecoder()
         let response = try decoder.decode(APIResponse<ProductDetails>.self, from: jsonData)

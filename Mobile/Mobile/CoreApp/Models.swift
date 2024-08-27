@@ -99,11 +99,11 @@ struct ProductDetails: Codable {
     let productName: String
     let productPrice: String
     let manufacturerName: String
-    let generalInformation: String
-    let warnings: String
-    let commonUse: String
-    let ingredients: String
-    let directions: String
+    let generalInformation: String?
+    let warnings: String?
+    let commonUse: String?
+    let ingredients: String?
+    let directions: String?
     let imageSrc: String
     let summary: String
 }
