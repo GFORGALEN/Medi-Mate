@@ -257,7 +257,7 @@ const Products = () => {
                     showQuickJumper: true,
                 }}
                 onChange={handleTableChange}
-                scroll={{ x: '100vw', y: 'calc(100vh - 410px)' }}
+                scroll={{ x: '100vw', y: 'calc(100vh - 420px)' }}
                 rowKey="productId"
                 className="text-base"
             />

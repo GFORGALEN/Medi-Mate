@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Table, Image, Pagination, Select, message, Spin } from 'antd';
 import { getInventoryAPI } from '@/api/user/inventory';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
 const InventoryPage = () => {
+    const { pharmacyId: routePharmacyId } = useParams();
+    const navigate = useNavigate();
     const [inventory, setInventory] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
@@ -12,7 +15,7 @@ const InventoryPage = () => {
         pageSize: 10,
         total: 0
     });
-    const [selectedPharmacy, setSelectedPharmacy] = useState(1);
+    const [selectedPharmacy, setSelectedPharmacy] = useState(routePharmacyId ? parseInt(routePharmacyId) : 1);
 
     const pharmacies = [
         { id: 1, name: 'MediMate Manakau' },
@@ -49,42 +52,41 @@ const InventoryPage = () => {
             setLoading(false);
         }
     };
-
     const columns = [
         {
-            title: '产品图片',
+            title: 'Image',
             dataIndex: 'imageSrc',
             key: 'imageSrc',
             render: (imageSrc) => <Image src={imageSrc} width={50} />,
         },
         {
-            title: '产品名称',
+            title: 'Product Name',
             dataIndex: 'productName',
             key: 'productName',
         },
         {
-            title: '价格',
+            title: 'Price',
             dataIndex: 'productPrice',
             key: 'productPrice',
             render: (price) => `$${price.toFixed(2)}`,
         },
         {
-            title: '制造商',
+            title: 'Manufacturer',
             dataIndex: 'manufacturerName',
             key: 'manufacturerName',
         },
         {
-            title: '库存数量',
+            title: 'Stock Quantity',
             dataIndex: 'stockQuantity',
             key: 'stockQuantity',
         },
         {
-            title: '货架号',
+            title: 'Shelf Number',
             dataIndex: 'shelfNumber',
             key: 'shelfNumber',
         },
         {
-            title: '货架层级',
+            title: 'Shelf Level',
             dataIndex: 'shelfLevel',
             key: 'shelfLevel',
         },
@@ -104,11 +106,12 @@ const InventoryPage = () => {
             ...prev,
             current: 1
         }));
+        navigate(`/inventory/${value}`);
     };
 
     return (
         <div style={{ padding: '20px' }}>
-            <h1>药房库存管理</h1>
+            <h1>Pharmacy inventory management</h1>
             <Select
                 style={{ width: 200, marginBottom: 20 }}
                 value={selectedPharmacy}
