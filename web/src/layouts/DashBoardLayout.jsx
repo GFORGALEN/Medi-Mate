@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { ConfigProvider, Layout, Button } from 'antd';
 import {
     MenuFoldOutlined,
@@ -89,7 +89,7 @@ const DashBoardLayout = () => {
                         </Button>
                     </Header>
                     <Layout className="overflow-hidden">
-                        <Content className="p-6 m-4 bg-white rounded-lg shadow-md overflow-y-auto h-[calc(100vh-112px)]">
+                        <Content className="p-6 m-4 bg-white rounded-lg shadow-md overflow-y-auto">
                             <Outlet />
                         </Content>
                         <Sider

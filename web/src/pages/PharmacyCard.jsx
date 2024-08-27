@@ -5,9 +5,9 @@ import { Spin, Button, message } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { getImagePath, getGoogleMapsUrl } from '../utils/utils';
 import { getPharmaciesAPI } from '@/api/user/pharmacy';
-import useGoogleMapsApi from '@/hook/useGoogleMapsApi.jsx'; // 假设这是您的自定义hook
+import useGoogleMapsApi from '@/hook/useGoogleMapsApi.jsx';
 
-const PharmacySingleMapCard = () => {
+const PharmacyMapWithCards = () => {
     const navigate = useNavigate();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [map, setMap] = useState(null);
@@ -37,10 +37,10 @@ const PharmacySingleMapCard = () => {
 
     const mapContainerStyle = {
         width: '100%',
-        height: 'calc(100vh - 200px)' // Adjust this value based on your card height
+        height: '100vh'
     };
 
-    const defaultCenter = { lat: -36.8485, lng: 174.7633 }; // Auckland coordinates
+    const defaultCenter = { lat: -36.8485, lng: 174.7633 };
 
     const currentPharmacy = pharmacies[currentIndex] || null;
     const center = currentPharmacy
@@ -92,7 +92,7 @@ const PharmacySingleMapCard = () => {
     }
 
     return (
-        <div className="w-full h-screen flex flex-col">
+        <div className="relative w-full">
             {isMapLoaded ? (
                 <GoogleMap
                     mapContainerStyle={mapContainerStyle}
@@ -100,7 +100,18 @@ const PharmacySingleMapCard = () => {
                     zoom={15}
                     onLoad={onMapLoad}
                 >
-                    {currentPharmacy && <Marker position={center} />}
+                    {pharmacies.map((pharmacy, index) => (
+                        <Marker
+                            key={pharmacy.pharmacyId}
+                            position={{
+                                lat: parseFloat(pharmacy.latitude),
+                                lng: parseFloat(pharmacy.longitude)
+                            }}
+                            icon={index === currentIndex ? {
+                                url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+                            } : undefined}
+                        />
+                    ))}
                 </GoogleMap>
             ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gray-200">
@@ -109,7 +120,7 @@ const PharmacySingleMapCard = () => {
             )}
 
             {currentPharmacy && (
-                <div className="bg-white shadow-md overflow-hidden">
+                <div className="absolute bottom-0 left-0 right-0 bg-white shadow-md overflow-hidden">
                     <div className="flex p-4 items-center">
                         <Button icon={<LeftOutlined />} onClick={handlePrevious} className="mr-2" />
                         <div className="flex-grow flex">
@@ -146,4 +157,4 @@ const PharmacySingleMapCard = () => {
     );
 };
 
-export default PharmacySingleMapCard;
+export default PharmacyMapWithCards;
