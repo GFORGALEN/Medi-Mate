@@ -27,6 +27,7 @@ struct ProductDetailsView: View {
             case .loaded(let details):
                 ProductDetailsContent(details: details, viewModel: viewModel, selectedSection: $selectedSection)
             case .error(let error):
+
                 ErrorView(error: error, retryAction: { Task { await viewModel.loadProductDetails() } })
             }
         }
@@ -174,11 +175,11 @@ struct ProductDetailsContent: View {
     private var contentSections: some View {
         VStack(alignment: .leading, spacing: isOlderMode ? 25 : 20) {
             ForEach([
-                ("General Information", details.generalInformation),
-                ("Warnings", details.warnings),
-                ("Common Use", details.commonUse),
-                ("Ingredients", details.ingredients),
-                ("Directions", details.directions)
+                ("General Information", details.generalInformation ?? "Not Available"),
+                ("Warnings", details.warnings ?? "Not Available"),
+                ("Common Use", details.commonUse ?? "Not Available"),
+                ("Ingredients", details.ingredients ?? "Not Available"),
+                ("Directions", details.directions ?? "Not Available")
             ], id: \.0) { title, content in
                 DisclosureGroup(
                     isExpanded: Binding(
