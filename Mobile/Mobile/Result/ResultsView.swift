@@ -16,15 +16,14 @@ struct ResultsView: View {
                             Spacer()
                             Text("Sorry There is no result, please re-enter the keyword or take a clearer picture of the front of the package.")
                                 .font(.system(size: 30, weight: .bold))
-                                //.foregroundColor(.red)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .padding()
                             Spacer()
                         }
                     } else {
-                        VStack {
-                            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 170), spacing: 20)], spacing: 20) {
-                                ForEach(HomeVM.products) { product in
+                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 170), spacing: 20)], spacing: 20) {
+                            ForEach(HomeVM.products) { product in
+                                Group {
                                     if isSelectionMode {
                                         ProductCard(product: product, isSelected: selectedProducts.contains(product.id))
                                             .onTapGesture {
@@ -36,14 +35,17 @@ struct ResultsView: View {
                                         }
                                     }
                                 }
-
-                                if HomeVM.isLoading {
-                                    CustomLoadingView()
-                                        .frame(width: 150, height: 150)
+                                .onAppear {
+                                    HomeVM.loadMoreProductsIfNeeded(currentProduct: product)
                                 }
                             }
-                            .padding()
+
+                            if HomeVM.isLoading {
+                                CustomLoadingView()
+                                    .frame(width: 150, height: 150)
+                            }
                         }
+                        .padding()
 
                         // Add bottom spacing
                         Spacer()
@@ -52,11 +54,6 @@ struct ResultsView: View {
                 }
                 .navigationTitle("Results")
                 .navigationBarTitleDisplayMode(.inline)
-                .onAppear {
-                    if HomeVM.products.isEmpty {
-                        HomeVM.loadMoreProductsIfNeeded(currentProduct: nil)
-                    }
-                }
 
                 if !HomeVM.products.isEmpty {
                     Button(action: {
@@ -90,6 +87,9 @@ struct ResultsView: View {
             }
         }
     }
+
+    // ... rest of the code remains the same
+
 
     private func toggleSelection(for id: String) {
         if selectedProducts.contains(id) {
