@@ -242,7 +242,59 @@ const ProductAnalytics = () => {
             ]
         };
     };
+    const generateAnalysisReport = () => {
+        const priceStats = calculatePriceStats(filteredProducts);
+        const topManufacturers = getTopManufacturers(products, 5);
 
+        return (
+            <Card title="Analysis Report" className="col-span-1 md:col-span-2 mt-6">
+                <h3 className="font-bold mb-2">Price Analysis:</h3>
+                <p>Average Price: ${priceStats.average.toFixed(2)}</p>
+                <p>Median Price: ${priceStats.median.toFixed(2)}</p>
+                <p>Price Range: ${priceStats.min.toFixed(2)} - ${priceStats.max.toFixed(2)}</p>
+
+                <h3 className="font-bold mt-4 mb-2">Top 5 Manufacturers:</h3>
+                <ul>
+                    {topManufacturers.map((m, index) => (
+                        <li key={index}>{m[0]}: {m[1]} products</li>
+                    ))}
+                </ul>
+
+                <h3 className="font-bold mt-4 mb-2">Product Distribution:</h3>
+                <p>Total Products: {filteredProducts.length}</p>
+                <p>Products under $50: {filteredProducts.filter(p => parseFloat(p.productPrice) < 50).length}</p>
+                <p>Products $50 - $200: {filteredProducts.filter(p => parseFloat(p.productPrice) >= 50 && parseFloat(p.productPrice) < 200).length}</p>
+                <p>Products over $200: {filteredProducts.filter(p => parseFloat(p.productPrice) >= 200).length}</p>
+
+                <h3 className="font-bold mt-4 mb-2">Insights:</h3>
+                <p>- The majority of products are priced between ${priceStats.q1.toFixed(2)} and ${priceStats.q3.toFixed(2)}.</p>
+                <p>- {topManufacturers[0][0]} is the leading manufacturer with {topManufacturers[0][1]} products.</p>
+                <p>- There is a {priceStats.outliers.length > 0 ? "significant" : "minimal"} number of price outliers, which may represent specialty or premium products.</p>
+            </Card>
+        );
+    };
+    const calculatePriceStats = (products) => {
+        const prices = products.map(p => parseFloat(p.productPrice)).sort((a, b) => a - b);
+        const len = prices.length;
+        return {
+            min: prices[0],
+            max: prices[len - 1],
+            average: prices.reduce((sum, price) => sum + price, 0) / len,
+            median: len % 2 === 0 ? (prices[len/2 - 1] + prices[len/2]) / 2 : prices[Math.floor(len/2)],
+            q1: prices[Math.floor(len * 0.25)],
+            q3: prices[Math.floor(len * 0.75)],
+            outliers: prices.filter(p => p < prices[Math.floor(len * 0.25)] - 1.5 * (prices[Math.floor(len * 0.75)] - prices[Math.floor(len * 0.25)]) ||
+                p > prices[Math.floor(len * 0.75)] + 1.5 * (prices[Math.floor(len * 0.75)] - prices[Math.floor(len * 0.25)]))
+        };
+    };
+
+    const getTopManufacturers = (products, count) => {
+        const manufacturerCounts = products.reduce((acc, product) => {
+            acc[product.manufacturerName] = (acc[product.manufacturerName] || 0) + 1;
+            return acc;
+        }, {});
+        return Object.entries(manufacturerCounts).sort((a, b) => b[1] - a[1]).slice(0, count);
+    };
     return (
         <Layout>
             <Content className="p-6">
@@ -278,6 +330,7 @@ const ProductAnalytics = () => {
                                 echarts={echarts}
                             />
                         </Card>
+                        {generateAnalysisReport()}
                     </div>
                 )}
             </Content>
