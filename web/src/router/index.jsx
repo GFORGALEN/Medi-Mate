@@ -8,11 +8,12 @@ import NewProductForm from "@/pages/NewAddProduct.jsx";
 import ProductAnalytics from "@/pages/Analytics.jsx";
 import Inventory from "@/pages/Inventory.jsx";
 import Pharmacies from "@/pages/Pharmacies.jsx";
+import PharmacyInventory from "@/pages/PharmacyInventory.jsx";
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <Navigate to="/login" replace />, // 将根路径重定向到登录页面
+        element: <Navigate to="/login" replace />,
     },
     {
         path: '/login',
@@ -50,7 +51,10 @@ const router = createBrowserRouter([
                 path: 'pharmacies',
                 element: <Pharmacies />,
             },
-
+            {
+                path: 'inventory/:pharmacyId',
+                element: <PharmacyInventory />,
+            },
         ],
     },
 ]);

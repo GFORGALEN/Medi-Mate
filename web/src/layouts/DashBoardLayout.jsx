@@ -64,7 +64,7 @@ const DashBoardLayout = () => {
                 },
             }}
         >
-            <Layout className="min-h-screen">
+            <Layout className="h-screen overflow-hidden">
                 <Sider collapsible collapsed={leftCollapsed} onCollapse={toggleLeftCollapsed}>
                     <div className="logo p-4">
                         <img
@@ -88,8 +88,8 @@ const DashBoardLayout = () => {
                             Logout
                         </Button>
                     </Header>
-                    <Layout>
-                        <Content className="p-6 m-4 bg-white rounded-lg shadow-md">
+                    <Layout className="overflow-hidden">
+                        <Content className="p-6 m-4 bg-white rounded-lg shadow-md overflow-y-auto h-[calc(100vh-112px)]">
                             <Outlet />
                         </Content>
                         <Sider
@@ -113,7 +113,6 @@ const DashBoardLayout = () => {
                             {!rightCollapsed && <div className="p-4 text-gray-600">Right Sidebar Content</div>}
                         </Sider>
                     </Layout>
-
                 </Layout>
             </Layout>
         </ConfigProvider>

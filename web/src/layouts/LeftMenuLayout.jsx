@@ -15,11 +15,6 @@ const items = [
         label: 'Products',
     },
     {
-        key: '/inventory',
-        icon: <InboxOutlined />,
-        label: 'Inventory',
-    },
-    {
         key: '/pharmacies',
         icon: <InboxOutlined />,
         label: 'Pharmacies',
