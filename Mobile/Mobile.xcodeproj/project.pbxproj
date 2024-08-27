@@ -11,6 +11,8 @@
 		6114B8152C6AC9DF00AA866C /* AnimatedTabBar in Frameworks */ = {isa = PBXBuildFile; productRef = 6114B8142C6AC9DF00AA866C /* AnimatedTabBar */; };
 		61620A9C2C75978A00C12BEF /* CareResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61620A9B2C75978A00C12BEF /* CareResultView.swift */; };
 		61620A9E2C7597B400C12BEF /* SearchResultsContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61620A9D2C7597B400C12BEF /* SearchResultsContainer.swift */; };
+		6162E5FD2C7E89540015E0D8 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6162E5FC2C7E89540015E0D8 /* EditProfileView.swift */; };
+		6162E5FF2C7E89800015E0D8 /* ChangePassWordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6162E5FE2C7E89800015E0D8 /* ChangePassWordView.swift */; };
 		619AC2C32C6B21360064D8F1 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619AC2C22C6B21360064D8F1 /* LoginViewModel.swift */; };
 		619AC2C72C6C15260064D8F1 /* ShopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619AC2C62C6C15250064D8F1 /* ShopViewModel.swift */; };
 		619AC2CF2C6C36EF0064D8F1 /* ShopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619AC2CE2C6C36EF0064D8F1 /* ShopView.swift */; };
@@ -58,6 +60,8 @@
 		6114B8112C6AC9B800AA866C /* KeyFrameWiggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyFrameWiggleButton.swift; sourceTree = "<group>"; };
 		61620A9B2C75978A00C12BEF /* CareResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareResultView.swift; sourceTree = "<group>"; };
 		61620A9D2C7597B400C12BEF /* SearchResultsContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsContainer.swift; sourceTree = "<group>"; };
+		6162E5FC2C7E89540015E0D8 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
+		6162E5FE2C7E89800015E0D8 /* ChangePassWordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePassWordView.swift; sourceTree = "<group>"; };
 		619AC2C22C6B21360064D8F1 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		619AC2C62C6C15250064D8F1 /* ShopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopViewModel.swift; sourceTree = "<group>"; };
 		619AC2CE2C6C36EF0064D8F1 /* ShopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopView.swift; sourceTree = "<group>"; };
@@ -208,6 +212,8 @@
 				D98C8B902C632FB80022544C /* RegisterViewModel.swift */,
 				D9B82B572C620D7900C5AFEB /* RegisterView.swift */,
 				61CDE9932C6F008D006E1AA5 /* UserAPI.swift */,
+				6162E5FC2C7E89540015E0D8 /* EditProfileView.swift */,
+				6162E5FE2C7E89800015E0D8 /* ChangePassWordView.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -351,6 +357,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				61DC84A22C6232FF0048463E /* Application.swift in Sources */,
+				6162E5FF2C7E89800015E0D8 /* ChangePassWordView.swift in Sources */,
 				D9733C7A2C6F0348003F5990 /* Service.swift in Sources */,
 				619AC2DD2C6C52940064D8F1 /* MapView.swift in Sources */,
 				61620A9C2C75978A00C12BEF /* CareResultView.swift in Sources */,
@@ -376,6 +383,7 @@
 				D9698F662C758E400004204A /* ComparisonView.swift in Sources */,
 				619AC2D72C6C3F3F0064D8F1 /* StoreLocationsView.swift in Sources */,
 				D9B82B5A2C62125200C5AFEB /* HomeView.swift in Sources */,
+				6162E5FD2C7E89540015E0D8 /* EditProfileView.swift in Sources */,
 				61DC84A02C6232B50048463E /* AuthenticationView.swift in Sources */,
 				D9698F642C758E330004204A /* ComparisonViewModel.swift in Sources */,
 				D98C8B8F2C6326750022544C /* Constant.swift in Sources */,
