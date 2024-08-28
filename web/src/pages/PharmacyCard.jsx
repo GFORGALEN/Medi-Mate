@@ -76,7 +76,7 @@ const PharmacyMapWithCards = ({ onPharmaciesLoaded, currentIndex }) => {
                     height: '100%',
                 }}
                 center={center}
-                zoom={18}
+                zoom={17}
                 onLoad={onMapLoad}
             >
                 {pharmacies.map((pharmacy, index) => {
