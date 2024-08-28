@@ -47,7 +47,6 @@ struct ResultsView: View {
                         }
                         .padding()
 
-                        // Add bottom spacing
                         Spacer()
                             .frame(height: 100)
                     }
@@ -56,27 +55,7 @@ struct ResultsView: View {
                 .navigationBarTitleDisplayMode(.inline)
 
                 if !HomeVM.products.isEmpty {
-                    Button(action: {
-                        if isSelectionMode && !selectedProducts.isEmpty {
-                            navigateToComparison = true
-                        } else {
-                            isSelectionMode.toggle()
-                            selectedProducts.removeAll()
-                        }
-                    }) {
-                        Text(isSelectionMode ? "Compare (\(selectedProducts.count))" : "Compare")
-                            .font(.title2)
-                            .bold()
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(width: 200, height: 60)
-                            .background(isSelectionMode ? Color.blue : Color.black)
-                            .cornerRadius(25)
-                            .shadow(color: .gray, radius: 3, x: 1, y: 1)
-                    }
-                    .padding(.bottom, 50)
-                    .padding(.trailing, 20)
-                    .disabled(isSelectionMode && selectedProducts.isEmpty)
+                    compareButton
                 }
             }
             .navigationDestination(for: String.self) { productId in
@@ -88,7 +67,33 @@ struct ResultsView: View {
         }
     }
 
-
+    private var compareButton: some View {
+        Button(action: {
+            if isSelectionMode && selectedProducts.count >= 2 {
+                navigateToComparison = true
+            } else if !isSelectionMode {
+                isSelectionMode.toggle()
+                selectedProducts.removeAll()
+            }
+        }) {
+            Text(isSelectionMode ? "Compare (\(selectedProducts.count))" : "Compare")
+                .font(.title2)
+                .bold()
+                .foregroundColor(.white)
+                .padding()
+                .frame(width: 200, height: 60)
+                .background(
+                    isSelectionMode && selectedProducts.count < 2
+                    ? Color.gray
+                    : (isSelectionMode ? Color.blue : Color.black)
+                )
+                .cornerRadius(25)
+                .shadow(color: .gray, radius: 3, x: 1, y: 1)
+        }
+        .disabled(isSelectionMode && selectedProducts.count < 2)
+        .padding(.bottom, 50)
+        .padding(.trailing, 20)
+    }
 
     private func toggleSelection(for id: String) {
         if selectedProducts.contains(id) {
