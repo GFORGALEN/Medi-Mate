@@ -40,7 +40,7 @@ const Pharmacies = () => {
             />
 
             {pharmacies[currentIndex] && (
-                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-8/12 md:w-1/3 lg:w-1/7 lg:h-1/8 bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 ease-in-out">
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-8/12 md:w-1/2 lg:w-1/7 lg:h-1/8 bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 ease-in-out">
                     <div className="flex p-4 items-center">
                         <Button icon={<LeftOutlined />} onClick={handlePrevious} className="mr-2" />
                         <div className="flex-grow flex items-center">
