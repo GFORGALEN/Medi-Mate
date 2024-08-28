@@ -88,7 +88,6 @@ struct ResultsView: View {
         }
     }
 
-    // ... rest of the code remains the same
 
 
     private func toggleSelection(for id: String) {

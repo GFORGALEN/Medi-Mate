@@ -3,297 +3,260 @@ import SwiftUI
 struct ComparisonView: View {
     @ObservedObject var viewModel: ComparisonViewModel
     let productIds: [String]
-    
+
     var body: some View {
         NavigationView {
-            Group {
+            ZStack {
+//                backgroundGradient
+                
                 if viewModel.isLoading {
-                    CustomLoadingView()
+                    LoadingView()
                 } else if viewModel.comparisons.isEmpty {
                     EmptyStateView()
                 } else {
-                    SideBySideComparisonView(comparisons: viewModel.comparisons)
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            PriceComparisonView(comparisons: viewModel.comparisons)
+                            ComparisonCardsView(comparisons: viewModel.comparisons)
+                            AIInsightsButton(comparisons: viewModel.comparisons)
+                            Spacer()
+                                .frame(height: 40)
+                        }
+                        .padding()
+                    }
                 }
             }
-            .navigationTitle("Product Comparison")
+            .navigationTitle("Comparison")
+            .navigationBarTitleDisplayMode(.large)
         }
         .onAppear {
             viewModel.fetchComparisons(productIds: productIds)
         }
     }
+    
+//    private var backgroundGradient: some View {
+//        LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.1), Color.purple.opacity(0.1)]),
+//                       startPoint: .topLeading,
+//                       endPoint: .bottomTrailing)
+//            .edgesIgnoringSafeArea(.all)
+//    }
 }
 
-struct SideBySideComparisonView: View {
+struct PriceComparisonView: View {
     let comparisons: [Comparison]
-    let attributes: [(String, (Comparison) -> AttributeContent)] = [
-        ("Image", { .image($0.imageSrc) }),
-        ("Name", { .text($0.productName) }),
-        ("Price", { .text($0.productPrice) }),
-        ("Common Use", { .text($0.commonUse) }),
-        ("Warnings", { .text($0.warnings) }),
-    ]
     
     var body: some View {
-        ScrollView([.vertical, .horizontal], showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 0) {
-                HStack(alignment: .top, spacing: 0) {
-                    AttributeHeaderColumn()
-                    ProductColumnsView(comparisons: comparisons)
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Price Comparison")
+                .font(.headline)
+            
+            ForEach(comparisons, id: \.productId) { comparison in
+                HStack {
+                    Text(comparison.productName)
+                        .font(.subheadline)
+                        .frame(width: 100, alignment: .leading)
+                    
+                    GeometryReader { geometry in
+                        ZStack(alignment: .leading) {
+                            Rectangle()
+                                .fill(Color.blue.opacity(0.3))
+                                .frame(width: geometry.size.width)
+                            
+                            Rectangle()
+                                .fill(Color.blue)
+                                .frame(width: CGFloat(priceValue(comparison.productPrice)) / CGFloat(maxPrice()) * geometry.size.width)
+                        }
+                    }
+                    .frame(height: 20)
+                    .cornerRadius(10)
+                    
+                    Text(comparison.productPrice)
+                        .font(.subheadline)
+                        .frame(width: 60, alignment: .trailing)
                 }
-                DifferenceButtonView(comparisons: comparisons)
-                Spacer().frame(height: 50)
+            }
+        }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(15)
+        .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+    }
+    
+    private func priceValue(_ priceString: String) -> Double {
+        let numericString = priceString.dropFirst().replacingOccurrences(of: ",", with: "")
+        return Double(numericString) ?? 0
+    }
+    
+    private func maxPrice() -> Double {
+        comparisons.map { priceValue($0.productPrice) }.max() ?? 1
+    }
+}
+
+struct ComparisonCardsView: View {
+    let comparisons: [Comparison]
+    @State private var expandedCard: String?
+    
+    var body: some View {
+        VStack(spacing: 15) {
+            ForEach(comparisons, id: \.productId) { comparison in
+                ComparisonCard(comparison: comparison, isExpanded: expandedCard == comparison.productId)
+                    .onTapGesture {
+                        withAnimation(.spring()) {
+                            expandedCard = (expandedCard == comparison.productId) ? nil : comparison.productId
+                        }
+                    }
             }
         }
     }
 }
 
-struct DifferenceButtonView: View {
+struct ComparisonCard: View {
+    let comparison: Comparison
+    let isExpanded: Bool
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                AsyncImage(url: URL(string: comparison.imageSrc)) { image in
+                    image.resizable().aspectRatio(contentMode: .fit)
+                } placeholder: {
+                    ProgressView()
+                }
+                .frame(width: 80, height: 80)
+                .cornerRadius(10)
+                
+                VStack(alignment: .leading) {
+                    Text(comparison.productName)
+                        .font(.headline)
+                    Text(comparison.productPrice)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                Image(systemName: isExpanded ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
+                    .foregroundColor(.blue)
+                    .font(.title2)
+            }
+            
+            if isExpanded {
+                Divider()
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    DetailRow(title: "Common Use", detail: comparison.commonUse)
+                    DetailRow(title: "Warnings", detail: comparison.warnings)
+                }
+            }
+        }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(15)
+        .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+    }
+}
+
+struct DetailRow: View {
+    let title: String
+    let detail: String
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+            Text(detail)
+                .font(.body)
+        }
+    }
+}
+
+struct AIInsightsButton: View {
     let comparisons: [Comparison]
-    @State private var showDifferences = false
+    @State private var showingInsights = false
     
     var body: some View {
         Button(action: {
-            showDifferences = true
+            showingInsights = true
         }) {
             HStack {
-                Image(.robot)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 30)
-                Text("Tell me difference")
-                    .font(.title3)
-                    .bold()
+                Image(systemName: "brain.head.profile")
+                Text("AI Insights")
             }
+            .font(.headline)
             .foregroundColor(.white)
             .padding()
-            .frame(maxWidth: 300)
-            .background(
-                LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]),
-                               startPoint: .leading,
-                               endPoint: .trailing)
-            )
+            .frame(maxWidth: .infinity)
+            .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.purple]), startPoint: .leading, endPoint: .trailing))
             .cornerRadius(15)
-            .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 3)
-            .overlay(
-                RoundedRectangle(cornerRadius: 15)
-                    .stroke(Color.white.opacity(0.6), lineWidth: 1)
-            )
         }
-        .padding()
-        .sheet(isPresented: $showDifferences) {
-            DifferencePopupView(comparisons: comparisons)
+        .sheet(isPresented: $showingInsights) {
+            AIInsightsView(comparisons: comparisons)
         }
     }
 }
 
-struct DifferencePopupView: View {
+struct AIInsightsView: View {
     let comparisons: [Comparison]
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationView {
-            List(comparisons, id: \.productId) { comparison in
-                VStack(alignment: .leading) {
-                    Text(comparison.productName)
-                        .font(.title2)
-                    Text(comparison.difference)
-                        .font(.body)
-                        .foregroundColor(.secondary)
-                }
-                .padding(.vertical, 8)
-            }
-            .navigationTitle("Differences")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Close") {
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-}
-
-struct AttributeHeaderColumn: View {
-    let attributes = ["Image", "Name", "Price", "Common Use", "Warnings"]
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            ForEach(attributes, id: \.self) { attribute in
-                AttributeCell(content: .text(attribute), isHeader: true)
-            }
-        }
-    }
-}
-
-struct ProductColumnsView: View {
-    let comparisons: [Comparison]
-    
-    var body: some View {
-        HStack(alignment: .top, spacing: 0) {
-            ForEach(comparisons, id: \.productId) { product in
-                ProductColumn(product: product)
-            }
-        }
-    }
-}
-
-struct ProductColumn: View {
-    let product: Comparison
-    let attributes: [(String, (Comparison) -> AttributeContent)] = [
-        ("Image", { .image($0.imageSrc) }),
-        ("Name", { .text($0.productName) }),
-        ("Price", { .text($0.productPrice) }),
-        ("Common Use", { .text($0.commonUse) }),
-        ("Warnings", { .text($0.warnings) }),
-    ]
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            ForEach(attributes, id: \.0) { _, getValue in
-                AttributeCell(content: getValue(product), isHeader: false)
-            }
-        }
-    }
-}
-
-enum AttributeContent {
-    case text(String)
-    case image(String)
-}
-
-struct AttributeCell: View {
-    let content: AttributeContent
-    let isHeader: Bool
-    @State private var showFullContent = false
-    
-    var body: some View {
-        Group {
-            switch content {
-            case .text(let text):
-                TextAttributeCell(text: text, isHeader: isHeader, showFullContent: $showFullContent)
-            case .image(let imageSrc):
-                ProductImage(imageSrc: imageSrc)
-            }
-        }
-        .sheet(isPresented: $showFullContent) {
-            FullContentView(content: content)
-        }
-    }
-}
-
-struct TextAttributeCell: View {
-    let text: String
-    let isHeader: Bool
-    @Binding var showFullContent: Bool
-    
-    var body: some View {
-        Text(text)
-            .padding(10)
-            .frame(width: isHeader ? 100 : 150, height: 100, alignment: .topLeading)
-            .background(isHeader ? Color.secondary.opacity(0.2) : Color.white)
-            .overlay(
-                RoundedRectangle(cornerRadius: 4)
-                    .stroke(Color.secondary.opacity(0.5), lineWidth: 1)
-            )
-            .onTapGesture {
-                if !isHeader {
-                    showFullContent = true
-                }
-            }
-    }
-}
-
-struct ProductImage: View {
-    let imageSrc: String
-    @State private var showFullImage = false
-    
-    var body: some View {
-        AsyncImage(url: URL(string: imageSrc)) { phase in
-            switch phase {
-            case .empty:
-                ProgressView()
-            case .success(let image):
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            case .failure:
-                Image(systemName: "photo")
-                    .foregroundColor(.gray)
-            @unknown default:
-                EmptyView()
-            }
-        }
-        .frame(width: 150, height: 100)
-        .overlay(
-            RoundedRectangle(cornerRadius: 4)
-                .stroke(Color.secondary.opacity(0.5), lineWidth: 1)
-        )
-        .onTapGesture {
-            showFullImage = true
-        }
-        .sheet(isPresented: $showFullImage) {
-            FullContentView(content: .image(imageSrc))
-        }
-    }
-}
-
-struct FullContentView: View {
-    let content: AttributeContent
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        NavigationView {
-            VStack {
-                switch content {
-                case .image(let imageSrc):
-                    AsyncImage(url: URL(string: imageSrc)) { phase in
-                        switch phase {
-                        case .empty:
-                            ProgressView()
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                        case .failure:
-                            Image(systemName: "photo")
-                                .foregroundColor(.gray)
-                        @unknown default:
-                            EmptyView()
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    ForEach(comparisons, id: \.productId) { comparison in
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text(comparison.productName)
+                                .font(.headline)
+                            Text(comparison.difference)
+                                .font(.body)
                         }
-                    }
-                case .text(let text):
-                    ScrollView {
-                        Text(text)
-                            .padding()
-                            .font(.title2)
+                        .padding()
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(10)
                     }
                 }
+                .padding()
             }
-            .navigationTitle("Details")
+            .navigationTitle("AI Insights")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Close") {
+                    Button("Dismiss") {
                         dismiss()
                     }
                 }
             }
+        }
+    }
+}
+
+struct LoadingView: View {
+    var body: some View {
+        VStack {
+            ProgressView()
+            Text("Loading comparisons...")
+                .font(.headline)
+                .foregroundColor(.secondary)
+                .padding(.top)
         }
     }
 }
 
 struct EmptyStateView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "doc.text.magnifyingglass")
-                .font(.system(size: 50))
+        VStack(spacing: 20) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 60))
+                .foregroundColor(.gray)
+            Text("No comparisons available")
+                .font(.title2)
+                .fontWeight(.semibold)
+            Text("Try selecting different products or check back later.")
+                .font(.body)
                 .foregroundColor(.secondary)
-            Text("No comparison data available")
-                .font(.headline)
-                .foregroundColor(.secondary)
-                .padding(.top)
+                .multilineTextAlignment(.center)
         }
+        .padding()
     }
 }

@@ -53,6 +53,8 @@ struct ProductDetailsContent: View {
                 summarySection
                 readAloudSection
                 contentSections
+                Spacer()
+                    .frame(height: 40)
             }
             .padding(isOlderMode ? 20 : 15)
         }
