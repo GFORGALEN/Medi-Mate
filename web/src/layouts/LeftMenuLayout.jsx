@@ -2,7 +2,7 @@ import React from 'react';
 import { Menu } from 'antd';
 import { DesktopOutlined, PieChartOutlined, InboxOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from "react-router-dom";
-import logo from '../../asserts/images/logo.png';
+import logo from '../../asserts/images/image.png';
 
 const items = [
   {
@@ -40,7 +40,6 @@ const LeftMenuLayout = ({ collapsed }) => {
         />
       </div>
       <Menu
-        theme="dark"
         selectedKeys={[location.pathname]}
         mode="inline"
         items={items}
