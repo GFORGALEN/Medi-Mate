@@ -3,14 +3,13 @@ import SwiftUI
 struct ComparisonView: View {
     @ObservedObject var viewModel: ComparisonViewModel
     let productIds: [String]
+    @State private var animationOffset: CGFloat = 0
 
     var body: some View {
         NavigationView {
             ZStack {
-//                backgroundGradient
-                
                 if viewModel.isLoading {
-                    LoadingView()
+                    analyzingProductsAnimation
                 } else if viewModel.comparisons.isEmpty {
                     EmptyStateView()
                 } else {
@@ -31,8 +30,33 @@ struct ComparisonView: View {
         }
         .onAppear {
             viewModel.fetchComparisons(productIds: productIds)
+            withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                animationOffset = 20
+            }
         }
     }
+
+    private var analyzingProductsAnimation: some View {
+        VStack(spacing: 30) {
+            Text("Analyzing")
+                .font(.system(size: 36, weight: .bold))
+                .foregroundColor(.blue)
+
+            Text("Products")
+                .font(.system(size: 36, weight: .bold))
+                .foregroundColor(.blue)
+                .offset(y: animationOffset)
+
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                .scaleEffect(2.0)
+        }
+        .frame(width: 250, height: 250)
+        .background(Color.white.opacity(0.9))
+        .cornerRadius(25)
+        .shadow(radius: 15)
+    }
+}
     
 //    private var backgroundGradient: some View {
 //        LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.1), Color.purple.opacity(0.1)]),
@@ -40,7 +64,7 @@ struct ComparisonView: View {
 //                       endPoint: .bottomTrailing)
 //            .edgesIgnoringSafeArea(.all)
 //    }
-}
+
 
 struct PriceComparisonView: View {
     let comparisons: [Comparison]
