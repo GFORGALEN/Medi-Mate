@@ -1,15 +1,15 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { GoogleMap, Marker } from '@react-google-maps/api';
-import { Spin } from 'antd';
-import { getPharmaciesAPI } from '@/api/user/pharmacy';
+import {useState, useCallback, useEffect} from 'react';
+import {GoogleMap, Marker} from '@react-google-maps/api';
+import {Spin} from 'antd';
+import {getPharmaciesAPI} from '@/api/user/pharmacy';
 import useGoogleMapsApi from '@/hook/useGoogleMapsApi.jsx';
 import PropTypes from 'prop-types';
 
-const PharmacyMapWithCards = ({ onPharmaciesLoaded, currentIndex }) => {
+const PharmacyMapWithCards = ({onPharmaciesLoaded, currentIndex}) => {
     const [map, setMap] = useState(null);
     const [pharmacies, setPharmacies] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [center, setCenter] = useState({ lat: -36.8485, lng: 174.7633 }); // Default to Auckland
+    const [center, setCenter] = useState({lat: -36.8485, lng: 174.7633}); // Default to Auckland
     const isMapLoaded = useGoogleMapsApi();
 
     useEffect(() => {
@@ -30,8 +30,6 @@ const PharmacyMapWithCards = ({ onPharmaciesLoaded, currentIndex }) => {
                             lng: parseFloat(validPharmacies[0].longitude)
                         });
                     }
-                } else {
-                    throw new Error('Invalid response format');
                 }
             } catch (error) {
                 console.error('Error fetching pharmacies:', error);
@@ -39,7 +37,6 @@ const PharmacyMapWithCards = ({ onPharmaciesLoaded, currentIndex }) => {
                 setLoading(false);
             }
         };
-
         fetchPharmacies();
     }, [onPharmaciesLoaded]);
 
@@ -63,13 +60,13 @@ const PharmacyMapWithCards = ({ onPharmaciesLoaded, currentIndex }) => {
     if (loading || !isMapLoaded) {
         return (
             <div className="w-full h-screen flex items-center justify-center bg-gray-200">
-                <Spin size="large" />
+                <Spin size="large"/>
             </div>
         );
     }
 
     return (
-        <div className="relative w-screen h-screen overflow-hidden">
+        <div className="relative w-screen h-screen">
             <GoogleMap
                 mapContainerStyle={{
                     width: '100%',
