@@ -1,14 +1,17 @@
 import  { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Table, Image, Pagination, Spin, Alert, Button, Modal } from 'antd';
-import { ArrowLeftOutlined, BoxPlotOutlined } from '@ant-design/icons';
+import { Table, Image, Pagination, Spin, Alert, Button, Modal, Input } from 'antd';
+import { ArrowLeftOutlined, BoxPlotOutlined, SearchOutlined } from '@ant-design/icons';
 import { getInventoryAPI } from '@/api/user/inventory';
 import Pharmacy3DView from './Pharmacy3DView';
+
+const { Search } = Input;
 
 const PharmacyInventory = () => {
     const { pharmacyId } = useParams();
     const navigate = useNavigate();
     const [inventory, setInventory] = useState([]);
+    const [filteredInventory, setFilteredInventory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [pagination, setPagination] = useState({
@@ -18,10 +21,15 @@ const PharmacyInventory = () => {
     });
     const [is3DViewVisible, setIs3DViewVisible] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         fetchInventory();
     }, [pharmacyId, pagination.current, pagination.pageSize]);
+
+    useEffect(() => {
+        filterInventory();
+    }, [inventory, searchTerm]);
 
     const fetchInventory = async () => {
         setLoading(true);
@@ -29,6 +37,7 @@ const PharmacyInventory = () => {
             const response = await getInventoryAPI(pharmacyId, pagination.current, pagination.pageSize);
             if (response && response.code === 1 && response.data) {
                 setInventory(response.data.records);
+                setFilteredInventory(response.data.records);
                 setPagination(prev => ({
                     ...prev,
                     total: response.data.total
@@ -43,6 +52,19 @@ const PharmacyInventory = () => {
             setLoading(false);
         }
     };
+
+    const filterInventory = () => {
+        const filtered = inventory.filter(item =>
+            item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.manufacturerName.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredInventory(filtered);
+    };
+
+    const handleSearch = (value) => {
+        setSearchTerm(value);
+    };
+
     const handleViewDetails = (product) => {
         setSelectedProduct(product);
         setIs3DViewVisible(true);
@@ -96,7 +118,6 @@ const PharmacyInventory = () => {
             ),
         },
     ];
-
 
     const handlePageChange = (page, pageSize) => {
         setPagination(prev => ({
@@ -160,11 +181,20 @@ const PharmacyInventory = () => {
                     </Button>
                 </div>
             </div>
-            {inventory.length > 0 ? (
+            <div className="mb-6">
+                <Search
+                    placeholder="Search products or manufacturers"
+                    onSearch={handleSearch}
+                    enterButton={<SearchOutlined />}
+                    size="large"
+                    className="max-w-xl"
+                />
+            </div>
+            {filteredInventory.length > 0 ? (
                 <>
                     <Table
                         columns={columns}
-                        dataSource={inventory}
+                        dataSource={filteredInventory}
                         rowKey="productName"
                         pagination={false}
                     />
@@ -179,7 +209,7 @@ const PharmacyInventory = () => {
             ) : (
                 <Alert
                     message="No Data"
-                    description="No inventory data available for this pharmacy."
+                    description="No inventory data available for this pharmacy or matching your search criteria."
                     type="info"
                     showIcon
                 />
