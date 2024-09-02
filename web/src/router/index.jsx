@@ -10,6 +10,7 @@ import ProductAnalytics from "@/pages/Analytics.jsx";
 import Inventory from "@/pages/Inventory.jsx";
 import Pharmacies from "@/pages/Pharmacies.jsx";
 import PharmacyInventory from "@/pages/PharmacyInventory.jsx";
+import Homepage from '../pages/mobile/Homepage';
 
 const router = createBrowserRouter([
     {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
     {
         path: '/login',
         element: <TLogin />,
+    },
+    {
+        path: '/mobile',
+        element: <Homepage />, // This is the mobile homepage
     },
     {
         path: '/',

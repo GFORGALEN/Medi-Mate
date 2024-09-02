@@ -2,7 +2,7 @@ import React from 'react';
 import { Menu } from 'antd';
 import { DesktopOutlined, PieChartOutlined, InboxOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from "react-router-dom";
-import logo from '../../asserts/images/image.png';
+import logo from '../../assets/images/image.png';
 
 const items = [
   {
