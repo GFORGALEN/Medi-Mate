@@ -6,7 +6,7 @@ export const getImagePath = (pharmacyName) => {
         'MediMate Manakau': 'Manakau.jpg',
         'MediMate NewMarket': 'NewMarket.jpg'
     };
-    return `asserts/images/${nameMap[pharmacyName] || 'default.jpg'}`;
+    return `assets/images/${nameMap[pharmacyName] || 'default.jpg'}`;
 };
 
 export const getGoogleMapsUrl = (address) => {

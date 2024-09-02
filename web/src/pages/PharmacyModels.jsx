@@ -28,10 +28,10 @@ const createPharmacyModel = (modelPath, scale = [1, 1, 1], position = [0, -1, 0]
     };
 };
 
-export const PharmacyModel1 = createPharmacyModel('asserts/models/pharmacy7.glb');
-export const PharmacyModel2 = createPharmacyModel('asserts/models/pharmacy5.glb');
-export const PharmacyModel3 = createPharmacyModel('asserts/models/pharmacy3.glb');
-export const PharmacyModel4 = createPharmacyModel('asserts/models/pharmacy4.glb', [2, 2, 2], [0, -0.75, 0]);
-export const PharmacyModel5 = createPharmacyModel('asserts/models/pharmacy2.glb', [3, 3, 3]);
+export const PharmacyModel1 = createPharmacyModel('assets/models/pharmacy7.glb');
+export const PharmacyModel2 = createPharmacyModel('assets/models/pharmacy5.glb');
+export const PharmacyModel3 = createPharmacyModel('assets/models/pharmacy3.glb');
+export const PharmacyModel4 = createPharmacyModel('assets/models/pharmacy4.glb', [2, 2, 2], [0, -0.75, 0]);
+export const PharmacyModel5 = createPharmacyModel('assets/models/pharmacy2.glb', [3, 3, 3]);
 
 export const ModelComponents = [PharmacyModel1, PharmacyModel2, PharmacyModel3, PharmacyModel4, PharmacyModel5];
