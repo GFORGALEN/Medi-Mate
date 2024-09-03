@@ -1,4 +1,4 @@
-import { requestInventory } from "@/axios/requestInventory ";
+import { requestInventory } from "@/axios/requestInventory";
 
 export function getInventoryAPI(pharmacyId, page, pageSize) {
     return requestInventory({
