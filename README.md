@@ -1,6 +1,15 @@
 # FriedChicken
 Hello, we are FriedChicken.
 
+## About The Project
+
+### Built With
+
+React
+Swift
+Java
+
+
 ## Mobile End develop
 
 The app develop with swift, in order to run it, you should follow these steps:
