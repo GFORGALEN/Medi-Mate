@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
     @Autowired
     private OrderMapper orderMapper;
     @Autowired
@@ -49,6 +46,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void handleOrderPaymentSuccess(String orderId) {
-        simpMessagingTemplate.convertAndSend("/topic/orderStatus", "Order " + orderId + " has been paid.");
+
     }
 }
