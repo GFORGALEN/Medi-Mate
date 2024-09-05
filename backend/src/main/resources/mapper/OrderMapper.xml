@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.friedchicken.mapper.OrderMapper">
+    <insert id="insertOrderItem">
+        insert into order_item (item_id, order_id, product_id, quantity, price)
+        values (#{itemId}, #{orderId}, #{productId}, #{quantity}, #{price});
+    </insert>
+    <insert id="insertOrder">
+        insert into `order` (order_id, user_id, pharmacy_id, created_at, status, amount)
+        values (#{orderId}, #{userId}, #{pharmacyId}, #{createdAt}, #{status}, #{amount});
+    </insert>
+</mapper>
