@@ -10,4 +10,6 @@ public interface OrderMapper {
     void insertOrderItem(OrderItem orderItem);
 
     void insertOrder(Order order);
+
+    Order getOrderByOrderId(String orderId);
 }

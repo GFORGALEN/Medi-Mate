@@ -7,7 +7,7 @@ spring:
     allow-circular-references: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://mysql:3306/medi_mate
+    url: jdbc:mysql://localhost:3306/medi_mate
     username: root
     password: ${fc.datasource.password}
   ai:
@@ -15,8 +15,14 @@ spring:
       api-key: ${fc.openai.api-key}
   data:
     redis:
-      host: redis
+      host: localhost
       port: 6379
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: myuser
+    password: ${fc.rabbitmq.password}
+    virtual-host: /friedchicken
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.friedchicken.pojo.entity

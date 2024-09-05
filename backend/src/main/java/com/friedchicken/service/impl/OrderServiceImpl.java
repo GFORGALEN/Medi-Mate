@@ -8,18 +8,25 @@ import com.friedchicken.pojo.entity.Order.OrderItem;
 import com.friedchicken.service.OrderService;
 import com.friedchicken.utils.UniqueIdUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
 public class OrderServiceImpl implements OrderService {
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
     @Autowired
     private OrderMapper orderMapper;
     @Autowired
     private UniqueIdUtil uniqueIdUtil;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Override
     @Transactional
@@ -28,7 +35,7 @@ public class OrderServiceImpl implements OrderService {
         BeanUtils.copyProperties(orderDTO, order);
         String orderId = uniqueIdUtil.generateUniqueId();
         order.setOrderId(orderId);
-        order.setStatus(1);
+        order.setStatus(0);
         orderMapper.insertOrder(order);
         for (OrderItemDTO item : orderDTO.getOrderItem()) {
             OrderItem orderItem = new OrderItem();
@@ -37,5 +44,11 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setItemId(uniqueIdUtil.generateUniqueId());
             orderMapper.insertOrderItem(orderItem);
         }
+        rabbitTemplate.convertAndSend("pay.topic", "pay.success", orderId);
+    }
+
+    @Override
+    public void handleOrderPaymentSuccess(String orderId) {
+        simpMessagingTemplate.convertAndSend("/topic/orderStatus", "Order " + orderId + " has been paid.");
     }
 }
