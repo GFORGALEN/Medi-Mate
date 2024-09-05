@@ -16,6 +16,11 @@ public class SseServiceImpl implements SseService {
     private final Map<String, SseEmitter> sseEmitterMap = new ConcurrentHashMap<>();
 
     @Override
+    public boolean hasActiveConnections() {
+        return !sseEmitterMap.isEmpty();
+    }
+
+    @Override
     public SseEmitter connect(String uuid) {
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
         try {

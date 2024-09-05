@@ -7,4 +7,6 @@ public interface SseService {
     SseEmitter connect(String uuid);
 
     void sendMessage(OrderMessage orderMessage);
+
+    boolean hasActiveConnections();
 }
