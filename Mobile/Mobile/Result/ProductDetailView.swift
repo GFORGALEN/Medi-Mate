@@ -8,9 +8,14 @@
 import SwiftUI
 import AVFoundation
 
+import SwiftUI
+import AVFoundation
+
 struct ProductDetailsView: View {
     @StateObject private var viewModel: ProductDetailsVM
     @State private var selectedSection: String?
+    @State private var isStoreSelectionPresented = false
+    @State private var selectedStore: String?
     @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
     @AppStorage("isCareMode") private var isOlderMode = false
     
@@ -19,16 +24,21 @@ struct ProductDetailsView: View {
     }
     
     var body: some View {
-        Group {
-            switch viewModel.state {
-            case .idle, .loading:
-                ProgressView("Loading...")
-                    .scalableFont(size: 18)
-            case .loaded(let details):
-                ProductDetailsContent(details: details, viewModel: viewModel, selectedSection: $selectedSection)
-            case .error(let error):
-
-                ErrorView(error: error, retryAction: { Task { await viewModel.loadProductDetails() } })
+        ZStack {
+            Group {
+                switch viewModel.state {
+                case .idle, .loading:
+                    ProgressView("Loading...")
+                        .scalableFont(size: 18)
+                case .loaded(let details):
+                    ProductDetailsContent(details: details, viewModel: viewModel, selectedSection: $selectedSection, isStoreSelectionPresented: $isStoreSelectionPresented, selectedStore: $selectedStore)
+                case .error(let error):
+                    ErrorView(error: error, retryAction: { Task { await viewModel.loadProductDetails() } })
+                }
+            }
+            
+            if isStoreSelectionPresented {
+                StoreSelectionPopup(isPresented: $isStoreSelectionPresented, selectedStore: $selectedStore)
             }
         }
         .navigationTitle("Product Details")
@@ -43,6 +53,8 @@ struct ProductDetailsContent: View {
     let details: ProductDetails
     @ObservedObject var viewModel: ProductDetailsVM
     @Binding var selectedSection: String?
+    @Binding var isStoreSelectionPresented: Bool
+    @Binding var selectedStore: String?
     @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
     @AppStorage("isCareMode") private var isOlderMode = false
     
@@ -90,6 +102,19 @@ struct ProductDetailsContent: View {
             Text("Manufacturer: \(details.manufacturerName)")
                 .scalableFont(size: isOlderMode ? 20 : 16)
                 .foregroundColor(.secondary)
+            
+            Button(action: {
+                isStoreSelectionPresented = true
+            }) {
+                Text("Select Store")
+                    .scalableFont(size: isOlderMode ? 20 : 16, weight: .semibold)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(isOlderMode ? 15 : 10)
+            }
+            .padding(.top, isOlderMode ? 15 : 10)
         }
     }
     
@@ -228,29 +253,4 @@ struct ErrorView: View {
     }
 }
 
-extension ProductDetailsVM {
-    func updateSpeechRate(forSpeed speed: String) {
-        switch speed {
-        case "Normal":
-            updateSpeechRate(AVSpeechUtteranceDefaultSpeechRate)
-        case "Fast":
-            updateSpeechRate(AVSpeechUtteranceDefaultSpeechRate * 1.25)
-        case "Very Fast":
-            updateSpeechRate(AVSpeechUtteranceDefaultSpeechRate * 1.5)
-        default:
-            break
-        }
-    }
-    
-    var currentSpeedLabel: String {
-        if speechRate == AVSpeechUtteranceDefaultSpeechRate {
-            return "Normal"
-        } else if speechRate == AVSpeechUtteranceDefaultSpeechRate * 1.25 {
-            return "Fast"
-        } else if speechRate == AVSpeechUtteranceDefaultSpeechRate * 1.5 {
-            return "Very Fast"
-        } else {
-            return "Custom"
-        }
-    }
-}
+

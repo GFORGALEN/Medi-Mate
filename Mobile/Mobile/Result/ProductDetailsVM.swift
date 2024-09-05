@@ -111,6 +111,31 @@ class ProductDetailsVM: ObservableObject {
         case error(Error)
     }
     
+    func updateSpeechRate(forSpeed speed: String) {
+        switch speed {
+        case "Normal":
+            updateSpeechRate(AVSpeechUtteranceDefaultSpeechRate)
+        case "Fast":
+            updateSpeechRate(AVSpeechUtteranceDefaultSpeechRate * 1.25)
+        case "Very Fast":
+            updateSpeechRate(AVSpeechUtteranceDefaultSpeechRate * 1.5)
+        default:
+            break
+        }
+    }
+    
+    var currentSpeedLabel: String {
+        if speechRate == AVSpeechUtteranceDefaultSpeechRate {
+            return "Normal"
+        } else if speechRate == AVSpeechUtteranceDefaultSpeechRate * 1.25 {
+            return "Fast"
+        } else if speechRate == AVSpeechUtteranceDefaultSpeechRate * 1.5 {
+            return "Very Fast"
+        } else {
+            return "Custom"
+        }
+    }
+    
     
 }
 
