@@ -8,7 +8,7 @@ class TabBarManager: ObservableObject {
 struct CustomTabBar: View {
     @EnvironmentObject var tabBarManager: TabBarManager
     @AppStorage("isOlderMode") private var isOlderMode = false
-    let icons = ["house", "book.pages", "map", "person.crop.circle"]
+    let icons = ["house", "book.pages","cart", "map", "person.crop.circle"]
     
     var body: some View {
         HStack {
@@ -30,7 +30,7 @@ struct CustomTabBar: View {
     
     private func wiggleButtonAt(_ index: Int) -> some View {
         WiggleButton(image: Image(systemName: icons[index]), maskImage: Image(systemName: "\(icons[index]).fill"), isSelected: index == tabBarManager.selectedIndex)
-            .scaleEffect(isOlderMode ? 2.0 : 1.5)  // Increase scale in Older Mode
+            .scaleEffect(isOlderMode ? 3.0 : 1.5)  // Increase scale in Older Mode
             .frame(width: isOlderMode ? 60 : 40, height: isOlderMode ? 60 : 40)  // Increase touch target in Older Mode
             .onTapGesture {
                 tabBarManager.selectedIndex = index

@@ -17,10 +17,12 @@ struct ContentView: View {
                 case 1:
                     CardView()
                 case 2:
+                    EmptyView()
+                case 3:
                     NavigationView {
                         StoreLocationsView()
                     }
-                case 3:
+                case 4:
                     if authViewModel.isLoginSuccessed {
                         AccountView(authViewModel: authViewModel)
                     } else {
