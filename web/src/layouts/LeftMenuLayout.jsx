@@ -1,8 +1,9 @@
 import React from 'react';
 import { Menu } from 'antd';
-import { DesktopOutlined, PieChartOutlined, InboxOutlined } from '@ant-design/icons';
+import { DesktopOutlined, PieChartOutlined, InboxOutlined, MedicineBoxOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from '../../assets/images/image.png';
+
 
 const items = [
   {
@@ -19,6 +20,11 @@ const items = [
     key: '/pharmacies',
     icon: <InboxOutlined />,
     label: 'Pharmacies',
+  },
+  {
+    key: '/OrderPage',
+    icon: <MedicineBoxOutlined />,
+    label: 'Order',
   },
 ];
 

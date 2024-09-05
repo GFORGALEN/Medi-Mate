@@ -11,6 +11,7 @@ import Inventory from "@/pages/Inventory.jsx";
 import Pharmacies from "@/pages/Pharmacies.jsx";
 import PharmacyInventory from "@/pages/PharmacyInventory.jsx";
 import Homepage from '../pages/mobile/Homepage';
+import OrderPage from '../pages/Order/OrderPage';
 
 const router = createBrowserRouter([
     {
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
             {
                 path: 'inventory/:pharmacyId',
                 element: <PharmacyInventory />,
+            },
+            {
+                path: 'OrderPage',
+                element: <OrderPage />,
             },
         ],
     },
