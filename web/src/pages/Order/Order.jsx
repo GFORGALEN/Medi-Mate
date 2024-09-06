@@ -1,45 +1,39 @@
-import React from 'react'
+import React, { useState } from 'react';
 import { Button, Modal } from 'antd';
-import { useState } from 'react';
-
-const Order = () => {
+const Order = ({ order, onStatusChange }) => {
   const [open, setOpen] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const [modalText, setModalText] = useState('Content of the modal');
 
   const showModal = () => {
     setOpen(true);
   };
 
   const handleOk = () => {
-    setModalText('The modal will be closed after two seconds');
-    setConfirmLoading(true);
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-    }, 2000);
+    setOpen(false);
+    onStatusChange(order.id);
   };
 
   const handleCancel = () => {
     setOpen(false);
   };
-    
+
+  const buttonText = order.status === 'receive' ? 'Start Picking' : 'Finish Order';
+
   return (
     <>
-      <Button type="primary" onClick={showModal}>
-        Open Modal with async logic
+      <Button onClick={showModal}>
+        Check
       </Button>
       <Modal
-        title="Receipt"
         open={open}
+        title="Order Details"
         onOk={handleOk}
-        confirmLoading={confirmLoading}
         onCancel={handleCancel}
+        okText={buttonText}
       >
-        <p>{modalText}</p>
+        <p>Order ID: {order.id}</p>
+        <p>Current Status: {order.status}</p>
       </Modal>
     </>
-  )
-}
-
-export default Order
+  );
+};
+export default Order;
