@@ -79,7 +79,7 @@ public class OrderController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
     })
     public Result<List<DetailOrderVO>> getOrderDetailByPharmacyId(@PathVariable String pharmacyId) {
-        log.info("Order detail request by pharmacyId{}", pharmacyId);
+        log.info("Order detail request by pharmacyId {}", pharmacyId);
 
         List<DetailOrderVO> detailOrderVOList=orderService.getOrderByPharmacyId(pharmacyId);
 
