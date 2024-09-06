@@ -2,6 +2,7 @@ package com.friedchicken.controller.Order;
 
 import com.friedchicken.pojo.dto.Order.DetailOrderPageDTO;
 import com.friedchicken.pojo.dto.Order.OrderDTO;
+import com.friedchicken.pojo.dto.Order.UpdateOrderDTO;
 import com.friedchicken.pojo.vo.Order.DetailOrderVO;
 import com.friedchicken.pojo.vo.Order.OrderItemDetailVO;
 import com.friedchicken.result.Result;
@@ -84,5 +85,20 @@ public class OrderController {
         List<DetailOrderVO> detailOrderVOList=orderService.getOrderByPharmacyId(pharmacyId);
 
         return Result.success(detailOrderVOList);
+    }
+
+    @PatchMapping("/updateOrderStatus")
+    @Operation(summary = "Update order details.",
+            description = "Update order details by using order Id.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get successfully.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class)))
+    })
+    public Result<String> updateOrderStatus(@RequestBody UpdateOrderDTO updateOrderDTO) {
+        log.info("Order update request{}", updateOrderDTO);
+
+        orderService.updateOrderStatus(updateOrderDTO);
+
+        return Result.success("Order update successfully.");
     }
 }

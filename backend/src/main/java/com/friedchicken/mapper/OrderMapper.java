@@ -1,10 +1,11 @@
 package com.friedchicken.mapper;
 
+import com.friedchicken.pojo.dto.Order.OrderDTO;
+import com.friedchicken.pojo.dto.Order.UpdateOrderDTO;
 import com.friedchicken.pojo.entity.Order.Order;
 import com.friedchicken.pojo.entity.Order.OrderItem;
 import com.friedchicken.pojo.vo.Order.DetailOrderVO;
 import com.friedchicken.pojo.vo.Order.OrderItemDetailVO;
-import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -23,4 +24,6 @@ public interface OrderMapper {
     List<OrderItemDetailVO> getOrderItemDetailByOrderId(String orderId);
 
     List<DetailOrderVO> getOrderByPharmacyId(String pharmacyId);
+
+    void updateOrder(UpdateOrderDTO updateOrderDTO);
 }
