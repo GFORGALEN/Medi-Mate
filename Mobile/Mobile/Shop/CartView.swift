@@ -2,8 +2,10 @@ import SwiftUI
 
 struct CartView: View {
     @EnvironmentObject var cartManager: CartManager
+    @EnvironmentObject var authViewModel: AuthenticationView
     @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
     @AppStorage("isCareMode") private var isOlderMode = false
+    @State private var selectedStore: Store?
     
     var body: some View {
         ScrollView {
@@ -13,6 +15,8 @@ struct CartView: View {
                     .scalableFont(size: isOlderMode ? 32 : 28)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
+                
+                storeSelectionSection
                 
                 if cartManager.items.isEmpty {
                     emptyCartView
@@ -26,6 +30,36 @@ struct CartView: View {
         }
         .background(Color(UIColor.systemGroupedBackground))
         .navigationBarTitleDisplayMode(.inline)
+    }
+    
+    private var storeSelectionSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Select Pickup Store:")
+                .font(.headline)
+                .scalableFont(size: isOlderMode ? 22 : 18)
+            
+            Picker("Select Store", selection: $cartManager.selectedStore) {
+                Text("Select a store").tag(nil as Store?)
+                ForEach(stores) { store in
+                    Text("\(store.name) (ID: \(store.id))").tag(store as Store?)
+                }
+            }
+            .pickerStyle(MenuPickerStyle())
+            .scalableFont(size: isOlderMode ? 20 : 16)
+            
+            if let store = cartManager.selectedStore {
+                Text("Selected Store: \(store.name) (ID: \(store.id))")
+                    .scalableFont(size: isOlderMode ? 18 : 14)
+                    .foregroundColor(.secondary)
+            } else {
+                Text("No store selected")
+                    .scalableFont(size: isOlderMode ? 18 : 14)
+                    .foregroundColor(.red)
+            }
+        }
+        .padding()
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(12)
     }
     
     private var emptyCartView: some View {
@@ -71,16 +105,52 @@ struct CartView: View {
     }
     
     private var checkoutButton: some View {
-        NavigationLink(destination: CheckoutView(cartManager: cartManager)) {
-            Text("Proceed to Checkout")
+        Button(action: {
+            guard let store = cartManager.selectedStore else {
+                print("No store selected")
+                return
+            }
+            
+            guard !authViewModel.userId.isEmpty else {
+                print("User ID not available")
+                return
+            }
+            
+            guard let order = cartManager.prepareOrder(userId: authViewModel.userId) else {
+                print("Failed to prepare order")
+                return
+            }
+            
+            print("Submitting order:")
+            print(order)
+            
+            submitOrder(order) { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let message):
+                        print("Order submitted successfully: \(message)")
+                        self.cartManager.clearCart()
+                    case .failure(let error):
+                        print("Failed to submit order: \(error.localizedDescription)")
+                        if let nsError = error as NSError? {
+                            print("Error Domain: \(nsError.domain)")
+                            print("Error Code: \(nsError.code)")
+                            print("Error User Info: \(nsError.userInfo)")
+                        }
+                    }
+                }
+            }
+        }) {
+            Text(cartManager.selectedStore == nil ? "Select a Store to Checkout" : "Proceed to Checkout")
                 .font(.headline)
                 .scalableFont(size: isOlderMode ? 22 : 18)
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(Color.blue)
+                .background(cartManager.selectedStore == nil ? Color.gray : Color.blue)
                 .cornerRadius(12)
         }
+        .disabled(cartManager.selectedStore == nil || cartManager.items.isEmpty || authViewModel.userId.isEmpty)
     }
     
     private func formatPrice(_ price: String) -> String {
