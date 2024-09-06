@@ -137,3 +137,16 @@ struct ProductLocationResponse: Codable{
 enum StoreLocation: String {
     case a = "A", b = "B", c = "C", d = "D", e = "E"
 }
+
+struct Store: Identifiable, Hashable {
+    let id: Int
+    let name: String
+}
+
+let stores: [Store] = [
+    Store(id: 1, name: "NewMarket"),
+    Store(id: 2, name: "Manakua"),
+    Store(id: 3, name: "Mount Albert"),
+    Store(id: 4, name: "Albany"),
+    Store(id: 5, name: "CBD")
+]

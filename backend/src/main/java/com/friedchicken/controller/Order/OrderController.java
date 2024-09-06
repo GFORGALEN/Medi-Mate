@@ -71,7 +71,6 @@ public class OrderController {
 
         return Result.success(orderItemDetailVO);
     }
-
     @GetMapping("/pharmacyOrder/{pharmacyId}")
     @Operation(summary = "Get order details.",
             description = "Get order details by using pharmacy Id.")
