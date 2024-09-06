@@ -12,7 +12,7 @@ public class HeartBeatConfig {
     @Autowired
     private SseService sseService;
 
-    @Scheduled(fixedRate = 20000)
+    @Scheduled(fixedRate = 5000)
     public void sendMessageTask() {
         OrderMessageVO orderMessageVO = new OrderMessageVO();
         orderMessageVO.setOrderId("ping");

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { SmileOutlined } from '@ant-design/icons';
 import { notification } from "antd";

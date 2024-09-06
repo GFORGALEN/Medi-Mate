@@ -4,6 +4,7 @@ import com.friedchicken.mapper.OrderMapper;
 import com.friedchicken.pojo.dto.Order.DetailOrderPageDTO;
 import com.friedchicken.pojo.dto.Order.OrderDTO;
 import com.friedchicken.pojo.dto.Order.OrderItemDTO;
+import com.friedchicken.pojo.dto.Order.UpdateOrderDTO;
 import com.friedchicken.pojo.entity.Order.Order;
 import com.friedchicken.pojo.entity.Order.OrderItem;
 import com.friedchicken.pojo.vo.Order.DetailOrderVO;
@@ -68,5 +69,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderItemDetailVO> getOrderItemDetailByOrderId(String orderId) {
         return orderMapper.getOrderItemDetailByOrderId(orderId);
+    }
+
+    @Override
+    public List<DetailOrderVO> getOrderByPharmacyId(String pharmacyId) {
+        return orderMapper.getOrderByPharmacyId(pharmacyId);
+    }
+
+    @Override
+    public void updateOrderStatus(UpdateOrderDTO updateOrderDTO) {
+        orderMapper.updateOrder(updateOrderDTO);
     }
 }

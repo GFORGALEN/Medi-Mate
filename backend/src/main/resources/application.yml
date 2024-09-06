@@ -23,6 +23,10 @@ spring:
     username: myuser
     password: ${fc.rabbitmq.password}
     virtual-host: /friedchicken
+    listener:
+      simple:
+        prefetch: 1
+        acknowledge-mode: auto
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.friedchicken.pojo.entity
