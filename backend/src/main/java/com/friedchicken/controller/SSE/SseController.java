@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/sse")
+@RequestMapping("/api/sse")
 @Tag(name = "SSE", description = "API for Server-Sent Events (SSE) connection management.")
 @Slf4j
 public class SseController {

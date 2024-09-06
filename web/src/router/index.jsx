@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import TLogin from "@/pages/TLogin.jsx";
 import Login from "@/pages/Login.jsx";
 import DashBoardLayout from "@/layouts/DashBoardLayout.jsx";
@@ -13,6 +13,21 @@ import PharmacyInventory from "@/pages/PharmacyInventory.jsx";
 import Homepage from '../pages/mobile/Homepage';
 import OrderPage from '../pages/Order/OrderPage';
 
+// 创建一个简单的身份验证检查函数
+const isAuthenticated = () => {
+    // 这里应该实现实际的身份验证逻辑
+    // 例如，检查 localStorage 中是否存在有效的令牌
+    return localStorage.getItem('authToken') !== null;
+};
+
+// 创建受保护的路由组件
+const ProtectedRoute = () => {
+    if (!isAuthenticated()) {
+        return <Navigate to="/login" replace />;
+    }
+    return <Outlet />;
+};
+
 const router = createBrowserRouter([
     {
         path: '/',
@@ -24,47 +39,53 @@ const router = createBrowserRouter([
     },
     {
         path: '/mobile',
-        element: <Homepage />, // This is the mobile homepage
+        element: <Homepage />, // 这是移动端首页
     },
     {
         path: '/',
-        element: <DashBoardLayout />,
+        element: <ProtectedRoute />, // 使用受保护的路由组件
         children: [
             {
-                path: 'analytics',
-                element: <ProductAnalytics />,
-            },
-            {
-                path: 'products',
-                element: <Products />,
-            },
-            {
-                path: 'products/productDetail/view/:id',
-                element: <ViewProduct />,
-            },
-            {
-                path: 'products/productDetail/edit/:id',
-                element: <EditProduct />,
-            },
-            {
-                path: 'products/new',
-                element: <NewProductForm />,
-            },
-            {
-                path: 'inventory',
-                element: <Inventory />,
-            },
-            {
-                path: 'pharmacies',
-                element: <Pharmacies />,
-            },
-            {
-                path: 'inventory/:pharmacyId',
-                element: <PharmacyInventory />,
-            },
-            {
-                path: 'OrderPage',
-                element: <OrderPage />,
+                path: '/',
+                element: <DashBoardLayout />,
+                children: [
+                    {
+                        path: 'analytics',
+                        element: <ProductAnalytics />,
+                    },
+                    {
+                        path: 'products',
+                        element: <Products />,
+                    },
+                    {
+                        path: 'products/productDetail/view/:id',
+                        element: <ViewProduct />,
+                    },
+                    {
+                        path: 'products/productDetail/edit/:id',
+                        element: <EditProduct />,
+                    },
+                    {
+                        path: 'products/new',
+                        element: <NewProductForm />,
+                    },
+                    {
+                        path: 'inventory',
+                        element: <Inventory />,
+                    },
+                    {
+                        path: 'pharmacies',
+                        element: <Pharmacies />,
+                    },
+                    {
+                        path: 'inventory/:pharmacyId',
+                        element: <PharmacyInventory />,
+                    },
+                    {
+                        path: 'OrderPage',
+                        element: <OrderPage />,
+                    },
+                ],
             },
         ],
     },
