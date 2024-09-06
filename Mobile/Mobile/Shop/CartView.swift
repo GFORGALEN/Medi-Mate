@@ -1,10 +1,3 @@
-//
-//  CartView.swift
-//  Mobile
-//
-//  Created by Lykheang Taing on 06/09/2024.
-//
-
 import SwiftUI
 
 struct CartView: View {
@@ -57,7 +50,7 @@ struct CartView: View {
     private var cartItemsList: some View {
         VStack(spacing: isOlderMode ? 16 : 12) {
             ForEach(cartManager.items) { item in
-                CartItemCard(item: item, cartManager: cartManager)
+                CartItemCard(item: item)
             }
         }
     }
@@ -68,7 +61,7 @@ struct CartView: View {
                 .font(.headline)
                 .scalableFont(size: isOlderMode ? 24 : 20)
             Spacer()
-            Text("$\(String(format: "%.2f", cartManager.totalPrice))")
+            Text(formatPrice(cartManager.totalPrice))
                 .font(.headline)
                 .scalableFont(size: isOlderMode ? 24 : 20)
         }
@@ -78,9 +71,7 @@ struct CartView: View {
     }
     
     private var checkoutButton: some View {
-        Button(action: {
-            // Implement checkout action
-        }) {
+        NavigationLink(destination: CheckoutView(cartManager: cartManager)) {
             Text("Proceed to Checkout")
                 .font(.headline)
                 .scalableFont(size: isOlderMode ? 22 : 18)
@@ -91,11 +82,18 @@ struct CartView: View {
                 .cornerRadius(12)
         }
     }
+    
+    private func formatPrice(_ price: String) -> String {
+        guard let doublePrice = Double(price) else {
+            return "Invalid Price"
+        }
+        return String(format: "$%.2f", doublePrice)
+    }
 }
 
 struct CartItemCard: View {
     let item: CartItem
-    @ObservedObject var cartManager: CartManager
+    @EnvironmentObject var cartManager: CartManager
     @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
     @AppStorage("isCareMode") private var isOlderMode = false
     
@@ -105,7 +103,11 @@ struct CartItemCard: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 productInfo
-                quantityControl
+                HStack {
+                    quantityControl
+                    Spacer()
+                    removeButton
+                }
             }
         }
         .padding()
@@ -186,5 +188,6 @@ struct CartItemCard: View {
                 .foregroundColor(.red)
                 .scalableFont(size: isOlderMode ? 20 : 18)
         }
+        .padding(.leading, 8)
     }
 }

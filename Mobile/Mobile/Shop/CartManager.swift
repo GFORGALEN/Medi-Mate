@@ -35,13 +35,31 @@ class CartManager: ObservableObject {
         items.reduce(0) { $0 + $1.quantity }
     }
     
-    var totalPrice: Double {
-        items.reduce(0) { $0 + (Double($1.product.productPrice) ?? 0) * Double($1.quantity) }
-    }
+    var totalPrice: String {
+            items.reduce("0") { result, item in
+                guard let price = Double(item.product.productPrice),
+                      let total = Double(result) else {
+                    return result
+                }
+                return String(total + (price * Double(item.quantity)))
+            }
+        }
+    func clearCart() {
+            items.removeAll()
+            objectWillChange.send()
+        }
 }
+
 
 struct CartItem: Identifiable {
     let id = UUID()
     let product: ProductDetails
     var quantity: Int
+}
+struct Product1: Identifiable {
+    let id: String
+    let productName: String
+    let productPrice: String
+    let imageSrc: String
+    // ... other properties ...
 }
