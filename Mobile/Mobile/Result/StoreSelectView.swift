@@ -1,10 +1,3 @@
-//
-//  StoreSelectView.swift
-//  Mobile
-//
-//  Created by Jabin on 2024/9/5.
-//
-
 import SwiftUI
 
 struct StoreSelectionPopup: View {
@@ -12,6 +5,9 @@ struct StoreSelectionPopup: View {
     @Binding var selectedStore: String?
     @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
     @AppStorage("isCareMode") private var isOlderMode = false
+    @StateObject private var viewModel = StoreSelectVM()
+    let productId: String
+    let onLocationReceived: (ProductLocationData) -> Void
     
     let stores = ["NewMarket", "Manakua", "Mount Albert", "Albany", "CBD"]
     
@@ -28,22 +24,24 @@ struct StoreSelectionPopup: View {
                     .scalableFont(size: isOlderMode ? 24 : 20, weight: .bold)
                     .padding()
                 
-                    ForEach(stores, id: \.self) { store in
-                        Button(action: {
-                            selectedStore = store
-                            isPresented = false
-                            // 这里可以添加导航到新视图的逻辑
-                        }) {
-                            Text(store)
-                                .scalableFont(size: isOlderMode ? 20 : 16)
-                                .padding()
-                                .frame(maxWidth: .infinity)
-                                .background(Color.white)
-                                .foregroundColor(.primary)
-                                .cornerRadius(isOlderMode ? 12 : 8)
+                ForEach(stores.indices, id: \.self) { index in
+                    Button(action: {
+                        selectedStore = stores[index]
+                        Task {
+                            await viewModel.fetchProduct(productId: productId, pharmacyId: index + 1)
                         }
-                        .padding(.horizontal)
+                    }) {
+                        Text(stores[index])
+                            .scalableFont(size: isOlderMode ? 20 : 16)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.white)
+                            .foregroundColor(.primary)
+                            .cornerRadius(isOlderMode ? 12 : 8)
                     }
+                    .padding(.horizontal)
+                }
+                
                 Button("Cancel") {
                     isPresented = false
                 }
@@ -57,19 +55,11 @@ struct StoreSelectionPopup: View {
             .shadow(radius: 10)
             .padding(isOlderMode ? 30 : 20)
         }
-    }
-}
-
-
-#Preview {
-    struct PreviewWrapper: View {
-        @State private var isPresented = true
-        @State private var selectedStore: String?
-        
-        var body: some View {
-            StoreSelectionPopup(isPresented: $isPresented, selectedStore: $selectedStore)
+        .onChange(of: viewModel.productLocation) { _, newValue in
+            if let locationData = newValue {
+                onLocationReceived(locationData)
+                isPresented = false
+            }
         }
     }
-    
-    return PreviewWrapper()
 }
