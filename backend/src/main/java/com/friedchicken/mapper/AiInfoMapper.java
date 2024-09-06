@@ -11,7 +11,7 @@ import java.util.List;
 @Mapper
 public interface AiInfoMapper {
 
-    Page<MedicineListVO> findByMultipleWords(List<String> keywords);
+    Page<MedicineListVO> findByMultipleWords(String name);
 
     List<Medicine> findProductByIds(List<String> productId);
 }

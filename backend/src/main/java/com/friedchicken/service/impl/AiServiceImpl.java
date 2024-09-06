@@ -113,7 +113,7 @@ public class AiServiceImpl implements AiService {
 
         if (cachedResult == null) {
             PageHelper.startPage(1, 100);
-            Page<MedicineListVO> page = aiInfoMapper.findByMultipleWords(keywords);
+            Page<MedicineListVO> page = aiInfoMapper.findByMultipleWords(name);
 
             cachedResult = new PageResult<>(page.getTotal(), page.getResult());
 
