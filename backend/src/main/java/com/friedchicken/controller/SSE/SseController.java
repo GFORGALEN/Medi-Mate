@@ -1,6 +1,6 @@
 package com.friedchicken.controller.SSE;
 
-import com.friedchicken.pojo.vo.Order.OrderMessage;
+import com.friedchicken.pojo.vo.Order.OrderMessageVO;
 import com.friedchicken.service.SseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -41,7 +41,7 @@ public class SseController {
     @ApiResponse(responseCode = "500", description = "Error sending the message",
             content = @Content(schema = @Schema(implementation = Error.class)))
     @ResponseBody
-    public void sendMessage(@RequestBody OrderMessage orderMessage) {
-        sseService.sendMessage(orderMessage);
+    public void sendMessage(@RequestBody OrderMessageVO orderMessageVO) {
+        sseService.sendMessage(orderMessageVO);
     }
 }

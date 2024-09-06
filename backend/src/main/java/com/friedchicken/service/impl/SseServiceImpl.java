@@ -1,6 +1,6 @@
 package com.friedchicken.service.impl;
 
-import com.friedchicken.pojo.vo.Order.OrderMessage;
+import com.friedchicken.pojo.vo.Order.OrderMessageVO;
 import com.friedchicken.service.SseService;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -42,10 +42,10 @@ public class SseServiceImpl implements SseService {
     }
 
     @Override
-    public void sendMessage(OrderMessage orderMessage) {
+    public void sendMessage(OrderMessageVO orderMessageVO) {
         sseEmitterMap.forEach((uuid, sseEmitter) -> {
             try {
-                sseEmitter.send(orderMessage, MediaType.APPLICATION_JSON);
+                sseEmitter.send(orderMessageVO, MediaType.APPLICATION_JSON);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

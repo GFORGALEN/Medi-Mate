@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderMessage implements Serializable {
+public class OrderMessageVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private String orderId;
