@@ -1,20 +1,26 @@
 package com.friedchicken.service.impl;
 
 import com.friedchicken.mapper.OrderMapper;
+import com.friedchicken.pojo.dto.Order.DetailOrderPageDTO;
 import com.friedchicken.pojo.dto.Order.OrderDTO;
 import com.friedchicken.pojo.dto.Order.OrderItemDTO;
 import com.friedchicken.pojo.entity.Order.Order;
 import com.friedchicken.pojo.entity.Order.OrderItem;
-import com.friedchicken.pojo.vo.Order.OrderMessage;
+import com.friedchicken.pojo.vo.Order.DetailOrderVO;
+import com.friedchicken.pojo.vo.Order.OrderItemDetailVO;
+import com.friedchicken.pojo.vo.Order.OrderMessageVO;
 import com.friedchicken.service.OrderService;
 import com.friedchicken.service.SseService;
 import com.friedchicken.utils.UniqueIdUtil;
+import com.github.pagehelper.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -49,8 +55,18 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void handleOrderPaymentSuccess(String orderId) {
-        OrderMessage orderMessage = new OrderMessage();
-        orderMessage.setOrderId(orderId);
-        sseService.sendMessage(orderMessage);
+        OrderMessageVO orderMessageVO = new OrderMessageVO();
+        orderMessageVO.setOrderId(orderId);
+        sseService.sendMessage(orderMessageVO);
+    }
+
+    @Override
+    public List<DetailOrderVO> getOrderDetailByUserId(DetailOrderPageDTO detailOrderPageDTO) {
+        return orderMapper.getOrderByUserId(detailOrderPageDTO.getUserId());
+    }
+
+    @Override
+    public List<OrderItemDetailVO> getOrderItemDetailByOrderId(String orderId) {
+        return orderMapper.getOrderItemDetailByOrderId(orderId);
     }
 }

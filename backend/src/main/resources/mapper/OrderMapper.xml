@@ -11,7 +11,18 @@
     </insert>
     <select id="getOrderByOrderId" resultType="com.friedchicken.pojo.entity.Order.Order">
         select *
-        from order
+        from `order`
+        where order_id = #{orderId};
+    </select>
+    <select id="getOrderByUserId" resultType="com.friedchicken.pojo.vo.Order.DetailOrderVO">
+        select *
+        from `order`
+        where user_id = #{userId};
+    </select>
+    <select id="getOrderItemDetailByOrderId" resultType="com.friedchicken.pojo.vo.Order.OrderItemDetailVO">
+        select o.order_id, m.product_id, o.quantity, o.price, m.product_name, m.manufacturer_name, m.image_src
+        from order_item o
+                 natural join medicine m
         where order_id = #{orderId};
     </select>
 </mapper>

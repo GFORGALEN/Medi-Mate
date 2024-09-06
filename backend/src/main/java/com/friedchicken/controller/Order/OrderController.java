@@ -1,6 +1,9 @@
 package com.friedchicken.controller.Order;
 
+import com.friedchicken.pojo.dto.Order.DetailOrderPageDTO;
 import com.friedchicken.pojo.dto.Order.OrderDTO;
+import com.friedchicken.pojo.vo.Order.DetailOrderVO;
+import com.friedchicken.pojo.vo.Order.OrderItemDetailVO;
 import com.friedchicken.result.Result;
 import com.friedchicken.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,10 +14,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/order")
@@ -37,5 +39,35 @@ public class OrderController {
         orderService.orderProduct(orderDTO);
 
         return Result.success("Order product successfully.");
+    }
+
+    @PostMapping("/allOrder")
+    @Operation(summary = "Get order details.",
+            description = "Use user id to retrieval user's orders.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get successfully.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
+    })
+    public Result<List<DetailOrderVO>> getOrderDetail(@RequestBody DetailOrderPageDTO detailOrderPageDTO) {
+        log.info("Order detail request{}", detailOrderPageDTO);
+
+        List<DetailOrderVO> detailOrderVO = orderService.getOrderDetailByUserId(detailOrderPageDTO);
+
+        return Result.success(detailOrderVO);
+    }
+
+    @GetMapping("/detailOrder/{orderId}")
+    @Operation(summary = "Get order details.",
+            description = "Use order id to retrival user's orders.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get successfully.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
+    })
+    public Result<List<OrderItemDetailVO>> getOrderItemDetail(@PathVariable String orderId) {
+        log.info("Order Item detail request{}", orderId);
+
+        List<OrderItemDetailVO> orderItemDetailVO = orderService.getOrderItemDetailByOrderId(orderId);
+
+        return Result.success(orderItemDetailVO);
     }
 }
