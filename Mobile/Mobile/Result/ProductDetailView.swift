@@ -17,10 +17,11 @@ struct ProductDetailsView: View {
     @State private var isShowingLocationView = false
     @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
     @AppStorage("isCareMode") private var isOlderMode = false
-    
+    @EnvironmentObject var cartManager: CartManager
     init(productId: String) {
-        _viewModel = StateObject(wrappedValue: ProductDetailsVM(productId: productId))
-    }
+            // We'll initialize the viewModel in the body
+            _viewModel = StateObject(wrappedValue: ProductDetailsVM(productId: productId, cartManager: CartManager()))
+        }
     
     var body: some View {
         NavigationStack {
@@ -70,6 +71,7 @@ struct ProductDetailsView: View {
             }
         }
         .task {
+            viewModel.updateCartManager(cartManager)
             await viewModel.loadProductDetails()
         }
     }
@@ -85,13 +87,14 @@ struct ProductDetailsContent: View {
     @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
     @AppStorage("isCareMode") private var isOlderMode = false
     @Binding var isShowingLocationView: Bool
-
+    @EnvironmentObject var cartManager: CartManager
     
     var body: some View {
         ScrollView {
             VStack(spacing: isOlderMode ? 30 : 20) {
                 headerSection
                 summarySection
+                addToCartButton
                 readAloudSection
                 contentSections
                 Spacer()
@@ -101,6 +104,7 @@ struct ProductDetailsContent: View {
         }
         .background(Color(UIColor.systemBackground))
     }
+    
     
     private var headerSection: some View {
         VStack(spacing: isOlderMode ? 20 : 15) {
@@ -190,6 +194,28 @@ struct ProductDetailsContent: View {
         .background(Color.black.opacity(0.05))
         .cornerRadius(isOlderMode ? 20 : 15)
     }
+    
+    private var addToCartButton: some View {
+            Button(action: {
+                viewModel.addToCart()
+            }) {
+                HStack {
+                    Image(systemName: viewModel.isAddedToCart ? "checkmark.circle.fill" : "cart.badge.plus")
+                        .font(.system(size: isOlderMode ? 24 : 20))
+                    Text(viewModel.isAddedToCart ? "Update Cart" : "Add to Cart")
+                        .scalableFont(size: isOlderMode ? 24 : 20, weight: .semibold)
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .frame(height: isOlderMode ? 70 : 50)
+                .background(viewModel.isAddedToCart ? Color.green : Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(isOlderMode ? 15 : 10)
+            }
+            .buttonStyle(PlainButtonStyle())
+            .padding(.vertical, isOlderMode ? 15 : 10)
+            .animation(.easeInOut, value: viewModel.isAddedToCart)
+        }
     
     private var readAloudSection: some View {
         VStack(spacing: isOlderMode ? 15 : 10) {

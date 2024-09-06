@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var authViewModel = AuthenticationView()
     @StateObject private var tabBarManager = TabBarManager()
+    @StateObject private var cartManager = CartManager()
     @AppStorage("isCareMode") private var isOlderMode = false
 
     var body: some View {
@@ -17,7 +18,7 @@ struct ContentView: View {
                 case 1:
                     CardView()
                 case 2:
-                    EmptyView()
+                    CartView()
                 case 3:
                     NavigationView {
                         StoreLocationsView()
@@ -38,6 +39,7 @@ struct ContentView: View {
         }
         .environmentObject(tabBarManager)
         .environmentObject(authViewModel)
+        .environmentObject(cartManager)
         .onChange(of: authViewModel.isLoginSuccessed) { oldValue, newValue in
             if newValue {
                 tabBarManager.selectedIndex = 0

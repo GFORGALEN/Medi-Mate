@@ -11,13 +11,20 @@ class ProductDetailsVM: ObservableObject {
     @Published var isSpeaking = false
     @Published var speechRate: Float = AVSpeechUtteranceDefaultSpeechRate
     private var synthesizer = AVSpeechSynthesizer()
+    private var cartManager: CartManager
     
-    init(productId: String, networkService: NetworkServiceProtocol = NetworkService()) {
-        self.productId = productId
-        self.networkService = networkService
-       
-        setupAudioSession()
-    }
+    init(productId: String, cartManager: CartManager, networkService: NetworkServiceProtocol = NetworkService()) {
+            self.productId = productId
+            self.networkService = networkService
+            self.cartManager = cartManager
+           
+            setupAudioSession()
+        }
+    
+    func updateCartManager(_ newCartManager: CartManager) {
+            self.cartManager = newCartManager
+        }
+        
     
     func loadProductDetails() async {
         state = .loading
@@ -47,6 +54,16 @@ class ProductDetailsVM: ObservableObject {
         
         return response.data
     }
+    func addToCart() {
+           guard let product = productDetails else { return }
+           cartManager.addToCart(product)
+           objectWillChange.send()  // Notify observers that the view model has changed
+       }
+       
+       var isAddedToCart: Bool {
+           guard let product = productDetails else { return false }
+           return cartManager.items.contains { $0.product.productId == product.productId }
+       }
     
     func setupAudioSession() {
         do {
