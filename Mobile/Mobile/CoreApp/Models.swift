@@ -118,3 +118,22 @@ struct Comparison: Codable{
     let warnings: String
     let difference: String
 }
+
+struct LocationRequest: Codable {
+    let productId: String
+    let pharmacyId: Int
+}
+struct ProductLocationData: Codable, Equatable {
+    let pharmacyName: String
+    let stockQuantity: Int
+    let shelfNumber: String
+    let shelfLevel: Int
+}
+struct ProductLocationResponse: Codable{
+    let code: Int
+    let msg: String?
+    let data: ProductLocationData
+}
+enum StoreLocation: String {
+    case a = "A", b = "B", c = "C", d = "D", e = "E"
+}

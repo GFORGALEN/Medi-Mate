@@ -6,7 +6,7 @@ class ProductDetailsVM: ObservableObject {
     @Published private(set) var state: LoadingState = .idle
     @Published private(set) var productDetails: ProductDetails?
     private let networkService: NetworkServiceProtocol
-    private let productId: String
+    let productId: String
     
     @Published var isSpeaking = false
     @Published var speechRate: Float = AVSpeechUtteranceDefaultSpeechRate
@@ -21,12 +21,11 @@ class ProductDetailsVM: ObservableObject {
     
     func loadProductDetails() async {
         state = .loading
-        
         do {
             let jsonString = try await networkService.fetchProductDetails(productId: productId)
             let details = try parseProductDetails(from: jsonString)
             state = .loaded(details)
-            productDetails = details  // Add this line
+            productDetails = details
         } catch {
             state = .error(error)
         }

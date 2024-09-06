@@ -4,18 +4,17 @@
 //
 //  Created by Jabin on 2024/8/19.
 //
-
-import SwiftUI
 import AVFoundation
 
 import SwiftUI
-import AVFoundation
 
 struct ProductDetailsView: View {
     @StateObject private var viewModel: ProductDetailsVM
     @State private var selectedSection: String?
     @State private var isStoreSelectionPresented = false
     @State private var selectedStore: String?
+    @State private var locationData: ProductLocationData?
+    @State private var isShowingLocationView = false
     @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
     @AppStorage("isCareMode") private var isOlderMode = false
     
@@ -24,25 +23,52 @@ struct ProductDetailsView: View {
     }
     
     var body: some View {
-        ZStack {
-            Group {
-                switch viewModel.state {
-                case .idle, .loading:
-                    ProgressView("Loading...")
-                        .scalableFont(size: 18)
-                case .loaded(let details):
-                    ProductDetailsContent(details: details, viewModel: viewModel, selectedSection: $selectedSection, isStoreSelectionPresented: $isStoreSelectionPresented, selectedStore: $selectedStore)
-                case .error(let error):
-                    ErrorView(error: error, retryAction: { Task { await viewModel.loadProductDetails() } })
+        NavigationStack {
+            ZStack {
+                Group {
+                    switch viewModel.state {
+                    case .idle, .loading:
+                        ProgressView("Loading...")
+                            .scalableFont(size: 18)
+                    case .loaded(let details):
+                        ProductDetailsContent(
+                            details: details,
+                            viewModel: viewModel,
+                            selectedSection: $selectedSection,
+                            isStoreSelectionPresented: $isStoreSelectionPresented,
+                            selectedStore: $selectedStore,
+                            locationData: $locationData,
+                            isShowingLocationView: $isShowingLocationView
+                        )
+                    case .error(let error):
+                        ErrorView(error: error, retryAction: { Task { await viewModel.loadProductDetails() } })
+                    }
+                }
+                
+                if isStoreSelectionPresented {
+                    StoreSelectionPopup(
+                        isPresented: $isStoreSelectionPresented,
+                        selectedStore: $selectedStore,
+                        productId: viewModel.productId
+                    ) { data in
+                        locationData = data
+                        isShowingLocationView = true
+                    }
                 }
             }
-            
-            if isStoreSelectionPresented {
-                StoreSelectionPopup(isPresented: $isStoreSelectionPresented, selectedStore: $selectedStore)
+            .navigationTitle("Product Details")
+            .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $isShowingLocationView) {
+                if let data = locationData {
+                    NavigationStack {
+                        LocationView(location: StoreLocation(rawValue: data.shelfNumber) ?? .a, productLocation: data)
+                            .navigationBarItems(leading: Button("Back") {
+                                isShowingLocationView = false
+                            })
+                    }
+                }
             }
         }
-        .navigationTitle("Product Details")
-        .navigationBarTitleDisplayMode(.inline)
         .task {
             await viewModel.loadProductDetails()
         }
@@ -55,8 +81,11 @@ struct ProductDetailsContent: View {
     @Binding var selectedSection: String?
     @Binding var isStoreSelectionPresented: Bool
     @Binding var selectedStore: String?
+    @Binding var locationData: ProductLocationData?
     @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
     @AppStorage("isCareMode") private var isOlderMode = false
+    @Binding var isShowingLocationView: Bool
+
     
     var body: some View {
         ScrollView {
@@ -104,19 +133,19 @@ struct ProductDetailsContent: View {
                 .foregroundColor(.secondary)
             
             Button(action: {
-                isStoreSelectionPresented = true
-            }) {
-                Text("Select Store")
-                    .scalableFont(size: isOlderMode ? 20 : 16, weight: .semibold)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(isOlderMode ? 15 : 10)
-            }
-            .padding(.top, isOlderMode ? 15 : 10)
-        }
-    }
+                            isStoreSelectionPresented = true
+                        }) {
+                            Text("Select Store")
+                                .scalableFont(size: isOlderMode ? 20 : 16, weight: .semibold)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(isOlderMode ? 15 : 10)
+                        }
+                        .padding(.top, isOlderMode ? 15 : 10)
+                    }
+                }
     
     private var summarySection: some View {
         VStack(alignment: .leading, spacing: isOlderMode ? 15 : 10) {
@@ -252,5 +281,3 @@ struct ErrorView: View {
         }
     }
 }
-
-

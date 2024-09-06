@@ -33,6 +33,7 @@
 		61DC84A22C6232FF0048463E /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DC84A12C6232FF0048463E /* Application.swift */; };
 		61DF39FF2C75866E0091B070 /* FontSizeMultiplierKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DF39FE2C75866E0091B070 /* FontSizeMultiplierKey.swift */; };
 		61DF3A012C75868D0091B070 /* ScalableFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DF3A002C75868D0091B070 /* ScalableFont.swift */; };
+		D9027F3E2C8A88CC00F5E013 /* StoreSelectVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9027F3D2C8A88CC00F5E013 /* StoreSelectVM.swift */; };
 		D918E4E02C742AE90006BA70 /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D918E4DF2C742AE90006BA70 /* CustomTabBar.swift */; };
 		D93428CF2C896DA10065B161 /* StoreSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D93428CE2C896DA10065B161 /* StoreSelectView.swift */; };
 		D94F239A2C74A3AE00092D9F /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94F23992C74A3AE00092D9F /* CardView.swift */; };
@@ -84,6 +85,7 @@
 		61DC84A12C6232FF0048463E /* Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
 		61DF39FE2C75866E0091B070 /* FontSizeMultiplierKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontSizeMultiplierKey.swift; sourceTree = "<group>"; };
 		61DF3A002C75868D0091B070 /* ScalableFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalableFont.swift; sourceTree = "<group>"; };
+		D9027F3D2C8A88CC00F5E013 /* StoreSelectVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreSelectVM.swift; sourceTree = "<group>"; };
 		D918E4DF2C742AE90006BA70 /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
 		D93428CE2C896DA10065B161 /* StoreSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSelectView.swift; sourceTree = "<group>"; };
 		D94F23992C74A3AE00092D9F /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 		611802CD2C769C1700994A83 /* Result */ = {
 			isa = PBXGroup;
 			children = (
+				D9027F3D2C8A88CC00F5E013 /* StoreSelectVM.swift */,
 				D9D44CAA2C6B157000AEA850 /* ResultsView.swift */,
 				61620A9B2C75978A00C12BEF /* CareResultView.swift */,
 				D9A276952C7312EB006B6442 /* ProductDetailsVM.swift */,
@@ -376,6 +379,7 @@
 				61620A9C2C75978A00C12BEF /* CareResultView.swift in Sources */,
 				D93428CF2C896DA10065B161 /* StoreSelectView.swift in Sources */,
 				619AC2D92C6C3F7A0064D8F1 /* StoreLocationViewModel.swift in Sources */,
+				D9027F3E2C8A88CC00F5E013 /* StoreSelectVM.swift in Sources */,
 				D972360C2C894EAF00F2307F /* LocationView.swift in Sources */,
 				D98C8B912C632FB80022544C /* RegisterViewModel.swift in Sources */,
 				D9C989602C72F90000EC4429 /* CustomLoadingView.swift in Sources */,
