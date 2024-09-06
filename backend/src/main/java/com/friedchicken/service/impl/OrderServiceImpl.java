@@ -5,22 +5,22 @@ import com.friedchicken.pojo.dto.Order.OrderDTO;
 import com.friedchicken.pojo.dto.Order.OrderItemDTO;
 import com.friedchicken.pojo.entity.Order.Order;
 import com.friedchicken.pojo.entity.Order.OrderItem;
+import com.friedchicken.pojo.vo.Order.OrderMessage;
 import com.friedchicken.service.OrderService;
+import com.friedchicken.service.SseService;
 import com.friedchicken.utils.UniqueIdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
 public class OrderServiceImpl implements OrderService {
-
     @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+    private SseService sseService;
     @Autowired
     private OrderMapper orderMapper;
     @Autowired
@@ -49,6 +49,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void handleOrderPaymentSuccess(String orderId) {
-        simpMessagingTemplate.convertAndSend("/topic/orderStatus", "Order " + orderId + " has been paid.");
+        OrderMessage orderMessage = new OrderMessage();
+        orderMessage.setOrderId(orderId);
+        sseService.sendMessage(orderMessage);
     }
 }

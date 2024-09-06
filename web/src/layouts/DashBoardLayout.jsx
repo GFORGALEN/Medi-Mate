@@ -41,6 +41,27 @@ const themeConfig = {
 const DashboardLayout = () => {
     const [collapsed, setCollapsed] = useState({ left: true, right: true });
     const [isHovering, setIsHovering] = useState(false);
+    const [messages, setMessages] = useState([]);
+
+    useEffect(() => {
+        const eventSource = new EventSource('http://localhost:8080/sse/connect');
+
+        eventSource.onmessage = event => {
+            const newMessage = JSON.parse(event.data);
+            setMessages(prevMessages => [...prevMessages, newMessage]);
+            console.log("New message:", newMessage);
+        };
+
+        eventSource.onerror = error => {
+            console.error("EventSource failed:", error);
+            eventSource.close();
+        };
+
+        return () => {
+            eventSource.close();
+        };
+    }, []);
+
     const location = useLocation();
 
     useEffect(() => {
@@ -63,6 +84,14 @@ const DashboardLayout = () => {
 
     return (
         <ConfigProvider theme={themeConfig}>
+            <div>
+                <h1>Messages</h1>
+                <ul>
+                    {messages.map((msg, index) => (
+                        <li key={index}>{msg.orderId}</li>
+                    ))}
+                </ul>
+            </div>
             <Layout className="h-screen overflow-hidden">
                 <Sider
                     collapsible
@@ -73,16 +102,17 @@ const DashboardLayout = () => {
                     className="transition-all duration-300 ease-in-out"
                     trigger={null}
                 >
-                    <LeftMenuLayout collapsed={collapsed.left && !isHovering} />
+                    <LeftMenuLayout collapsed={collapsed.left && !isHovering}/>
                 </Sider>
-            <Layout>
+                <Layout>
                     <Header className="flex items-center justify-between px-4">
-                        <HeaderLayout />
+                        <HeaderLayout/>
                     </Header>
 
                     <Layout className="overflow-hidden">
-                        <Content className="p-6 m-4 bg-white rounded-lg shadow-md overflow-y-auto h-[calc(100vh-112px)]">
-                            <Outlet />
+                        <Content
+                            className="p-6 m-4 bg-white rounded-lg shadow-md overflow-y-auto h-[calc(100vh-112px)]">
+                            <Outlet/>
                         </Content>
                         <Sider
                             width={collapsed.right ? 80 : "20%"}
@@ -97,7 +127,7 @@ const DashboardLayout = () => {
                                 <Button
                                     type="primary"
                                     onClick={() => toggleCollapsed('right')}
-                                    icon={collapsed.right ? <LeftOutlined /> : <RightOutlined />}
+                                    icon={collapsed.right ? <LeftOutlined/> : <RightOutlined/>}
                                 >
                                     {collapsed.right ? '' : 'Collapse'}
                                 </Button>
