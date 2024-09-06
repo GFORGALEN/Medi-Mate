@@ -116,6 +116,11 @@ struct CartView: View {
                 return
             }
             
+            guard !authViewModel.token.isEmpty else {
+                print("Authentication token not available")
+                return
+            }
+            
             guard let order = cartManager.prepareOrder(userId: authViewModel.userId) else {
                 print("Failed to prepare order")
                 return
@@ -124,7 +129,7 @@ struct CartView: View {
             print("Submitting order:")
             print(order)
             
-            submitOrder(order) { result in
+            submitOrder(order, token: authViewModel.token) { result in
                 DispatchQueue.main.async {
                     switch result {
                     case .success(let message):
@@ -147,10 +152,10 @@ struct CartView: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(cartManager.selectedStore == nil ? Color.gray : Color.blue)
+                .background(cartManager.selectedStore == nil || authViewModel.token.isEmpty ? Color.gray : Color.blue)
                 .cornerRadius(12)
         }
-        .disabled(cartManager.selectedStore == nil || cartManager.items.isEmpty || authViewModel.userId.isEmpty)
+        .disabled(cartManager.selectedStore == nil || cartManager.items.isEmpty || authViewModel.userId.isEmpty || authViewModel.token.isEmpty)
     }
     
     private func formatPrice(_ price: String) -> String {

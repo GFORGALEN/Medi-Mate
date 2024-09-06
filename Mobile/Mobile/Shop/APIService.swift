@@ -1,6 +1,6 @@
 import Foundation
 
-func submitOrder(_ order: [String: Any], completion: @escaping (Result<String, Error>) -> Void) {
+func submitOrder(_ order: [String: Any], token: String, completion: @escaping (Result<String, Error>) -> Void) {
     let urlString = "http://172.24.65.23:8080/api/order/orderProduct"
     guard let url = URL(string: urlString) else {
         completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
@@ -10,6 +10,7 @@ func submitOrder(_ order: [String: Any], completion: @escaping (Result<String, E
     var request = URLRequest(url: url)
     request.httpMethod = "POST"
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
     
     do {
         let jsonData = try JSONSerialization.data(withJSONObject: order, options: [.prettyPrinted])
