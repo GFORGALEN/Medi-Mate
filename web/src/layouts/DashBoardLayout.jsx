@@ -1,11 +1,19 @@
-import {useState, useEffect, useCallback} from 'react';
-import {ConfigProvider, Layout, Button} from 'antd';
-import {LeftOutlined, RightOutlined} from '@ant-design/icons';
+import { useState, useEffect, useCallback } from 'react';
+import { ConfigProvider, Layout, Button, notification } from 'antd';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import LeftMenuLayout from "@/layouts/LeftMenuLayout";
-import {Outlet, useLocation} from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import HeaderLayout from "@/layouts/HeaderLayout";
+import { APP_API_URL } from "@/../config.js";
+import React from 'react';
+import { setOrderId } from "@/store/features/messageSlice";
 
-const {Header, Sider, Content} = Layout;
+
+import { useDispatch } from "react-redux";
+
+
+
+const { Header, Sider, Content } = Layout;
 
 const themeConfig = {
     components: {
@@ -43,12 +51,19 @@ const DashboardLayout = () => {
     const [isHovering, setIsHovering] = useState(false);
     const [messages, setMessages] = useState([]);
 
+
+    const dispatch = useDispatch()
+
     useEffect(() => {
-        const eventSource = new EventSource('http://localhost:8080/sse/connect');
+        const eventSource = new EventSource(`${APP_API_URL}/sse/connect`);
 
         eventSource.onmessage = event => {
             const newMessage = JSON.parse(event.data);
+            if (newMessage.orderId === "ping") {
+                return;
+            }
             setMessages(prevMessages => [...prevMessages, newMessage]);
+            dispatch(setOrderId(newMessage.orderId));
             console.log("New message:", newMessage);
         };
 
@@ -61,6 +76,20 @@ const DashboardLayout = () => {
             eventSource.close();
         };
     }, []);
+
+    useEffect(() => {
+        if (!messages.length) return;
+        openNotification('topRight');
+
+    }, [messages]);
+    const [api, contextHolder] = notification.useNotification();
+    const openNotification = (placement) => {
+        api.info({
+            message: "New Order",
+            description: `New order has been received`,
+            placement,
+        });
+    };
 
     const location = useLocation();
 
@@ -84,14 +113,7 @@ const DashboardLayout = () => {
 
     return (
         <ConfigProvider theme={themeConfig}>
-            <div>
-                <h1>Messages</h1>
-                <ul>
-                    {messages.map((msg, index) => (
-                        <li key={index}>{msg.orderId}</li>
-                    ))}
-                </ul>
-            </div>
+            {contextHolder}
             <Layout className="h-screen overflow-hidden">
                 <Sider
                     collapsible
@@ -102,11 +124,11 @@ const DashboardLayout = () => {
                     className="transition-all duration-300 ease-in-out"
                     trigger={null}
                 >
-                    <LeftMenuLayout collapsed={collapsed.left && !isHovering}/>
+                    <LeftMenuLayout collapsed={collapsed.left && !isHovering} />
                 </Sider>
                 <Layout>
                     <Header className="flex items-center justify-between px-4">
-                        <HeaderLayout/>
+                        <HeaderLayout />
                     </Header>
 
                     <Layout className="overflow-hidden">
@@ -127,7 +149,7 @@ const DashboardLayout = () => {
                                 <Button
                                     type="primary"
                                     onClick={() => toggleCollapsed('right')}
-                                    icon={collapsed.right ? <LeftOutlined/> : <RightOutlined/>}
+                                    icon={collapsed.right ? <LeftOutlined /> : <RightOutlined />}
                                 >
                                     {collapsed.right ? '' : 'Collapse'}
                                 </Button>
