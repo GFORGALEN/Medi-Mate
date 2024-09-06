@@ -4,17 +4,10 @@
 <mapper namespace="com.friedchicken.mapper.AiInfoMapper">
 
     <select id="findByMultipleWords" resultType="com.friedchicken.pojo.vo.Medicine.MedicineListVO">
-        SELECT * FROM medicine
-        WHERE
-        <if test="keywords != null and keywords.size() > 0">
-            <foreach collection="keywords" item="word" separator=" OR ">
-                product_name LIKE CONCAT('%', #{word}, '%')
-            </foreach>
-        </if>
-        ORDER BY
-        <foreach collection="keywords" item="word" separator=" + " open="(" close=") DESC">
-            (IF(product_name LIKE CONCAT('%', #{word}, '%'), 1, 0))
-        </foreach>
+        SELECT *, MATCH(product_name, general_information) AGAINST(#{searchTerms} IN BOOLEAN MODE) AS relevance
+        FROM medicine
+        WHERE MATCH(product_name, general_information) AGAINST(#{searchTerms} IN BOOLEAN MODE)
+        ORDER BY relevance DESC
     </select>
 
     <select id="findProductByIds" resultType="com.friedchicken.pojo.entity.Medicine.Medicine">
