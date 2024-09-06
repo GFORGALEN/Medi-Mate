@@ -21,4 +21,6 @@ public interface OrderMapper {
     List<DetailOrderVO> getOrderByUserId(String userId);
 
     List<OrderItemDetailVO> getOrderItemDetailByOrderId(String orderId);
+
+    List<DetailOrderVO> getOrderByPharmacyId(String pharmacyId);
 }

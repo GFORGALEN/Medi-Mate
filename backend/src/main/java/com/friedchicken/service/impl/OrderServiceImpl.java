@@ -69,4 +69,9 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderItemDetailVO> getOrderItemDetailByOrderId(String orderId) {
         return orderMapper.getOrderItemDetailByOrderId(orderId);
     }
+
+    @Override
+    public List<DetailOrderVO> getOrderByPharmacyId(String pharmacyId) {
+        return orderMapper.getOrderByPharmacyId(pharmacyId);
+    }
 }

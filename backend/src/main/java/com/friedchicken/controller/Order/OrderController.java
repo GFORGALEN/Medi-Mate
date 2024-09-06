@@ -70,4 +70,19 @@ public class OrderController {
 
         return Result.success(orderItemDetailVO);
     }
+
+    @GetMapping("/pharmacyOrder/{pharmacyId}")
+    @Operation(summary = "Get order details.",
+            description = "Get order details by using pharmacy Id.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get successfully.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)))
+    })
+    public Result<List<DetailOrderVO>> getOrderDetailByPharmacyId(@PathVariable String pharmacyId) {
+        log.info("Order detail request by pharmacyId{}", pharmacyId);
+
+        List<DetailOrderVO> detailOrderVOList=orderService.getOrderByPharmacyId(pharmacyId);
+
+        return Result.success(detailOrderVOList);
+    }
 }

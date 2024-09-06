@@ -16,4 +16,6 @@ public interface OrderService {
     List<DetailOrderVO> getOrderDetailByUserId(DetailOrderPageDTO detailOrderPageDTO);
 
     List<OrderItemDetailVO> getOrderItemDetailByOrderId(String orderId);
+
+    List<DetailOrderVO> getOrderByPharmacyId(String pharmacyId);
 }
