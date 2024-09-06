@@ -17,7 +17,7 @@ import OrderPage from '../pages/Order/OrderPage';
 const isAuthenticated = () => {
     // 这里应该实现实际的身份验证逻辑
     // 例如，检查 localStorage 中是否存在有效的令牌
-    return localStorage.getItem('authToken') !== null;
+    return localStorage.getItem('token') !== null;
 };
 
 // 创建受保护的路由组件
