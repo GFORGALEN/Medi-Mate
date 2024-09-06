@@ -1,12 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef} from 'react';
 import { ConfigProvider, Layout, Button, notification } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import LeftMenuLayout from "@/layouts/LeftMenuLayout";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import HeaderLayout from "@/layouts/HeaderLayout";
 import { APP_API_URL } from "@/../config.js";
 import React from 'react';
 import { setOrderId } from "@/store/features/messageSlice";
+
 
 
 import { useDispatch } from "react-redux";
@@ -50,9 +51,21 @@ const DashboardLayout = () => {
     const [collapsed, setCollapsed] = useState({ left: true, right: true });
     const [isHovering, setIsHovering] = useState(false);
     const [messages, setMessages] = useState([]);
+    const navigate = useNavigate();
+
+
 
 
     const dispatch = useDispatch()
+
+    const audioRef = useRef(null);
+
+    const playAudio = () => {
+        if (audioRef.current) {
+            audioRef.current.play();
+        }
+    };
+
 
     useEffect(() => {
         const eventSource = new EventSource(`${APP_API_URL}/sse/connect`);
@@ -80,6 +93,7 @@ const DashboardLayout = () => {
     useEffect(() => {
         if (!messages.length) return;
         openNotification('topRight');
+        playAudio();
 
     }, [messages]);
     const [api, contextHolder] = notification.useNotification();
@@ -88,6 +102,11 @@ const DashboardLayout = () => {
             message: "New Order",
             description: `New order has been received`,
             placement,
+            onClick: () => {
+                navigate(`/OrderPage`, { replace: true });
+                audioRef.current.pause();
+            },
+
         });
     };
 
@@ -114,6 +133,7 @@ const DashboardLayout = () => {
     return (
         <ConfigProvider theme={themeConfig}>
             {contextHolder}
+            <audio ref={audioRef} src="/assets/sound.mp3" />
             <Layout className="h-screen overflow-hidden">
                 <Sider
                     collapsible
@@ -134,7 +154,7 @@ const DashboardLayout = () => {
                     <Layout className="overflow-hidden">
                         <Content
                             className="p-6 m-4 bg-white rounded-lg shadow-md overflow-y-auto h-[calc(100vh-112px)]">
-                            <Outlet/>
+                            <Outlet />
                         </Content>
                         <Sider
                             width={collapsed.right ? 80 : "20%"}
