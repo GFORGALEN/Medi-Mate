@@ -16,7 +16,16 @@ const OrderPage = () => {
   const getOrdersForStatus = (status) => orders.filter(order => order.status === status);
   useEffect(() => {
     if (!dataFromRedux.orderId) return;
-    setOrders(prevOrders => [...prevOrders, { id: dataFromRedux.orderId, status: 'receive' }]);
+    setOrders(prevOrders => {
+      const newOrders = [...prevOrders];
+      if (!newOrders.some(order => order.id === dataFromRedux.orderId)) {
+        newOrders.push({ id: dataFromRedux.orderId, status: 'receive' });
+      }
+      return newOrders;
+    });
+    //setOrders(prevOrders => [...prevOrders, { id: dataFromRedux.orderId, status: 'receive' }]);
+
+
   }, [dataFromRedux]);
 
 
