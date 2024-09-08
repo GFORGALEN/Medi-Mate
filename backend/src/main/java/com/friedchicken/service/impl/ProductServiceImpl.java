@@ -33,6 +33,8 @@ public class ProductServiceImpl implements ProductService {
     private AiServiceImpl aiServiceImpl;
     @Autowired
     private RedisTemplate<String, PageResult<MedicineListVO>> pageResultRedisTemplate;
+    @Autowired
+    private RedisTemplate<String, MedicineDetailVO> medicineDetailRedisTemplate;
 
     @Override
     public PageResult<MedicineListVO> getProductsByName(MedicinePageDTO medicinePageDTO) {
@@ -54,6 +56,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public MedicineDetailVO getProductById(String productId) {
+        MedicineDetailVO productInRedis = medicineDetailRedisTemplate.opsForValue().get(productId);
+        if (productInRedis != null) {
+            return productInRedis;
+        }
         MedicineDetailVO productById = productMapper.getProductById(productId);
         if (productById.getSummary() == null) {
             String text = aiServiceImpl.handlerText("You are a professional pharmacist, give me a brief summary."
@@ -61,6 +67,7 @@ public class ProductServiceImpl implements ProductService {
             productById.setSummary(text);
             productMapper.updateProductById(productById);
         }
+        medicineDetailRedisTemplate.opsForValue().set(productId, productById, 10, TimeUnit.MINUTES);
         return productById;
     }
 

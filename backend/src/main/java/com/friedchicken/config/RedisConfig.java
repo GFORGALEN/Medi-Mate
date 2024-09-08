@@ -1,6 +1,7 @@
 package com.friedchicken.config;
 
 import com.friedchicken.pojo.vo.Inventory.DetailInventoryVO;
+import com.friedchicken.pojo.vo.Medicine.MedicineDetailVO;
 import com.friedchicken.pojo.vo.Medicine.MedicineListVO;
 import com.friedchicken.result.PageResult;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +34,22 @@ public class RedisConfig {
     @Bean
     public RedisTemplate<String, PageResult<DetailInventoryVO>> pageResultForDetailInventoryRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, PageResult<DetailInventoryVO>> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory);
+
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        template.afterPropertiesSet();
+
+        return template;
+    }
+
+    @Bean
+    public RedisTemplate<String, MedicineDetailVO> medicineDetailRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, MedicineDetailVO> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
 
         template.setKeySerializer(new StringRedisSerializer());

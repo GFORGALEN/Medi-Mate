@@ -1,26 +1,33 @@
 package com.friedchicken.service.impl;
 
+import com.friedchicken.constant.MessageConstant;
 import com.friedchicken.mapper.OrderMapper;
+import com.friedchicken.mapper.ProductMapper;
 import com.friedchicken.pojo.dto.Order.DetailOrderPageDTO;
 import com.friedchicken.pojo.dto.Order.OrderDTO;
 import com.friedchicken.pojo.dto.Order.OrderItemDTO;
 import com.friedchicken.pojo.dto.Order.UpdateOrderDTO;
 import com.friedchicken.pojo.entity.Order.Order;
 import com.friedchicken.pojo.entity.Order.OrderItem;
+import com.friedchicken.pojo.vo.Medicine.MedicineDetailVO;
 import com.friedchicken.pojo.vo.Order.DetailOrderVO;
 import com.friedchicken.pojo.vo.Order.OrderItemDetailVO;
 import com.friedchicken.pojo.vo.Order.OrderMessageVO;
 import com.friedchicken.service.OrderService;
 import com.friedchicken.service.SseService;
+import com.friedchicken.service.exception.NoProductException;
+import com.friedchicken.service.exception.NoQuantityException;
 import com.friedchicken.utils.UniqueIdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -30,9 +37,13 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderMapper orderMapper;
     @Autowired
+    private ProductMapper productMapper;
+    @Autowired
     private UniqueIdUtil uniqueIdUtil;
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private RedisTemplate<String, MedicineDetailVO> medicineDetailRedisTemplate;
 
     @Override
     @Transactional
@@ -46,6 +57,17 @@ public class OrderServiceImpl implements OrderService {
         for (OrderItemDTO item : orderDTO.getOrderItem()) {
             OrderItem orderItem = new OrderItem();
             BeanUtils.copyProperties(item, orderItem);
+            if (orderItem.getQuantity() <= 0) {
+                throw new NoQuantityException(MessageConstant.NO_QUANTITY);
+            }
+            MedicineDetailVO medicineDetailVO = medicineDetailRedisTemplate.opsForValue().get(orderItem.getProductId());
+            if (medicineDetailVO == null) {
+                MedicineDetailVO productById = productMapper.getProductById(orderItem.getProductId());
+                if (productById == null) {
+                    throw new NoProductException(MessageConstant.NO_SUCH_PRODUCT);
+                }
+                medicineDetailRedisTemplate.opsForValue().set(orderItem.getProductId(), productById, 10, TimeUnit.MINUTES);
+            }
             orderItem.setOrderId(orderId);
             orderItem.setItemId(uniqueIdUtil.generateUniqueId());
             orderMapper.insertOrderItem(orderItem);
