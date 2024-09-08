@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class OrderStatusListener {
     @Autowired
-    private OrderService orderService;  // 确保你有适当的方法来处理支付成功
+    private OrderService orderService;
     @Autowired
     private SseService sseService;
 
