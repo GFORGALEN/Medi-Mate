@@ -18,4 +18,5 @@ public class DetailInventoryDTO implements Serializable {
     private int pharmacyId;
     private int page;
     private int pageSize;
+    private String productName;
 }
