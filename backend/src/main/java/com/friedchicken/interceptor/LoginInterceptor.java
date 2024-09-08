@@ -17,6 +17,9 @@
 
 package com.friedchicken.interceptor;
 
+import com.friedchicken.constant.JwtClaimsConstant;
+import com.friedchicken.constant.MessageConstant;
+import com.friedchicken.mapper.UserMapper;
 import com.friedchicken.properties.JwtProperties;
 import com.friedchicken.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +32,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import javax.security.auth.login.LoginException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -41,6 +45,8 @@ public class LoginInterceptor implements HandlerInterceptor {
     private StringRedisTemplate stringRedisTemplate;
     @Autowired
     private FunctionRegistry functionCatalog;
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -49,11 +55,16 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            String token = authorizationHeader.substring(7); // Remove "Bearer " prefix
+            String token = authorizationHeader.substring(7);
+            log.info("Token Auth");
             try {
                 Map<String, Object> claims = JwtUtil.parseToken(token, jwtProperties.getUserSecretKey());
                 if (!Objects.equals(stringRedisTemplate.opsForValue().get(token), token)) {
-                    throw new RuntimeException();
+                    throw new LoginException(MessageConstant.USER_NOT_LOGIN);
+                }
+                String userId = (String) claims.get(JwtClaimsConstant.USER_ID);
+                if (userMapper.getUserByUserId(userId) == null) {
+                    throw new LoginException(MessageConstant.USER_NOT_LOGIN);
                 }
                 return true;
             } catch (Exception e) {
