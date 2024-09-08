@@ -1,9 +1,9 @@
-import  { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Table, Image, Pagination, Spin, Alert, Button, Modal, Input } from 'antd';
 import { ArrowLeftOutlined, BoxPlotOutlined, SearchOutlined } from '@ant-design/icons';
 import { getInventoryAPI } from '@/api/user/inventory';
-import Pharmacy3DView from './Pharmacy3DView';
+import PharmacyShelfView from './pharmacy3DView';
 
 const { Search } = Input;
 
@@ -19,7 +19,7 @@ const PharmacyInventory = () => {
         pageSize: 10,
         total: 0
     });
-    const [is3DViewVisible, setIs3DViewVisible] = useState(false);
+    const [isShelfViewVisible, setIsShelfViewVisible] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -67,7 +67,7 @@ const PharmacyInventory = () => {
 
     const handleViewDetails = (product) => {
         setSelectedProduct(product);
-        setIs3DViewVisible(true);
+        setIsShelfViewVisible(true);
     };
 
     const columns = [
@@ -109,11 +109,11 @@ const PharmacyInventory = () => {
             key: 'shelfLevel',
         },
         {
-            title: 'Action',
+            title: 'Drug Location',
             key: 'action',
             render: (_, record) => (
                 <Button type="link" onClick={() => handleViewDetails(record)}>
-                    Details
+                    Location
                 </Button>
             ),
         },
@@ -131,8 +131,9 @@ const PharmacyInventory = () => {
         navigate('/pharmacies');
     };
 
-    const toggle3DView = () => {
-        setIs3DViewVisible(!is3DViewVisible);
+    const toggleShelfView = () => {
+        setIsShelfViewVisible(!isShelfViewVisible);
+        setSelectedProduct(null);
     };
 
     if (loading) {
@@ -171,10 +172,10 @@ const PharmacyInventory = () => {
                     <Button
                         type="primary"
                         icon={<BoxPlotOutlined />}
-                        onClick={toggle3DView}
+                        onClick={toggleShelfView}
                         className="mr-4"
                     >
-                        Toggle 3D View
+                        Toggle Shelf View
                     </Button>
                     <Button type="primary" icon={<ArrowLeftOutlined />} onClick={handleGoBack}>
                         Back to Pharmacies
@@ -215,18 +216,16 @@ const PharmacyInventory = () => {
                 />
             )}
             <Modal
-                title={`3D View - ${selectedProduct ? selectedProduct.productName : 'Inventory'}`}
-                visible={is3DViewVisible}
+                title={`Shelf View - ${selectedProduct ? selectedProduct.productName : 'Inventory'}`}
+                visible={isShelfViewVisible}
                 onCancel={() => {
-                    setIs3DViewVisible(false);
+                    setIsShelfViewVisible(false);
                     setSelectedProduct(null);
                 }}
                 width={800}
                 footer={null}
             >
-                <div style={{ height: '600px' }}>
-                    <Pharmacy3DView product={selectedProduct} />
-                </div>
+                <PharmacyShelfView inventory={filteredInventory} selectedProduct={selectedProduct} />
             </Modal>
         </div>
     );
