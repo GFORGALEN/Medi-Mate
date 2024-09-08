@@ -1,6 +1,5 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import TLogin from "@/pages/TLogin.jsx";
-import Login from "@/pages/Login.jsx";
 import DashBoardLayout from "@/layouts/DashBoardLayout.jsx";
 import Products from "@/pages/Products.jsx";
 import EditProduct from "@/pages/EditProduct.jsx";
