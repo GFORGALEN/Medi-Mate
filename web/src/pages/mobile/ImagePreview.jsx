@@ -23,11 +23,11 @@ const ImagePreview = ({ imageBlob, onRetake, uploading, setUploading, setUploadS
 
   return (
     <div className="relative w-full aspect-square mb-4">
-      <img 
+      {/* <img 
         src={URL.createObjectURL(imageBlob)} 
         alt="Captured" 
         className="rounded-xl w-full h-full object-cover" 
-      />
+      /> */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
         <button
           onClick={onRetake}
