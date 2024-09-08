@@ -23,8 +23,7 @@
     <insert id="register" parameterType="User">
         INSERT INTO user
         (user_id, username, email, password, google_id, user_pic, created_at, updated_at)
-        VALUES
-            (#{userId}, #{username}, #{email}, #{password}, #{googleId}, #{userPic}, #{createdAt}, #{updatedAt})
+        VALUES (#{userId}, #{username}, #{email}, #{password}, #{googleId}, #{userPic}, #{createdAt}, #{updatedAt})
     </insert>
 
     <insert id="addUserInfo" parameterType="User">
