@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Order from './Order';
@@ -29,15 +29,15 @@ const DraggableOrderItem = React.memo(({ order, onStatusChange }) => {
   }, [order, onStatusChange]);
 
   return (
-      <li
-          ref={drag}
-          className={`bg-blue-100 p-4 mb-2 rounded shadow flex items-center justify-between ${
-              isDragging ? 'opacity-50' : ''
-          }`}
-      >
-        <span>{order.id}</span>
-        <Order order={order} onStatusChange={handleCheckClick} />
-      </li>
+    <li
+      ref={drag}
+      className={`bg-blue-100 p-4 mb-2 rounded shadow flex items-center justify-between ${
+        isDragging ? 'opacity-50' : ''
+      }`}
+    >
+      <span>{order.id}</span>
+      <Order order={order} onStatusChange={handleCheckClick} />
+    </li>
   );
 });
 
@@ -48,47 +48,49 @@ const StatusColumn = React.memo(({ status, orders, onStatusChange }) => {
   }), [status, onStatusChange]);
 
   return (
-      <div className="flex-1" ref={drop}>
-        <h2 className="text-xl font-semibold mb-4 capitalize">{status}</h2>
-        <ul className="bg-white rounded-lg shadow p-4 min-h-[500px]">
-          {orders.map((order) => (
-              <DraggableOrderItem key={order.id} order={order} onStatusChange={onStatusChange} />
-          ))}
-        </ul>
-      </div>
-  );
-});
-
-const OrderHistory = ({ orders }) => (
-    <div className="mt-8">
-      <h2 className="text-2xl font-bold mb-4">Order History</h2>
-      <ul className="bg-white rounded-lg shadow p-4">
+    <div className="flex-1" ref={drop}>
+      <h2 className="text-xl font-semibold mb-4 capitalize">{status}</h2>
+      <ul className="bg-white rounded-lg shadow p-4 min-h-[500px]">
         {orders.map((order) => (
-            <li key={order.id} className="mb-2">
-              Order ID: {order.id} - Status: {order.status}
-            </li>
+          <DraggableOrderItem key={order.id} order={order} onStatusChange={onStatusChange} />
         ))}
       </ul>
     </div>
-);
+  );
+});
+
+const OrderHistory = React.memo(({ orders }) => (
+  <div className="mt-8">
+    <h2 className="text-2xl font-bold mb-4">Order History</h2>
+    <ul className="bg-white rounded-lg shadow p-4">
+      {orders.map((order) => (
+        <li key={order.id} className="mb-2">
+          Order ID: {order.id} - Status: {order.status}
+        </li>
+      ))}
+    </ul>
+  </div>
+));
 
 const OrderPage = () => {
   const [orders, setOrders] = useState(initialOrders);
   const [confirmModal, setConfirmModal] = useState({ visible: false, orderId: null, newStatus: null });
   const dataFromRedux = useSelector(state => state.message);
 
-  const getOrdersForStatus = useCallback((status) =>
-          orders.filter(order => order.status === status),
-      [orders]);
+  const ordersByStatus = useMemo(() => {
+    return statuses.reduce((acc, status) => {
+      acc[status] = orders.filter(order => order.status === status);
+      return acc;
+    }, {});
+  }, [orders]);
 
   useEffect(() => {
     if (!dataFromRedux.orderId) return;
     setOrders(prevOrders => {
-      const newOrders = [...prevOrders];
-      if (!newOrders.some(order => order.id === dataFromRedux.orderId)) {
-        newOrders.push({ id: dataFromRedux.orderId, status: 'receive' });
+      if (!prevOrders.some(order => order.id === dataFromRedux.orderId)) {
+        return [...prevOrders, { id: dataFromRedux.orderId, status: 'receive' }];
       }
-      return newOrders;
+      return prevOrders;
     });
   }, [dataFromRedux]);
 
@@ -100,12 +102,9 @@ const OrderPage = () => {
   }, [orders]);
 
   const confirmStatusChange = useCallback(() => {
-    setOrders(prevOrders => prevOrders.map(order => {
-      if (order.id === confirmModal.orderId) {
-        return { ...order, status: confirmModal.newStatus };
-      }
-      return order;
-    }));
+    setOrders(prevOrders => prevOrders.map(order => 
+      order.id === confirmModal.orderId ? { ...order, status: confirmModal.newStatus } : order
+    ));
     setConfirmModal({ visible: false, orderId: null, newStatus: null });
   }, [confirmModal]);
 
@@ -114,30 +113,30 @@ const OrderPage = () => {
   }, []);
 
   return (
-      <DndProvider backend={HTML5Backend}>
-        <div className="min-h-screen bg-gray-100 p-8">
-          <h1 className="text-3xl font-bold mb-8 text-center">Order Management</h1>
-          <div className="flex justify-between space-x-4">
-            {statuses.map((status) => (
-                <StatusColumn
-                    key={status}
-                    status={status}
-                    orders={getOrdersForStatus(status)}
-                    onStatusChange={handleStatusChange}
-                />
-            ))}
-          </div>
-          <OrderHistory orders={orders} />
-          <Modal
-              title="Confirm Status Change"
-              open={confirmModal.visible}
-              onOk={confirmStatusChange}
-              onCancel={cancelStatusChange}
-          >
-            <p>Are you sure you want to change the status of order {confirmModal.orderId} to {confirmModal.newStatus}?</p>
-          </Modal>
+    <DndProvider backend={HTML5Backend}>
+      <div className="min-h-screen bg-gray-100 p-8">
+        <h1 className="text-3xl font-bold mb-8 text-center">Order Management</h1>
+        <div className="flex justify-between space-x-4">
+          {statuses.map((status) => (
+            <StatusColumn
+              key={status}
+              status={status}
+              orders={ordersByStatus[status]}
+              onStatusChange={handleStatusChange}
+            />
+          ))}
         </div>
-      </DndProvider>
+        <OrderHistory orders={orders} />
+        <Modal
+          title="Confirm Status Change"
+          open={confirmModal.visible}
+          onOk={confirmStatusChange}
+          onCancel={cancelStatusChange}
+        >
+          <p>Are you sure you want to change the status of order {confirmModal.orderId} to {confirmModal.newStatus}?</p>
+        </Modal>
+      </div>
+    </DndProvider>
   );
 };
 
