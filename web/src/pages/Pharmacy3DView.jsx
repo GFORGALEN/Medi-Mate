@@ -1,91 +1,128 @@
-import { useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Text } from '@react-three/drei';
-import * as THREE from 'three';
-const Shelf = ({ position, size, color }) => {
-    return (
-        <mesh position={position}>
-            <boxGeometry args={size} />
-            <meshStandardMaterial color={color} />
-        </mesh>
-    );
-};
+import React, { useState } from 'react';
+import { Image } from 'antd';
 
-const Product = ({ position, size, color, label }) => {
-    const mesh = useRef();
+const PharmacyShelfView = ({ inventory, selectedProduct }) => {
+    const [hoveredCell, setHoveredCell] = useState(null);
 
-    useFrame(() => {
-        mesh.current.rotation.y += 0.01;
-    });
+    const shelves = ['A', 'B', 'C', 'D', 'E'];
+    const levels = [1, 2, 3, 4, 5, 6];
 
-    return (
-        <group position={position}>
-            <mesh ref={mesh}>
-                <boxGeometry args={size} />
-                <meshStandardMaterial color={color} />
-            </mesh>
-            <Text
-                position={[0, size[1] / 2 + 0.1, 0]}
-                color="black"
-                anchorX="center"
-                anchorY="bottom"
-                fontSize={0.15}
-            >
-                {label}
-            </Text>
-        </group>
-    );
-};
-
-const Pharmacy3DView = ({ product }) => {
-    const shelfColors = {
-        A: '#FFA07A',
-        B: '#98FB98',
-        C: '#87CEFA',
-        D: '#DDA0DD',
-        E: '#F0E68C'
+    const getProductsForCell = (shelf, level) => {
+        return inventory.filter(item => item.shelfNumber === shelf && item.shelfLevel === level);
     };
 
-    const shelfSize = [5, 3, 1];
-    const cellSize = [0.8, 0.8, 0.8];
-    const shelfPosition = [0, 1.5, 0];
-
-    const getProductPosition = (shelfNumber, shelfLevel) => {
-        const x = (shelfNumber.charCodeAt(0) - 65) * 1 - 2;
-        const y = (shelfLevel - 1) * 0.9 + 0.4;
-        return [x, y, 0.5];
+    const isSelectedCell = (shelf, level) => {
+        return selectedProduct && selectedProduct.shelfNumber === shelf && selectedProduct.shelfLevel === level;
     };
 
     return (
-        <Canvas camera={{ position: [0, 2, 5], fov: 60 }} style={{ height: '600px' }}>
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} />
-            <OrbitControls />
-
-            {/* Main shelf */}
-            <Shelf position={shelfPosition} size={shelfSize} color="#8B4513" />
-
-            {/* Shelf divisions */}
-            {Object.keys(shelfColors).map((shelfLetter, index) => (
-                <Shelf
-                    key={shelfLetter}
-                    position={[(index - 2) * 1, 1.5, 0]}
-                    size={[0.9, 2.9, 0.9]}
-                    color={shelfColors[shelfLetter]}
-                />
-            ))}
-
-            {/* Product */}
-            {product && (
-                <Product
-                    position={getProductPosition(product.shelfNumber, product.shelfLevel)}
-                    size={cellSize}
-                    color="red"
-                    label={product.productName}
-                />
+        <div className="pharmacy-shelf-view">
+            <div className="shelf-container">
+                {shelves.map(shelf => (
+                    <div key={shelf} className="shelf">
+                        {levels.map(level => {
+                            const products = getProductsForCell(shelf, level);
+                            const isSelected = isSelectedCell(shelf, level);
+                            return (
+                                <div
+                                    key={`${shelf}-${level}`}
+                                    className={`shelf-cell ${products.length > 0 ? 'has-products' : ''} ${isSelected ? 'selected' : ''}`}
+                                    onMouseEnter={() => setHoveredCell({ shelf, level, products })}
+                                    onMouseLeave={() => setHoveredCell(null)}
+                                >
+                                    {products.length > 0 ? (
+                                        <Image
+                                            src={products[0].imageSrc}
+                                            alt={products[0].productName}
+                                            preview={false}
+                                            className="product-image"
+                                        />
+                                    ) : (
+                                        <span className="cell-number">{level}</span>
+                                    )}
+                                </div>
+                            );
+                        })}
+                        <div className="shelf-label">{shelf}</div>
+                    </div>
+                ))}
+            </div>
+            {hoveredCell && (
+                <div className="product-tooltip">
+                    <h3>Shelf {hoveredCell.shelf}, Level {hoveredCell.level}</h3>
+                    {hoveredCell.products.length > 0 ? (
+                        <ul>
+                            {hoveredCell.products.map(product => (
+                                <li key={product.productName}>
+                                    {product.productName} - Quantity: {product.stockQuantity}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>No products in this location</p>
+                    )}
+                </div>
             )}
-        </Canvas>
+            <style jsx>{`
+                .pharmacy-shelf-view {
+                    position: relative;
+                    padding: 20px;
+                }
+                .shelf-container {
+                    display: flex;
+                    justify-content: space-around;
+                }
+                .shelf {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+                .shelf-label {
+                    font-weight: bold;
+                    margin-top: 10px;
+                }
+                .shelf-cell {
+                    width: 60px;
+                    height: 60px;
+                    border: 1px solid #ccc;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 2px;
+                    cursor: pointer;
+                    overflow: hidden;
+                    position: relative;
+                }
+                .has-products {
+                    background-color: #e6f7ff;
+                }
+                .selected {
+                    border: 2px solid #faad14;
+                    box-shadow: 0 0 10px rgba(250, 173, 20, 0.5);
+                }
+                .product-image {
+                    max-width: 100%;
+                    max-height: 100%;
+                    object-fit: cover;
+                }
+                .cell-number {
+                    font-size: 24px;
+                    color: #999;
+                }
+                .product-tooltip {
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    background-color: white;
+                    border: 1px solid #ccc;
+                    padding: 10px;
+                    border-radius: 4px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                    max-width: 300px;
+                }
+            `}</style>
+        </div>
     );
 };
 
-export default Pharmacy3DView;
+export default PharmacyShelfView;
