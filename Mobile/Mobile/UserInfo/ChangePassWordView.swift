@@ -51,56 +51,28 @@ struct ChangePasswordView: View {
     }
     
     private func updatePassword() {
-        guard let url = URL(string: "http://52.64.142.47:8080/api/user/updatePassword") else {
-            errorMessage = "Invalid URL"
-            return
-        }
-        
         let passwordUpdate = PasswordUpdate(
             email: authViewModel.userEmail,
             oldPassword: oldPassword,
             newPassword: newPassword
         )
         
-        var request = URLRequest(url: url)
-        request.httpMethod = "PATCH"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(AuthManager.shared.token)", forHTTPHeaderField: "Authorization")
-        
-        do {
-            request.httpBody = try JSONEncoder().encode(passwordUpdate)
-        } catch {
-            errorMessage = "Error encoding data: \(error.localizedDescription)"
-            return
-        }
-        
         isLoading = true
         errorMessage = nil
         successMessage = nil
         
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                isLoading = false
-                if let error = error {
-                    errorMessage = "Network error: \(error.localizedDescription)"
-                    return
+        UserInfoAPI.shared.updatePassword(passwordUpdate: passwordUpdate) { result in
+            isLoading = false
+            switch result {
+            case .success:
+                successMessage = "Password updated successfully"
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    presentationMode.wrappedValue.dismiss()
                 }
-                
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    errorMessage = "Invalid response"
-                    return
-                }
-                
-                if httpResponse.statusCode == 200 {
-                    successMessage = "Password updated successfully"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        presentationMode.wrappedValue.dismiss()
-                    }
-                } else {
-                    errorMessage = "Server error: \(httpResponse.statusCode)"
-                }
+            case .failure(let error):
+                errorMessage = error.localizedDescription
             }
-        }.resume()
+        }
     }
 }
 

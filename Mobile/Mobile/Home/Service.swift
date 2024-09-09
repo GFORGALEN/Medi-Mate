@@ -1,10 +1,3 @@
-//
-//  Service.swift
-//  Mobile
-//
-//  Created by Jabin on 2024/8/16.
-//
-
 import Foundation
 import UIKit
 
@@ -14,23 +7,29 @@ protocol NetworkServiceProtocol {
     func fetchProductDetails(productId: String) async throws -> String
     func compareProducts(productIds: [String]) async throws -> String
     func findProduct(productId: String, pharmacyId: Int) async throws -> String
-
 }
 
 class NetworkService: NetworkServiceProtocol {
+    private func createURL(endpoint: String, queryItems: [URLQueryItem]? = nil) throws -> URL {
+        var components = URLComponents(string: "\(Constant.apiSting)/api/\(endpoint)")
+        components?.queryItems = queryItems
+        
+        guard let url = components?.url else {
+            throw URLError(.badURL)
+        }
+        
+        return url
+    }
+    
     func textSearch(page: Int, pageSize: Int, productName: String, manufacture: String) async throws -> String {
-        var components = URLComponents(string: "\(Constant.apiSting)/api/products")
-        components?.queryItems = [
+        let queryItems = [
             URLQueryItem(name: "page", value: String(page)),
             URLQueryItem(name: "pageSize", value: String(pageSize)),
             URLQueryItem(name: "productName", value: productName),
             URLQueryItem(name: "manufacture", value: manufacture)
         ]
         
-        guard let url = components?.url else {
-            throw URLError(.badURL)
-        }
-        
+        let url = try createURL(endpoint: "products", queryItems: queryItems)
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -44,10 +43,7 @@ class NetworkService: NetworkServiceProtocol {
     }
     
     func imageSearch(image: UIImage) async throws -> String {
-        guard let url = URL(string: "\(Constant.apiSting)/api/message/image") else {
-            throw URLError(.badURL)
-        }
-
+        let url = try createURL(endpoint: "message/image")
         let boundary = UUID().uuidString
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -70,72 +66,61 @@ class NetworkService: NetworkServiceProtocol {
             throw URLError(.badServerResponse)
         }
         
-        
         return String(data: imageData, encoding: .utf8) ?? ""
     }
     
     func fetchProductDetails(productId: String) async throws -> String {
-        guard var urlComponents = URLComponents(string: "\(Constant.apiSting)/api/products/productDetail") else {
-                throw URLError(.badURL)
-            }
-            
-            urlComponents.queryItems = [URLQueryItem(name: "productId", value: productId)]
-            
-            guard let url = urlComponents.url else {
-                throw URLError(.badURL)
-            }
-            
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.setValue("application/json", forHTTPHeaderField: "Accept")
-            
-            let (data, response) = try await URLSession.shared.data(for: request)
-            
-            guard let httpResponse = response as? HTTPURLResponse, 200...299 ~= httpResponse.statusCode else {
-                throw URLError(.badServerResponse)
-            }
-            return String(data: data, encoding: .utf8) ?? ""
+        let queryItems = [URLQueryItem(name: "productId", value: productId)]
+        let url = try createURL(endpoint: "products/productDetail", queryItems: queryItems)
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, 200...299 ~= httpResponse.statusCode else {
+            throw URLError(.badServerResponse)
         }
+        return String(data: data, encoding: .utf8) ?? ""
+    }
     
     func compareProducts(productIds: [String]) async throws -> String {
-            guard let url = URL(string: "\(Constant.apiSting)/api/message/comparison") else {
-                throw URLError(.badURL)
-            }
-            
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.setValue("Bearer \(AuthManager.shared.token)", forHTTPHeaderField: "Authorization")
-            
-            let body = ["productId": productIds]
-            request.httpBody = try JSONSerialization.data(withJSONObject: body)
-            
-            let (data, response) = try await URLSession.shared.data(for: request)
-            
-            guard let httpResponse = response as? HTTPURLResponse, 200...299 ~= httpResponse.statusCode else {
-                throw URLError(.badServerResponse)
-            }
-            
-            return String(data: data, encoding: .utf8) ?? ""
+        let url = try createURL(endpoint: "message/comparison")
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(AuthManager.shared.token)", forHTTPHeaderField: "Authorization")
+        
+        let body = ["productId": productIds]
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, 200...299 ~= httpResponse.statusCode else {
+            throw URLError(.badServerResponse)
         }
+        
+        return String(data: data, encoding: .utf8) ?? ""
+    }
+
     func findProduct(productId: String, pharmacyId: Int) async throws -> String {
-            guard let url = URL(string: "\(Constant.apiSting)/api/products/productLocation") else {
-                throw URLError(.badURL)
-            }
-            
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            
-            let body = LocationRequest(productId: productId, pharmacyId: pharmacyId)
-            request.httpBody = try JSONEncoder().encode(body)
-            
-            let (data, response) = try await URLSession.shared.data(for: request)
-            
-            guard let httpResponse = response as? HTTPURLResponse, 200...299 ~= httpResponse.statusCode else {
-                throw URLError(.badServerResponse)
-            }
-            
-            return String(data: data, encoding: .utf8) ?? ""
+        let url = try createURL(endpoint: "products/productLocation")
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let body = LocationRequest(productId: productId, pharmacyId: pharmacyId)
+        request.httpBody = try JSONEncoder().encode(body)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, 200...299 ~= httpResponse.statusCode else {
+            throw URLError(.badServerResponse)
         }
+        
+        return String(data: data, encoding: .utf8) ?? ""
+    }
 }
