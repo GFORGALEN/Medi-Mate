@@ -1,5 +1,6 @@
 package com.friedchicken.service;
 
+import com.friedchicken.pojo.dto.Order.DeleteOrderDTO;
 import com.friedchicken.pojo.dto.Order.DetailOrderPageDTO;
 import com.friedchicken.pojo.dto.Order.OrderDTO;
 import com.friedchicken.pojo.dto.Order.UpdateOrderDTO;
@@ -21,4 +22,6 @@ public interface OrderService {
     List<DetailOrderVO> getOrderByPharmacyId(String pharmacyId);
 
     void updateOrderStatus(UpdateOrderDTO orderDTO);
+
+    void deleteOrder(DeleteOrderDTO deleteOrderDTO);
 }

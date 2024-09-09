@@ -1,5 +1,6 @@
 package com.friedchicken.controller.Order;
 
+import com.friedchicken.pojo.dto.Order.DeleteOrderDTO;
 import com.friedchicken.pojo.dto.Order.DetailOrderPageDTO;
 import com.friedchicken.pojo.dto.Order.OrderDTO;
 import com.friedchicken.pojo.dto.Order.UpdateOrderDTO;
@@ -71,6 +72,7 @@ public class OrderController {
 
         return Result.success(orderItemDetailVO);
     }
+
     @GetMapping("/pharmacyOrder/{pharmacyId}")
     @Operation(summary = "Get order details.",
             description = "Get order details by using pharmacy Id.")
@@ -81,7 +83,7 @@ public class OrderController {
     public Result<List<DetailOrderVO>> getOrderDetailByPharmacyId(@PathVariable String pharmacyId) {
         log.info("Order detail request by pharmacyId {}", pharmacyId);
 
-        List<DetailOrderVO> detailOrderVOList=orderService.getOrderByPharmacyId(pharmacyId);
+        List<DetailOrderVO> detailOrderVOList = orderService.getOrderByPharmacyId(pharmacyId);
 
         return Result.success(detailOrderVOList);
     }
@@ -99,5 +101,20 @@ public class OrderController {
         orderService.updateOrderStatus(updateOrderDTO);
 
         return Result.success("Order update successfully.");
+    }
+
+    @DeleteMapping("/order")
+    @Operation(summary = "Delete order.",
+            description = "Delete order by using order Id and user Id.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Delete successfully.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class)))
+    })
+    public Result<String> deleteOrder(@RequestBody DeleteOrderDTO deleteOrderDTO){
+        log.info("Delete order request{}", deleteOrderDTO);
+
+        orderService.deleteOrder(deleteOrderDTO);
+
+        return Result.success("Delete successfully.");
     }
 }

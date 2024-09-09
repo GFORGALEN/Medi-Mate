@@ -1,5 +1,6 @@
 package com.friedchicken.mapper;
 
+import com.friedchicken.pojo.dto.Order.DeleteOrderDTO;
 import com.friedchicken.pojo.dto.Order.OrderDTO;
 import com.friedchicken.pojo.dto.Order.UpdateOrderDTO;
 import com.friedchicken.pojo.entity.Order.Order;
@@ -28,4 +29,5 @@ public interface OrderMapper {
 
     void updateOrder(UpdateOrderDTO updateOrderDTO);
 
+    void deleteOrder(DeleteOrderDTO deleteOrderDTO);
 }
