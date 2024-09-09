@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Table, Image, Pagination, Spin, Alert, Button, Modal, Input } from 'antd';
-import { ArrowLeftOutlined, BoxPlotOutlined, SearchOutlined } from '@ant-design/icons';
-import { getInventoryAPI } from '@/api/user/inventory';
+import {useState, useEffect} from 'react';
+import {useParams, useNavigate} from 'react-router-dom';
+import {Table, Image, Pagination, Spin, Alert, Button, Modal, Input} from 'antd';
+import {ArrowLeftOutlined, BoxPlotOutlined, SearchOutlined} from '@ant-design/icons';
+import {getInventoryAPI} from '@/api/user/inventory';
 import PharmacyShelfView from './pharmacy3DView';
 
-const { Search } = Input;
+const {Search} = Input;
 
 const PharmacyInventory = () => {
-    const { pharmacyId } = useParams();
+    const {pharmacyId} = useParams();
     const navigate = useNavigate();
     const [inventory, setInventory] = useState([]);
     const [filteredInventory, setFilteredInventory] = useState([]);
@@ -75,7 +75,7 @@ const PharmacyInventory = () => {
             title: 'Image',
             dataIndex: 'imageSrc',
             key: 'imageSrc',
-            render: (imageSrc) => <Image src={imageSrc} width={50} />,
+            render: (imageSrc) => <Image src={imageSrc} width={50}/>,
         },
         {
             title: 'Product Name',
@@ -139,7 +139,7 @@ const PharmacyInventory = () => {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <Spin size="large" tip="Loading inventory..." />
+                <Spin size="large" tip="Loading inventory..."/>
             </div>
         );
     }
@@ -171,13 +171,13 @@ const PharmacyInventory = () => {
                 <div>
                     <Button
                         type="primary"
-                        icon={<BoxPlotOutlined />}
+                        icon={<BoxPlotOutlined/>}
                         onClick={toggleShelfView}
                         className="mr-4"
                     >
                         Toggle Shelf View
                     </Button>
-                    <Button type="primary" icon={<ArrowLeftOutlined />} onClick={handleGoBack}>
+                    <Button type="primary" icon={<ArrowLeftOutlined/>} onClick={handleGoBack}>
                         Back to Pharmacies
                     </Button>
                 </div>
@@ -186,7 +186,7 @@ const PharmacyInventory = () => {
                 <Search
                     placeholder="Search products or manufacturers"
                     onSearch={handleSearch}
-                    enterButton={<SearchOutlined />}
+                    enterButton={<SearchOutlined/>}
                     size="large"
                     className="max-w-xl"
                 />
@@ -225,7 +225,7 @@ const PharmacyInventory = () => {
                 width={800}
                 footer={null}
             >
-                <PharmacyShelfView inventory={filteredInventory} selectedProduct={selectedProduct} />
+                <PharmacyShelfView inventory={filteredInventory} selectedProduct={selectedProduct}/>
             </Modal>
         </div>
     );
