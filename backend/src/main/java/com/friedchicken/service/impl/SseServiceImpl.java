@@ -21,6 +21,11 @@ public class SseServiceImpl implements SseService {
     }
 
     @Override
+    public Map<String, SseEmitter> getSseEmitterMap() {
+        return sseEmitterMap;
+    }
+
+    @Override
     public SseEmitter connect(String uuid) {
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
         try {
