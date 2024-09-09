@@ -10,7 +10,7 @@ const OrderHistory = React.memo(({ orders, onDeleteOrder }) => (
             {orders.map((order) => (
                 <li key={order.orderId} className="mb-2 flex justify-between items-center">
           <span>
-            Order ID: {order.orderId} - Amount: ${order.amount} - Status: {statuses[order.status]}
+            Order ID: {order.orderId} - User ID: {order.userId} - Amount: ${order.amount} - Status: {statuses[order.status]}
           </span>
                     <Button onClick={() => onDeleteOrder(order.orderId)} type="danger" size="small">
                         Delete

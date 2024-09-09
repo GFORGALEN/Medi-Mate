@@ -19,7 +19,13 @@ const OrderPage = () => {
     ...order,
     createdAt: order.createdAt || new Date().toISOString()
   });
-
+  useEffect(() => {
+    pharmacyOrderAPI.getOrderDetails(1).then((response) => {
+      if (response.code === 1 && Array.isArray(response.data)) {
+        setOrders(response.data);
+      }
+    });
+  }, []);
   const ordersByStatus = useMemo(() => {
     return statuses.reduce((acc, status, index) => {
       acc[status] = orders
