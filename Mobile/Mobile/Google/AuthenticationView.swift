@@ -99,6 +99,7 @@ class AuthenticationView: ObservableObject {
                         self.userEmail = response.data.email
 //                        self.userPicURL = response.data.userPicUR< ?? ""
                         self.token = response.data.token
+                        AuthManager.shared.token = response.data.token
                         
 //                        // Update AuthenticationView properties
 //                        authViewModel.isLoginSuccessed = true

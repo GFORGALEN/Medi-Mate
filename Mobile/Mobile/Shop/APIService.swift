@@ -1,7 +1,7 @@
 import Foundation
 
 func submitOrder(_ order: [String: Any], token: String, completion: @escaping (Result<String, Error>) -> Void) {
-    let urlString = "http://172.24.65.23:8080/api/order/orderProduct"
+    let urlString = "http://52.64.142.47:8080/api/order/orderProduct"
     guard let url = URL(string: urlString) else {
         completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
         return
