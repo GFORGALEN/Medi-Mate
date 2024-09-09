@@ -6,6 +6,7 @@ import { pharmacyOrderAPI } from '@/api/orderApi.jsx';
 import StatusColumn from './StatusColumn';
 import OrderHistory from './OrderHistory';
 import OrderDetailModal from './OrderDetailModal';
+import GenerateReportButton from './GenerateReportButton';
 
 const statuses = ['receive', 'picking', 'finish'];
 
@@ -43,7 +44,17 @@ const OrderPage = () => {
       }
     });
   }, []);
-
+  useEffect(() => {
+    pharmacyOrderAPI.getOrderDetails(1).then((response) => {
+      if (response.code === 1 && Array.isArray(response.data)) {
+        const ordersWithTimestamp = response.data.map(order => ({
+          ...order,
+          createdAt: order.createdAt || new Date().toISOString() // 如果后端没有提供，则在前端生成时间戳
+        }));
+        setOrders(ordersWithTimestamp);
+      }
+    });
+  }, []);
   useEffect(() => {
     if (!dataFromRedux.orderId) return;
     setOrders(prevOrders => {
@@ -81,6 +92,9 @@ const OrderPage = () => {
       <DndProvider backend={HTML5Backend}>
         <div className="min-h-screen bg-gray-100 p-8">
           <h1 className="text-3xl font-bold mb-8 text-center">Order Management</h1>
+          <div className="mb-4">
+            <GenerateReportButton orders={orders} />
+          </div>
           <div className="flex justify-between space-x-4">
             {statuses.map((status) => (
                 <StatusColumn
