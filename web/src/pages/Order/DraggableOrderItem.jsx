@@ -1,5 +1,3 @@
-
-// bin，这个组件是用来定义每个模块的 就是order id amount wait 那些每个订单的单独模块
 import React, { useState, useEffect } from 'react';
 import { useDrag } from 'react-dnd';
 import { Button, Tag } from 'antd';
@@ -30,7 +28,7 @@ const getWaitTimeColor = (seconds) => {
     return 'red';
 };
 
-const DraggableOrderItem = React.memo(({ order, onStatusChange, onViewDetails,onDeleteOrder}) => {
+const DraggableOrderItem = React.memo(({ order, onStatusChange, onViewDetails, onDeleteOrder }) => {
     const [waitTime, setWaitTime] = useState(calculateWaitTime(order.createdAt));
     const [waitTimeInSeconds, setWaitTimeInSeconds] = useState(0);
 
@@ -43,13 +41,13 @@ const DraggableOrderItem = React.memo(({ order, onStatusChange, onViewDetails,on
             setWaitTime(calculateWaitTime(order.createdAt));
         };
 
-        // 初始更新
+        // Initial update
         updateWaitTime();
 
-        // 设置定时器，每秒更新一次
+        // Update every second
         const timer = setInterval(updateWaitTime, 1000);
 
-        // 清理函数
+        // Cleanup
         return () => clearInterval(timer);
     }, [order.createdAt]);
 
@@ -66,22 +64,30 @@ const DraggableOrderItem = React.memo(({ order, onStatusChange, onViewDetails,on
     return (
         <li
             ref={drag}
-            className={`bg-blue-100 p-4 mb-2 rounded shadow flex items-center justify-between ${
+            className={`bg-blue-100 p-4 mb-4 rounded shadow flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0 ${
                 isDragging ? 'opacity-50' : ''
             }`}
         >
-            <span>Order ID: {order.orderId}</span>
-            <span>Amount: ${order.amount}</span>
-            <Tag color={waitTimeColor}>Wait: {waitTime}</Tag>
-            <Order order={order} onStatusChange={onStatusChange}/>
-            <Button onClick={() => onViewDetails(order.orderId)} className="bg-blue-500 text-white mr-2">
-                View Details
-            </Button>
-            <Button onClick={() => onDeleteOrder(order.orderId)} type="danger" className="bg-blue-500 text-white mr-2">
-                Delete
-            </Button>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 flex-grow">
+                <span className="text-sm sm:text-base">Order ID: {order.orderId}</span>
+                <span className="text-sm sm:text-base">User ID: {order.userId}</span>
+                <span className="text-sm sm:text-base">Amount: ${order.amount}</span>
+            </div>
+            <div className="flex items-center space-x-4">
+                <Tag color={waitTimeColor} className="text-xs sm:text-sm">
+                    Wait: {waitTime}
+                </Tag>
+                <Order order={order} onStatusChange={onStatusChange} />
+                <Button onClick={() => onViewDetails(order.orderId)} className="bg-blue-500 text-white text-xs sm:text-sm">
+                    View Details
+                </Button>
+                <Button onClick={() => onDeleteOrder(order.orderId)} type="danger" className="bg-red-500 text-white text-xs sm:text-sm">
+                    Delete
+                </Button>
+            </div>
         </li>
     );
 });
 
 export default DraggableOrderItem;
+//这个是每一个订单的功能以及样式 展示出了order的id userid amount等信息
