@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Spin, Table } from 'antd';
+import { Modal, Spin, Table, Button } from 'antd';
 import { pharmacyOrderAPI } from '@/api/orderApi.jsx';
+import GenerateReceiptButton from './GenerateReceiptButton';
 
 const OrderDetailModal = ({ orderId, visible, onClose }) => {
     const [orderDetails, setOrderDetails] = useState(null);
@@ -12,7 +13,11 @@ const OrderDetailModal = ({ orderId, visible, onClose }) => {
             pharmacyOrderAPI.getOrderDetail(orderId)
                 .then(response => {
                     if (response.code === 1 && Array.isArray(response.data)) {
-                        setOrderDetails(response.data);
+                        setOrderDetails({
+                            ...response.data[0],
+                            createdAt: new Date().toISOString(), // 添加订单生成时间
+                            items: response.data
+                        });
                     }
                 })
                 .catch(error => console.error('Error fetching order details:', error))
@@ -32,18 +37,26 @@ const OrderDetailModal = ({ orderId, visible, onClose }) => {
             title={`Order Details - ${orderId}`}
             open={visible}
             onCancel={onClose}
-            footer={null}
+            footer={[
+                <GenerateReceiptButton key="receipt" order={orderDetails} />,
+                <Button key="close" onClick={onClose}>
+                    Close
+                </Button>
+            ]}
             width={800}
         >
             {loading ? (
                 <Spin size="large" />
             ) : orderDetails ? (
-                <Table
-                    dataSource={orderDetails}
-                    columns={columns}
-                    rowKey="productId"
-                    pagination={false}
-                />
+                <>
+                    <p>Order Date: {new Date(orderDetails.createdAt).toLocaleString()}</p>
+                    <Table
+                        dataSource={orderDetails.items}
+                        columns={columns}
+                        rowKey="productId"
+                        pagination={false}
+                    />
+                </>
             ) : (
                 <p>No details available</p>
             )}
@@ -52,4 +65,3 @@ const OrderDetailModal = ({ orderId, visible, onClose }) => {
 };
 
 export default OrderDetailModal;
-//这个是点击view details后弹出的modal，显示订单详情
