@@ -57,11 +57,6 @@ struct EditProfileView: View {
     }
     
     private func updateProfile() {
-        guard let url = URL(string: "http://52.64.142.47:8080/api/userinfo/updateUserInfo") else {
-            errorMessage = "Invalid URL"
-            return
-        }
-        
         guard let birthYearInt = Int(birthYear),
               let userWeightInt = Int(userWeight),
               let userHeightInt = Int(userHeight) else {
@@ -76,41 +71,18 @@ struct EditProfileView: View {
             userHeight: userHeightInt
         )
         
-        var request = URLRequest(url: url)
-        request.httpMethod = "PUT"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(AuthManager.shared.token)", forHTTPHeaderField: "Authorization")
-        
-        do {
-            request.httpBody = try JSONEncoder().encode(updatedUserInfo)
-        } catch {
-            errorMessage = "Error encoding data: \(error.localizedDescription)"
-            return
-        }
-        
         isLoading = true
         errorMessage = nil
         
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                isLoading = false
-                if let error = error {
-                    errorMessage = "Network error: \(error.localizedDescription)"
-                    return
-                }
-                
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    errorMessage = "Invalid response"
-                    return
-                }
-                
-                if httpResponse.statusCode == 200 {
-                    userInfo = updatedUserInfo
-                    presentationMode.wrappedValue.dismiss()
-                } else {
-                    errorMessage = "Server error: \(httpResponse.statusCode)"
-                }
+        UserInfoAPI.shared.updateUserInfo(userInfo: updatedUserInfo) { result in
+            isLoading = false
+            switch result {
+            case .success:
+                userInfo = updatedUserInfo
+                presentationMode.wrappedValue.dismiss()
+            case .failure(let error):
+                errorMessage = error.localizedDescription
             }
-        }.resume()
+        }
     }
 }
