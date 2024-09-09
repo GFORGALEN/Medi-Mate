@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Table, Image, Pagination, Select, message, Spin } from 'antd';
-import { getInventoryAPI } from '@/api/user/inventory';
-import { useParams, useNavigate } from 'react-router-dom';
+import {useState, useEffect} from 'react';
+import {Table, Image, Pagination, Select, Spin} from 'antd';
+import {getInventoryAPI} from '@/api/user/inventory';
+import {useParams, useNavigate} from 'react-router-dom';
 
-const { Option } = Select;
+const {Option} = Select;
 
 const InventoryPage = () => {
-    const { pharmacyId: routePharmacyId } = useParams();
+    const {pharmacyId: routePharmacyId} = useParams();
     const navigate = useNavigate();
     const [inventory, setInventory] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -18,11 +18,11 @@ const InventoryPage = () => {
     const [selectedPharmacy, setSelectedPharmacy] = useState(routePharmacyId ? parseInt(routePharmacyId) : 1);
 
     const pharmacies = [
-        { id: 1, name: 'MediMate Manakau' },
-        { id: 2, name: 'MediMate NewMarket' },
-        { id: 3, name: 'MediMate Mount Albert' },
-        { id: 4, name: 'MediMate Albany' },
-        { id: 5, name: 'MediMate CBD' },
+        {id: 1, name: 'MediMate Manakau'},
+        {id: 2, name: 'MediMate NewMarket'},
+        {id: 3, name: 'MediMate Mount Albert'},
+        {id: 4, name: 'MediMate Albany'},
+        {id: 5, name: 'MediMate CBD'},
     ];
 
     useEffect(() => {
@@ -43,11 +43,9 @@ const InventoryPage = () => {
                 }));
             } else {
                 console.error('Unexpected response structure:', response);
-                message.error('获取库存信息失败：响应结构异常');
             }
         } catch (error) {
             console.error('Error fetching inventory:', error);
-            message.error('获取库存信息失败，请稍后再试。');
         } finally {
             setLoading(false);
         }
@@ -57,7 +55,7 @@ const InventoryPage = () => {
             title: 'Image',
             dataIndex: 'imageSrc',
             key: 'imageSrc',
-            render: (imageSrc) => <Image src={imageSrc} width={50} />,
+            render: (imageSrc) => <Image src={imageSrc} width={50}/>,
         },
         {
             title: 'Product Name',
@@ -110,10 +108,10 @@ const InventoryPage = () => {
     };
 
     return (
-        <div style={{ padding: '20px' }}>
+        <div style={{padding: '20px'}}>
             <h1>Pharmacy inventory management</h1>
             <Select
-                style={{ width: 200, marginBottom: 20 }}
+                style={{width: 200, marginBottom: 20}}
                 value={selectedPharmacy}
                 onChange={handlePharmacyChange}
             >
@@ -135,7 +133,7 @@ const InventoryPage = () => {
                             pageSize={pagination.pageSize}
                             total={pagination.total}
                             onChange={handlePageChange}
-                            style={{ marginTop: '20px', textAlign: 'right' }}
+                            style={{marginTop: '20px', textAlign: 'right'}}
                         />
                     </>
                 ) : (

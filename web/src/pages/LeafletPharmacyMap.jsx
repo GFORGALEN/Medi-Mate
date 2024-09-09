@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import { Icon } from 'leaflet';
+import React, {useState, useEffect, useRef} from 'react';
+import {MapContainer, TileLayer, Marker, Popup, useMap} from 'react-leaflet';
+import {Icon} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { getPharmaciesAPI } from '@/api/user/pharmacy';
-import { Spin } from 'antd';
+import {getPharmaciesAPI} from '@/api/user/pharmacy';
+import {Spin} from 'antd';
 
-function ChangeView({ center, zoom }) {
+function ChangeView({center, zoom}) {
     const map = useMap();
     map.setView(center, zoom);
     return null;
 }
 
-const LeafletPharmacyMap = ({ onPharmaciesLoaded, currentIndex }) => {
+const LeafletPharmacyMap = ({onPharmaciesLoaded, currentIndex}) => {
     const [pharmacies, setPharmacies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [center, setCenter] = useState([-36.8485, 174.7633]); // Default to Auckland
@@ -53,7 +53,7 @@ const LeafletPharmacyMap = ({ onPharmaciesLoaded, currentIndex }) => {
     }, [currentIndex, pharmacies]);
 
     if (loading) {
-        return <Spin size="large" />;
+        return <Spin size="large"/>;
     }
 
     const customIcon = new Icon({
@@ -66,10 +66,10 @@ const LeafletPharmacyMap = ({ onPharmaciesLoaded, currentIndex }) => {
         <MapContainer
             center={center}
             zoom={18}
-            style={{ height: '100%', width: '100%' }}
+            style={{height: '100%', width: '100%'}}
             ref={mapRef}
         >
-            <ChangeView center={center} zoom={13} />
+            <ChangeView center={center} zoom={13}/>
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

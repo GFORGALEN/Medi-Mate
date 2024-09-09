@@ -5,14 +5,9 @@ import LeftMenuLayout from "@/layouts/LeftMenuLayout";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import HeaderLayout from "@/layouts/HeaderLayout";
 import { APP_API_URL } from "@/../config.js";
-import React from 'react';
 import { setOrderId } from "@/store/features/messageSlice";
 
-
-
 import { useDispatch } from "react-redux";
-
-
 
 const { Header, Sider, Content } = Layout;
 
@@ -51,13 +46,9 @@ const DashboardLayout = () => {
     const [collapsed, setCollapsed] = useState({ left: true, right: true });
     const [isHovering, setIsHovering] = useState(false);
     const [messages, setMessages] = useState([]);
+
     const navigate = useNavigate();
-
-
-
-
     const dispatch = useDispatch()
-
     const audioRef = useRef(null);
 
     const playAudio = () => {
@@ -65,7 +56,6 @@ const DashboardLayout = () => {
             audioRef.current.play();
         }
     };
-
 
     useEffect(() => {
         const eventSource = new EventSource(`${APP_API_URL}/sse/connect`);
