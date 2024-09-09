@@ -36,7 +36,6 @@ class ComparisonViewModel: ObservableObject {
         }
     }
 }
-
 struct ComparisonData: Codable {
     let comparisonRequest: ComparisonRequest
 }

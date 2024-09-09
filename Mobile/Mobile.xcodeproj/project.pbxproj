@@ -12,6 +12,7 @@
 		61441D012C8A91DE009A55A9 /* CartManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61441D002C8A91DE009A55A9 /* CartManager.swift */; };
 		61441D032C8A93D8009A55A9 /* CartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61441D022C8A93D8009A55A9 /* CartView.swift */; };
 		61441D132C8AC124009A55A9 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61441D122C8AC124009A55A9 /* APIService.swift */; };
+		61441D172C8E9A28009A55A9 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61441D162C8E9A28009A55A9 /* AuthManager.swift */; };
 		61620A9C2C75978A00C12BEF /* CareResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61620A9B2C75978A00C12BEF /* CareResultView.swift */; };
 		61620A9E2C7597B400C12BEF /* SearchResultsContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61620A9D2C7597B400C12BEF /* SearchResultsContainer.swift */; };
 		6162E5FD2C7E89540015E0D8 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6162E5FC2C7E89540015E0D8 /* EditProfileView.swift */; };
@@ -67,6 +68,7 @@
 		61441D002C8A91DE009A55A9 /* CartManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartManager.swift; sourceTree = "<group>"; };
 		61441D022C8A93D8009A55A9 /* CartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartView.swift; sourceTree = "<group>"; };
 		61441D122C8AC124009A55A9 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
+		61441D162C8E9A28009A55A9 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		61620A9B2C75978A00C12BEF /* CareResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareResultView.swift; sourceTree = "<group>"; };
 		61620A9D2C7597B400C12BEF /* SearchResultsContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsContainer.swift; sourceTree = "<group>"; };
 		6162E5FC2C7E89540015E0D8 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 				D9F8AAC82C61F84200B723A5 /* ContentView.swift */,
 				D9F8AAC62C61F84200B723A5 /* MobileApp.swift */,
 				D9A1EF912C671DC6002CCE61 /* Models.swift */,
+				61441D162C8E9A28009A55A9 /* AuthManager.swift */,
 			);
 			path = CoreApp;
 			sourceTree = "<group>";
@@ -393,6 +396,7 @@
 				D9B82B4F2C61FDC600C5AFEB /* LoginView.swift in Sources */,
 				61441D132C8AC124009A55A9 /* APIService.swift in Sources */,
 				61DF39FF2C75866E0091B070 /* FontSizeMultiplierKey.swift in Sources */,
+				61441D172C8E9A28009A55A9 /* AuthManager.swift in Sources */,
 				D9A276962C7312EB006B6442 /* ProductDetailsVM.swift in Sources */,
 				D9B82B582C620D7900C5AFEB /* RegisterView.swift in Sources */,
 				D9A1EF922C671DC6002CCE61 /* Models.swift in Sources */,
@@ -551,7 +555,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Mobile/Preview Content\"";
-				DEVELOPMENT_TEAM = 6NW5SH8SH9;
+				DEVELOPMENT_TEAM = 5A8JFDJVRM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Mobile/Info.plist;
@@ -582,7 +586,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Mobile/Preview Content\"";
-				DEVELOPMENT_TEAM = 6NW5SH8SH9;
+				DEVELOPMENT_TEAM = 5A8JFDJVRM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Mobile/Info.plist;

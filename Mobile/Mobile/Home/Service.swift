@@ -105,6 +105,7 @@ class NetworkService: NetworkServiceProtocol {
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue("Bearer \(AuthManager.shared.token)", forHTTPHeaderField: "Authorization")
             
             let body = ["productId": productIds]
             request.httpBody = try JSONSerialization.data(withJSONObject: body)

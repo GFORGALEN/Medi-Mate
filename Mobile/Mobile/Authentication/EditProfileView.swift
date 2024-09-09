@@ -79,7 +79,7 @@ struct EditProfileView: View {
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(authViewModel.token)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(AuthManager.shared.token)", forHTTPHeaderField: "Authorization")
         
         do {
             request.httpBody = try JSONEncoder().encode(updatedUserInfo)
