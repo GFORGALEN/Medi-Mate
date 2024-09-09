@@ -112,6 +112,21 @@ const Products = () => {
 
     const columns = [
         {
+            title: 'Image',
+            dataIndex: 'imageSrc',
+            key: 'image',
+            width: 100,
+            ellipsis: true,
+            render: (imageSrc) => (
+                <img
+                    src={imageSrc}
+                    alt="Product"
+                    className="w-16 h-16 object-contain cursor-pointer"
+                    onClick={() => showImage(imageSrc)}
+                />
+            )
+        },
+        {
             title: 'Product Name',
             dataIndex: 'productName',
             key: 'name',
@@ -128,21 +143,7 @@ const Products = () => {
             ellipsis: true,
             render: (text) => <span className="text-base">${text}</span>
         },
-        {
-            title: 'Image',
-            dataIndex: 'imageSrc',
-            key: 'image',
-            width: 100,
-            ellipsis: true,
-            render: (imageSrc) => (
-                <img
-                    src={imageSrc}
-                    alt="Product"
-                    className="w-16 h-16 object-contain cursor-pointer"
-                    onClick={() => showImage(imageSrc)}
-                />
-            )
-        },
+
         {
             title: 'Manufacturer Name',
             dataIndex: 'manufacturerName',

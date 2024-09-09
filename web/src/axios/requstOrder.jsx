@@ -3,7 +3,7 @@ import { getUserToken } from "@/utils/index.jsx";
 import { APP_API_URL } from "@/../config.js";
 
 const requestOrder = axios.create({
-    baseURL: `${APP_API_URL}/order/pharmacyOrder`,
+    baseURL: `${APP_API_URL}/order`,
     timeout: 5000
 });
 
