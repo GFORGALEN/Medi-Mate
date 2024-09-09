@@ -73,7 +73,7 @@ const router = createBrowserRouter([
                         element: <Pharmacies/>,
                     },
                     {
-                        path: 'inventory/:pharmacyId',
+                        path: '/pharmacies/inventory/:pharmacyId',
                         element: <PharmacyInventory/>,
                     },
                     {

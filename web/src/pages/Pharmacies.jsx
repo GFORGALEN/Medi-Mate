@@ -16,7 +16,7 @@ const Pharmacies = () => {
 
     const handleViewInventory = () => {
         if (pharmacies[currentIndex]) {
-            navigate(`/inventory/${pharmacies[currentIndex].pharmacyId}`);
+            navigate(`/pharmacies/inventory/${pharmacies[currentIndex].pharmacyId}`);
         }
     };
 
