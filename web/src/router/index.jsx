@@ -11,6 +11,8 @@ import Pharmacies from "@/pages/Pharmacies.jsx";
 import PharmacyInventory from "@/pages/PharmacyInventory.jsx";
 import Homepage from '../pages/mobile/Homepage';
 import OrderPage from '../pages/Order/OrderPage';
+import ProductResultDisplay from '../pages/mobile/ProductResultDisplay';
+import PhotoCapture from '../pages/mobile/PhotoCapture';
 
 const isAuthenticated = () => {
     return localStorage.getItem('token') !== null;
@@ -34,8 +36,18 @@ const router = createBrowserRouter([
     },
     {
         path: '/mobile',
-        element: <Homepage/>, // 这是移动端首页
-    },
+        element: <Homepage />,
+        children: [
+          {
+            path: '',
+            element: <PhotoCapture />,
+          },
+          {
+            path: 'result',
+            element: <ProductResultDisplay />,
+          },
+        ],
+      },
     {
         path: '/',
         element: <ProtectedRoute/>, // 使用受保护的路由组件
