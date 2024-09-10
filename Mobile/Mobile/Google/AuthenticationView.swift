@@ -18,7 +18,7 @@ class AuthenticationView: ObservableObject {
     @Published var errorMessage: String?
     
     private let apiService = UserAPIService.shared
-
+    private var cartManager: CartManager?
     init() {
         self.currentUser = Auth.auth().currentUser
     }
@@ -152,18 +152,26 @@ class AuthenticationView: ObservableObject {
         print("Full error details: \(error)")
     }
     
-    func logout() async throws {
-        GIDSignIn.sharedInstance.signOut()
-        try Auth.auth().signOut()
-        isLoginSuccessed = false
-        currentUser = nil
-        // Clear user info
-        userEmail = ""
-        userName = ""
-        userPicURL = nil
-        userId = ""
-        errorMessage = nil
-    }
+    func logout() {
+            do {
+                try Auth.auth().signOut()
+                GIDSignIn.sharedInstance.signOut()
+                
+                // Clear user info
+                isLoginSuccessed = false
+                currentUser = nil
+                userEmail = ""
+                userName = ""
+                userPicURL = nil
+                userId = ""
+                token = ""
+                
+                // Clear the cart
+                cartManager?.clearCart()
+            } catch {
+                errorMessage = "Failed to sign out: \(error.localizedDescription)"
+            }
+        }
     private func printLoginResponse() {
         let responseData = """
         Login Successful!

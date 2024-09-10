@@ -46,6 +46,7 @@ class CartManager: ObservableObject {
         }
     func clearCart() {
             items.removeAll()
+        selectedStore = nil
             objectWillChange.send()
         }
     
@@ -74,6 +75,7 @@ class CartManager: ObservableObject {
                 "orderItem": orderItems
             ]
         }
+    
 
 }
 
