@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 
 @Data
@@ -19,4 +20,5 @@ public class UpdateOrderDTO implements Serializable {
     private int pharmacyId;
     private double amount;
     private int status;
+    private LocalDateTime updatedAt;
 }

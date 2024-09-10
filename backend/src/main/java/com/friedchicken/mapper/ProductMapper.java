@@ -1,5 +1,7 @@
 package com.friedchicken.mapper;
 
+import com.friedchicken.annotation.AutoFillDateTime;
+import com.friedchicken.enumeration.OperationType;
 import com.friedchicken.pojo.dto.Medicine.MedicineLocationDTO;
 import com.friedchicken.pojo.dto.Medicine.MedicinePageDTO;
 import com.friedchicken.pojo.vo.Medicine.MedicineDetailVO;
@@ -18,6 +20,7 @@ public interface ProductMapper {
 
     MedicineDetailVO getProductById(String productId);
 
+    @AutoFillDateTime(OperationType.UPDATE)
     void updateProductById(MedicineDetailVO medicineDetailVO);
 
     Page<MedicineDetailVO> getDetailProducts(MedicinePageDTO medicinePageDTO);

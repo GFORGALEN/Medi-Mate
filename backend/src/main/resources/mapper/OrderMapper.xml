@@ -21,6 +21,9 @@
             <if test="status != null">
                 status = #{status},
             </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt}
+            </if>
         </set>
         where order_id= #{orderId};
     </update>
@@ -44,8 +47,16 @@
         where order_id = #{orderId};
     </select>
     <select id="getOrderByUserId" resultType="com.friedchicken.pojo.vo.Order.DetailOrderVO">
-        select *
+        select order_id,
+               amount,
+               username,
+               nickname,
+               pharmacy_id,
+               status,
+               created_at,
+               updated_at
         from `order`
+                 natural join user
         where user_id = #{userId};
     </select>
     <select id="getOrderByPharmacyId" resultType="com.friedchicken.pojo.vo.Order.DetailOrderVO">

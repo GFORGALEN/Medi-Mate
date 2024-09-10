@@ -14,4 +14,5 @@ public class UserChangePasswordDTO implements Serializable {
     private String email;
     private String oldPassword;
     private String newPassword;
+    private String nickname;
 }

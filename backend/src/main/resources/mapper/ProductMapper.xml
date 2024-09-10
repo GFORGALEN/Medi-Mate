@@ -38,6 +38,9 @@
             <if test="summary != null">
                 summary = #{summary},
             </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt}
+            </if>
         </set>
         where product_id = #{productId};
     </update>

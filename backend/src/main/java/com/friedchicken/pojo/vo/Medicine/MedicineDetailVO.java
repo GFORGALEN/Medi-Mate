@@ -26,4 +26,5 @@ public class MedicineDetailVO implements Serializable {
     private String directions;
     private String imageSrc;
     private String summary;
+    private String updatedAt;
 }

@@ -16,7 +16,7 @@ public class DetailOrderVO implements Serializable {
     private static final long serialVersionUID = 1L;
     private String orderId;
     private double amount;
-    private String userId;
+    private String username;
     private int pharmacyId;
     private int status;
     private LocalDateTime createdAt;
