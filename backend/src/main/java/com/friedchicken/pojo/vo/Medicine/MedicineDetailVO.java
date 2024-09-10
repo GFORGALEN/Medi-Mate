@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -26,5 +27,6 @@ public class MedicineDetailVO implements Serializable {
     private String directions;
     private String imageSrc;
     private String summary;
-    private String updatedAt;
+    private LocalDateTime updatedAt;
+    private LocalDateTime createdAt;
 }
