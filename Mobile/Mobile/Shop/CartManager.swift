@@ -10,6 +10,10 @@ import Foundation
 class CartManager: ObservableObject {
     @Published var items: [CartItem] = []
     @Published var selectedStore: Store?
+    init() {
+            // Subscribe to the logout notification
+            NotificationCenter.default.addObserver(self, selector: #selector(clearCart), name: .userDidLogout, object: nil)
+        }
     func addToCart(_ product: ProductDetails) {
         if let index = items.firstIndex(where: { $0.product.productId == product.productId }) {
             items[index].quantity += 1
@@ -44,10 +48,15 @@ class CartManager: ObservableObject {
                 return String(total + (price * Double(item.quantity)))
             }
         }
-    func clearCart() {
-            items.removeAll()
-        selectedStore = nil
-            objectWillChange.send()
+    @objc func clearCart() {
+            DispatchQueue.main.async {
+                self.items.removeAll()
+                self.selectedStore = nil
+            }
+        }
+        
+        deinit {
+            NotificationCenter.default.removeObserver(self)
         }
     
     

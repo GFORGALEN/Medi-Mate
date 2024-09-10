@@ -1,16 +1,9 @@
-//
-//  MobileApp.swift
-//  Mobile
-//
-//  Created by Jabin on 2024/8/6.
-//
-
 import SwiftUI
 
 struct MobileApp: App {
     @AppStorage("isCareMode") private var isOlderMode = false
     @StateObject private var cartManager = CartManager()
-    @StateObject var authViewModel = AuthenticationView()
+    @StateObject private var authViewModel = AuthenticationView()
     
     var body: some Scene {
         WindowGroup {

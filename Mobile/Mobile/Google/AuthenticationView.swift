@@ -17,10 +17,12 @@ class AuthenticationView: ObservableObject {
     
     @Published var errorMessage: String?
     
+    
     private let apiService = UserAPIService.shared
-    private var cartManager: CartManager?
+    @Published var cartManager: CartManager?
     init() {
         self.currentUser = Auth.auth().currentUser
+        self.cartManager = cartManager
     }
 
     func signInWithGoogle() {
@@ -166,8 +168,8 @@ class AuthenticationView: ObservableObject {
                 userId = ""
                 token = ""
                 
-                // Clear the cart
-                cartManager?.clearCart()
+                // Post a notification that logout occurred
+                NotificationCenter.default.post(name: .userDidLogout, object: nil)
             } catch {
                 errorMessage = "Failed to sign out: \(error.localizedDescription)"
             }
