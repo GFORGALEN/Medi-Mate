@@ -20,7 +20,7 @@ public class OrderEmail implements Serializable {
 
     private String orderId;
     private String userId;
-    private int pharmacyId;
+    private String pharmacyAddress;
     private double amount;
     private int status;
     private LocalDateTime createdAt;

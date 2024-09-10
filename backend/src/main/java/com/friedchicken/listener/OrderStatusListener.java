@@ -41,8 +41,8 @@ public class OrderStatusListener {
     }
 
     @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(name = "mark.order.pick.queue",durable = "true"),
-            exchange = @Exchange(name = "pick.topic",type = ExchangeTypes.TOPIC),
+            value = @Queue(name = "mark.order.pick.queue", durable = "true"),
+            exchange = @Exchange(name = "pick.topic", type = ExchangeTypes.TOPIC),
             key = "pick.success"
     ))
     public void listenOrderPick(OrderEmail orderEmail) {
@@ -52,9 +52,12 @@ public class OrderStatusListener {
         message.setSubject("Order Completion Notification");
         message.setText("Dear " + orderEmail.getNickname() + ",\n\n" +
                 "Your order with ID " + orderEmail.getOrderId() + " has been completed successfully.\n" +
+                "Please pick your items at " + orderEmail.getPharmacyAddress() + ".\n\n" +
+                "And please show your userId" + orderEmail.getUserId() + "to the staff.\n\n" +
                 "Thank you for shopping with us!\n\n" +
                 "Best regards,\n" +
-                "Your Company Name");
+                "Medimate\n\n")
+        ;
         mailSender.send(message);
     }
 }

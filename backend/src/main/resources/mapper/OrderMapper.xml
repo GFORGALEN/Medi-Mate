@@ -22,7 +22,10 @@
                 status = #{status},
             </if>
             <if test="updatedAt != null">
-                updated_at = #{updatedAt}
+                updated_at = #{updatedAt},
+            </if>
+            <if test="cancelReason != null">
+                cancel_reason = #{cancelReason},
             </if>
         </set>
         where order_id= #{orderId};
@@ -67,7 +70,7 @@
     <select id="getOrderDetailByOrderId" resultType="com.friedchicken.pojo.entity.Order.OrderEmail">
         SELECT o.order_id,
                o.user_id,
-               o.pharmacy_id,
+               p.pharmacy_address,
                o.amount,
                o.status,
                o.created_at,
@@ -77,6 +80,7 @@
                u.nickname
         FROM `order` o
                  JOIN user u ON u.user_id = o.user_id
+                 join pharmacy p on p.pharmacy_id = o.pharmacy_id
         WHERE o.order_id = #{orderId};
     </select>
 </mapper>
