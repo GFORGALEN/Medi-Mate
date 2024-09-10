@@ -16,25 +16,25 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor).excludePathPatterns(
-                "/api/user/login",
-                "/api/user/google-login"
-                ,"/api/user/register"
-                ,"/api/message/image"
-                ,"/api/products/**"
-                ,"/api/sse/**"
-                ,"/swagger-ui/index.html#"
-                ,"/swagger-ui.html",
-                "/v3/api-docs/**",
-                "/swagger-resources/**",
-                "/webjars/**",
-                "/swagger-ui/**");
+                "/api/user/login"
+                , "/api/user/google-login"
+                , "/api/user/register"
+                , "/api/message/image"
+                , "/api/products/**"
+                , "/api/sse/**"
+                , "/swagger-ui/index.html#"
+                , "/swagger-ui.html"
+                , "/v3/api-docs/**"
+                , "/swagger-resources/**"
+                , "/webjars/**"
+                , "/swagger-ui/**");
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE","PATCH","UPDATE")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "UPDATE")
                 .allowedHeaders("*")
                 .allowCredentials(false)
                 .maxAge(3600);
