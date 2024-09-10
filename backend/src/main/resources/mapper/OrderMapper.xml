@@ -64,4 +64,19 @@
         from `order`
         where pharmacy_id = #{pharmacyId};
     </select>
+    <select id="getOrderDetailByOrderId" resultType="com.friedchicken.pojo.entity.Order.OrderEmail">
+        SELECT o.order_id,
+               o.user_id,
+               o.pharmacy_id,
+               o.amount,
+               o.status,
+               o.created_at,
+               o.updated_at,
+               u.username,
+               u.email,
+               u.nickname
+        FROM `order` o
+                 JOIN user u ON u.user_id = o.user_id
+        WHERE o.order_id = #{orderId};
+    </select>
 </mapper>

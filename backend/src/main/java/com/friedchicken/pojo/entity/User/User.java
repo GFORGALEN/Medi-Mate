@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -19,6 +20,6 @@ public class User implements Serializable {
     private String googleId;
     private String nickname;
     private String userPic;
-    private String createdAt;
-    private String updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

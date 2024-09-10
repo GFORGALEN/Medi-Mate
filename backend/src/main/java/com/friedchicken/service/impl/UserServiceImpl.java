@@ -6,10 +6,7 @@ import com.friedchicken.controller.user.exception.AccountNotFoundException;
 import com.friedchicken.controller.user.exception.PasswordErrorException;
 import com.friedchicken.controller.user.exception.RegisterFailedException;
 import com.friedchicken.mapper.UserMapper;
-import com.friedchicken.pojo.dto.User.UserChangePasswordDTO;
-import com.friedchicken.pojo.dto.User.UserGoogleDTO;
-import com.friedchicken.pojo.dto.User.UserLoginDTO;
-import com.friedchicken.pojo.dto.User.UserRegisterDTO;
+import com.friedchicken.pojo.dto.User.*;
 import com.friedchicken.pojo.entity.User.User;
 import com.friedchicken.pojo.vo.User.UserGoogleVO;
 import com.friedchicken.pojo.vo.User.UserLoginVO;
@@ -22,6 +19,7 @@ import com.friedchicken.utils.UniqueIdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -141,5 +139,12 @@ public class UserServiceImpl implements UserService {
         userByEmail.setPassword(userChangePasswordDTO.getNewPassword());
         userMapper.update(userByEmail);
 
+    }
+
+    @Override
+    public void updateNickname(UserChangeNickname userChangeNickname) {
+        User user = new User();
+        BeanUtils.copyProperties(user, userChangeNickname);
+        userMapper.update(user);
     }
 }

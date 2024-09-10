@@ -3,13 +3,12 @@ package com.friedchicken.mapper;
 import com.friedchicken.annotation.AutoFillDateTime;
 import com.friedchicken.enumeration.OperationType;
 import com.friedchicken.pojo.dto.Order.DeleteOrderDTO;
-import com.friedchicken.pojo.dto.Order.OrderDTO;
 import com.friedchicken.pojo.dto.Order.UpdateOrderDTO;
 import com.friedchicken.pojo.entity.Order.Order;
+import com.friedchicken.pojo.entity.Order.OrderEmail;
 import com.friedchicken.pojo.entity.Order.OrderItem;
 import com.friedchicken.pojo.vo.Order.DetailOrderVO;
 import com.friedchicken.pojo.vo.Order.OrderItemDetailVO;
-import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -34,4 +33,6 @@ public interface OrderMapper {
     void updateOrder(UpdateOrderDTO updateOrderDTO);
 
     void deleteOrder(DeleteOrderDTO deleteOrderDTO);
+
+    OrderEmail getOrderDetailByOrderId(UpdateOrderDTO updateOrderDTO);
 }

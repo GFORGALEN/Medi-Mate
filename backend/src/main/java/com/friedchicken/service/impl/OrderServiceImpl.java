@@ -1,10 +1,12 @@
 package com.friedchicken.service.impl;
 
 import com.friedchicken.constant.MessageConstant;
+import com.friedchicken.constant.OrderStatusConstant;
 import com.friedchicken.mapper.OrderMapper;
 import com.friedchicken.mapper.ProductMapper;
 import com.friedchicken.pojo.dto.Order.*;
 import com.friedchicken.pojo.entity.Order.Order;
+import com.friedchicken.pojo.entity.Order.OrderEmail;
 import com.friedchicken.pojo.entity.Order.OrderItem;
 import com.friedchicken.pojo.vo.Medicine.MedicineDetailVO;
 import com.friedchicken.pojo.vo.Order.DetailOrderVO;
@@ -12,6 +14,7 @@ import com.friedchicken.pojo.vo.Order.OrderItemDetailVO;
 import com.friedchicken.pojo.vo.Order.OrderMessageVO;
 import com.friedchicken.service.OrderService;
 import com.friedchicken.service.SseService;
+import com.friedchicken.service.exception.NoCancelReasonException;
 import com.friedchicken.service.exception.NoProductException;
 import com.friedchicken.service.exception.NoQuantityException;
 import com.friedchicken.utils.UniqueIdUtil;
@@ -49,7 +52,7 @@ public class OrderServiceImpl implements OrderService {
         BeanUtils.copyProperties(orderDTO, order);
         String orderId = uniqueIdUtil.generateUniqueId();
         order.setOrderId(orderId);
-        order.setStatus(1);
+        order.setStatus(OrderStatusConstant.FINISH_ORDER_STATUS);
         orderMapper.insertOrder(order);
         for (OrderItemDTO item : orderDTO.getOrderItem()) {
             OrderItem orderItem = new OrderItem();
@@ -95,7 +98,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void updateOrderStatus(UpdateOrderDTO updateOrderDTO) {
+        int status = updateOrderDTO.getStatus();
+        if (status == OrderStatusConstant.FINISH_PICKING) {
+            OrderEmail orderEmail = orderMapper.getOrderDetailByOrderId(updateOrderDTO);
+            rabbitTemplate.convertAndSend("pick.topic", "pick.success", orderEmail);
+        } else if (status == OrderStatusConstant.CANCEL_ORDER_STATUS) {
+            if (updateOrderDTO.getCancelReason().isEmpty()) {
+                throw new NoCancelReasonException(MessageConstant.NO_CANCEL_REASON);
+            }
+        }
         orderMapper.updateOrder(updateOrderDTO);
     }
 

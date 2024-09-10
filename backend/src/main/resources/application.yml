@@ -27,6 +27,19 @@ spring:
       simple:
         prefetch: 1
         acknowledge-mode: auto
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: medimateorderservice@gmail.com
+    password: ${fc.mail.password}
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.friedchicken.pojo.entity

@@ -2,10 +2,7 @@ package com.friedchicken.controller.user;
 
 import com.friedchicken.constant.MessageConstant;
 import com.friedchicken.controller.user.exception.AccountNotFoundException;
-import com.friedchicken.pojo.dto.User.UserChangePasswordDTO;
-import com.friedchicken.pojo.dto.User.UserGoogleDTO;
-import com.friedchicken.pojo.dto.User.UserLoginDTO;
-import com.friedchicken.pojo.dto.User.UserRegisterDTO;
+import com.friedchicken.pojo.dto.User.*;
 import com.friedchicken.pojo.vo.User.UserGoogleVO;
 import com.friedchicken.pojo.vo.User.UserLoginVO;
 import com.friedchicken.result.Result;
@@ -114,5 +111,20 @@ public class UserController {
         userService.updatePassword(userChangePasswordDTO);
 
         return Result.success();
+    }
+
+    @PatchMapping("/updateNickname")
+    @Operation(summary = "Update Nickname",
+            description = "If the user want to change his nickname, it will use this API to update.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Update successfully.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserLoginVO.class)))
+    })
+    public Result<String> updateNickname(@RequestBody UserChangeNickname userChangeNickname) {
+        log.info("A new user want to change nickname:{}", userChangeNickname.toString());
+
+        userService.updateNickname(userChangeNickname);
+
+        return Result.success("Update successfully.");
     }
 }

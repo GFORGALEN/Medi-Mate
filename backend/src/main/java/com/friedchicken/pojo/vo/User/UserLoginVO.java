@@ -14,6 +14,7 @@ import java.io.Serializable;
 public class UserLoginVO implements Serializable {
     private String userId;
     private String username;
+    private String nickname;
     private String email;
     private String userPic;
     private String token;

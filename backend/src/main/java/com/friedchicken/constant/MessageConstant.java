@@ -13,6 +13,7 @@ public class MessageConstant {
     public static final String WRONG_INPUT = "Wrong Input!";
     public static final String FILE_UPLOAD_ERROR = "File Upload Error!";
     public static final String UNRECOGNIZED_MEDICINE = "No medication detected. Please try again!";
-    public static final String NO_QUANTITY="Error product quantity!";
-    public static final String NO_SUCH_PRODUCT="No such product!";
+    public static final String NO_QUANTITY = "Error product quantity!";
+    public static final String NO_SUCH_PRODUCT = "No such product!";
+    public static final String NO_CANCEL_REASON = "No cancel reason!";
 }
