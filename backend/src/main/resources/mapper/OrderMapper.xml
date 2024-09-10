@@ -6,8 +6,8 @@
         values (#{itemId}, #{orderId}, #{productId}, #{quantity}, #{price});
     </insert>
     <insert id="insertOrder">
-        insert into `order` (order_id, user_id, pharmacy_id, created_at, status, amount)
-        values (#{orderId}, #{userId}, #{pharmacyId}, #{createdAt}, #{status}, #{amount});
+        insert into `order` (order_id, user_id, pharmacy_id, created_at, status, amount, updated_at)
+        values (#{orderId}, #{userId}, #{pharmacyId}, #{createdAt}, #{status}, #{amount}, #{updatedAt});
     </insert>
     <update id="updateOrder">
         update `order`

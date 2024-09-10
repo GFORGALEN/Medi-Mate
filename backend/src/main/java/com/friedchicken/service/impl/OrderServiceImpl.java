@@ -49,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
         BeanUtils.copyProperties(orderDTO, order);
         String orderId = uniqueIdUtil.generateUniqueId();
         order.setOrderId(orderId);
-        order.setStatus(0);
+        order.setStatus(1);
         orderMapper.insertOrder(order);
         for (OrderItemDTO item : orderDTO.getOrderItem()) {
             OrderItem orderItem = new OrderItem();

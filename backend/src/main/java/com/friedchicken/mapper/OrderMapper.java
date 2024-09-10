@@ -1,5 +1,7 @@
 package com.friedchicken.mapper;
 
+import com.friedchicken.annotation.AutoFillDateTime;
+import com.friedchicken.enumeration.OperationType;
 import com.friedchicken.pojo.dto.Order.DeleteOrderDTO;
 import com.friedchicken.pojo.dto.Order.OrderDTO;
 import com.friedchicken.pojo.dto.Order.UpdateOrderDTO;
@@ -17,6 +19,7 @@ public interface OrderMapper {
 
     void insertOrderItem(OrderItem orderItem);
 
+    @AutoFillDateTime(OperationType.INSERT)
     void insertOrder(Order order);
 
     Order getOrderByOrderId(String orderId);
@@ -27,6 +30,7 @@ public interface OrderMapper {
 
     List<DetailOrderVO> getOrderByPharmacyId(String pharmacyId);
 
+    @AutoFillDateTime(OperationType.UPDATE)
     void updateOrder(UpdateOrderDTO updateOrderDTO);
 
     void deleteOrder(DeleteOrderDTO deleteOrderDTO);

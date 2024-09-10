@@ -1,4 +1,4 @@
-package com.friedchicken.config;
+package com.friedchicken.task;
 
 
 import com.friedchicken.pojo.vo.Order.OrderMessageVO;
@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Slf4j
 @Configuration
-public class HeartBeatConfig {
+public class HeartBeatTask {
     @Autowired
     private SseService sseService;
 

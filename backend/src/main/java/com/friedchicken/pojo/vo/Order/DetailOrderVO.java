@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -18,4 +19,6 @@ public class DetailOrderVO implements Serializable {
     private String userId;
     private int pharmacyId;
     private int status;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
