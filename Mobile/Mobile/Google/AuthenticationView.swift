@@ -17,10 +17,12 @@ class AuthenticationView: ObservableObject {
     
     @Published var errorMessage: String?
     
+    
     private let apiService = UserAPIService.shared
-
+    @Published var cartManager: CartManager?
     init() {
         self.currentUser = Auth.auth().currentUser
+        self.cartManager = cartManager
     }
 
     func signInWithGoogle() {
@@ -152,18 +154,26 @@ class AuthenticationView: ObservableObject {
         print("Full error details: \(error)")
     }
     
-    func logout() async throws {
-        GIDSignIn.sharedInstance.signOut()
-        try Auth.auth().signOut()
-        isLoginSuccessed = false
-        currentUser = nil
-        // Clear user info
-        userEmail = ""
-        userName = ""
-        userPicURL = nil
-        userId = ""
-        errorMessage = nil
-    }
+    func logout() {
+            do {
+                try Auth.auth().signOut()
+                GIDSignIn.sharedInstance.signOut()
+                
+                // Clear user info
+                isLoginSuccessed = false
+                currentUser = nil
+                userEmail = ""
+                userName = ""
+                userPicURL = nil
+                userId = ""
+                token = ""
+                
+                // Post a notification that logout occurred
+                NotificationCenter.default.post(name: .userDidLogout, object: nil)
+            } catch {
+                errorMessage = "Failed to sign out: \(error.localizedDescription)"
+            }
+        }
     private func printLoginResponse() {
         let responseData = """
         Login Successful!

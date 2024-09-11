@@ -1,11 +1,5 @@
-//
-//  RegisterViewModel.swift
-//  Mobile
-//
-//  Created by Jabin on 2024/8/7.
-//
-
 import SwiftUI
+import CryptoKit
 
 class RegisterViewModel: ObservableObject {
     @Published var email = ""
@@ -37,10 +31,11 @@ class RegisterViewModel: ObservableObject {
         errorMessage = nil
         
         do {
+            let hashedPassword = hashPassword(password)
             let _: EmptyResponse = try await apiService.request(
                 endpoint: "register",
                 method: "POST",
-                body: ["email": email, "password": password]
+                body: ["email": email, "password": hashedPassword]
             )
             isRegistered = true
         } catch {
@@ -52,6 +47,12 @@ class RegisterViewModel: ObservableObject {
         }
         
         isLoading = false
+    }
+    
+    private func hashPassword(_ password: String) -> String {
+        let inputData = Data(password.utf8)
+        let hashed = SHA256.hash(data: inputData)
+        return hashed.compactMap { String(format: "%02x", $0) }.joined()
     }
 }
 

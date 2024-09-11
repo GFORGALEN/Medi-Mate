@@ -4,6 +4,7 @@ struct ContentView: View {
     @StateObject private var authViewModel = AuthenticationView()
     @StateObject private var tabBarManager = TabBarManager()
     @StateObject private var cartManager = CartManager()
+    @StateObject private var homeViewModel = HomeVM()
     @AppStorage("isCareMode") private var isOlderMode = false
 
     var body: some View {
@@ -14,7 +15,7 @@ struct ContentView: View {
                 Spacer()
                 switch tabBarManager.selectedIndex {
                 case 0:
-                    HomeView()
+                    HomeView(viewModel: homeViewModel)
                 case 1:
                     CardView()
                 case 2:
@@ -40,6 +41,7 @@ struct ContentView: View {
         .environmentObject(tabBarManager)
         .environmentObject(authViewModel)
         .environmentObject(cartManager)
+        .environmentObject(homeViewModel)
         .onChange(of: authViewModel.isLoginSuccessed) { oldValue, newValue in
             if newValue {
                 tabBarManager.selectedIndex = 0

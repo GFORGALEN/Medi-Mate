@@ -8,51 +8,84 @@ struct CartView: View {
     @State private var selectedStore: Store?
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                Text("Your Cart")
-                    .font(.system(size: isOlderMode ? 32 : 28, weight: .bold))
-                    .scalableFont(size: isOlderMode ? 32 : 28)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(spacing: 16) {
+                    Text("Your Cart")
+                        .font(.system(size: isOlderMode ? 32 : 28, weight: .bold))
+                        .scalableFont(size: isOlderMode ? 32 : 28)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
+                        .padding(.top,40)
+                    
+                    storeSelectionSection
+                        
+                    
+                    if cartManager.items.isEmpty {
+                        emptyCartView
+                    } else {
+                        cartItemsList
+                    }
+                }
+                .padding(.horizontal)
                 
-                storeSelectionSection
-                
-                if cartManager.items.isEmpty {
-                    emptyCartView
-                } else {
-                    cartItemsList
+                Spacer(minLength: 50)
+            }
+            
+            if !cartManager.items.isEmpty {
+                VStack(spacing: 16) {
                     totalSection
                     checkoutButton
                 }
+                .padding(.horizontal)
+                .padding(.bottom, 75)
             }
-            .padding()
+            
+            // This is a placeholder for the tab bar
+            // Replace this with your actual tab bar if needed
+            Color(.secondarySystemBackground)
+                .frame(height: 49)
+                .opacity(0.01) // Make it invisible but keep the space
         }
         .background(Color(UIColor.systemGroupedBackground))
         .navigationBarTitleDisplayMode(.inline)
     }
     
     private var storeSelectionSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Select Pickup Store:")
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Pickup Location")
                 .font(.headline)
-                .scalableFont(size: isOlderMode ? 22 : 18)
+                .scalableFont(size: isOlderMode ? 24 : 20)
+                .foregroundColor(.primary)
             
-            Picker("Select Store", selection: $cartManager.selectedStore) {
-                Text("Select a store").tag(nil as Store?)
-                ForEach(stores) { store in
-                    Text("\(store.name) (ID: \(store.id))").tag(store as Store?)
+            HStack {
+                Text("Choose location")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+                
+                Picker("", selection: $cartManager.selectedStore) {
+                    Text("Select a store").tag(nil as Store?)
+                    ForEach(stores) { store in
+                        Text(store.name).tag(store as Store?)
+                    }
                 }
+                .pickerStyle(MenuPickerStyle())
+                .scalableFont(size: isOlderMode ? 20 : 16)
+                .accentColor(.blue)
             }
-            .pickerStyle(MenuPickerStyle())
-            .scalableFont(size: isOlderMode ? 20 : 16)
             
             if let store = cartManager.selectedStore {
-                Text("Selected Store: \(store.name) (ID: \(store.id))")
-                    .scalableFont(size: isOlderMode ? 18 : 14)
-                    .foregroundColor(.secondary)
+                HStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.green)
+                    Text("Selected: \(store.name)")
+                        .scalableFont(size: isOlderMode ? 18 : 14)
+                        .foregroundColor(.secondary)
+                }
             } else {
-                Text("No store selected")
+                Text("Please select a pickup location")
                     .scalableFont(size: isOlderMode ? 18 : 14)
                     .foregroundColor(.red)
             }
@@ -60,6 +93,7 @@ struct CartView: View {
         .padding()
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(12)
+        .frame(maxWidth: .infinity) // Ensure it takes full width
     }
     
     private var emptyCartView: some View {
@@ -75,10 +109,11 @@ struct CartView: View {
                 .foregroundColor(.secondary)
                 .scalableFont(size: isOlderMode ? 18 : 16)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity)
+        .padding()
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(12)
-        .padding()
+        .padding(.horizontal)
     }
     
     private var cartItemsList: some View {
@@ -87,6 +122,7 @@ struct CartView: View {
                 CartItemCard(item: item)
             }
         }
+        .padding(.horizontal)
     }
     
     private var totalSection: some View {
@@ -100,9 +136,10 @@ struct CartView: View {
                 .scalableFont(size: isOlderMode ? 24 : 20)
         }
         .padding()
-        .background(Color(UIColor.secondarySystemGroupedBackground))
-        .cornerRadius(12)
+        .background(Color(.secondarySystemBackground))
+        .cornerRadius(10)
     }
+
     
     private var checkoutButton: some View {
         Button(action: {
@@ -151,10 +188,12 @@ struct CartView: View {
                 .scalableFont(size: isOlderMode ? 22 : 18)
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
-                .padding()
-                .background(cartManager.selectedStore == nil || authViewModel.token.isEmpty ? Color.gray : Color.blue)
-                .cornerRadius(12)
+                .padding(.vertical, 15) // Add more vertical padding
+                .background(cartManager.selectedStore == nil ? Color.gray.opacity(0.7) : Color.blue) // Use a more vibrant color when active
+                .cornerRadius(15) // Increase corner radius slightly
         }
+        .padding(.horizontal, 20) // Add horizontal padding to make button narrower
+        .shadow(radius: 3, y: 2) // Add a subtle shadow
         .disabled(cartManager.selectedStore == nil || cartManager.items.isEmpty || authViewModel.userId.isEmpty || authViewModel.token.isEmpty)
     }
     
@@ -165,6 +204,8 @@ struct CartView: View {
         return String(format: "$%.2f", doublePrice)
     }
 }
+
+
 
 struct CartItemCard: View {
     let item: CartItem

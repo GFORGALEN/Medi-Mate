@@ -1,6 +1,6 @@
 import Foundation
 import SwiftUI
-
+import CryptoKit
 // Updated to match the actual API response structure
 struct LoginResponse: Codable {
     let code: Int
@@ -40,10 +40,11 @@ class LoginViewModel: ObservableObject {
         loginError = ""
         
         do {
+            let hashedPassword = hashPassword(password)
             let response: LoginResponse = try await apiService.request(
                 endpoint: "login",
                 method: "POST",
-                body: ["email": email, "password": password]
+                body: ["email": email, "password": hashedPassword]
             )
             
             await MainActor.run {
@@ -97,6 +98,12 @@ class LoginViewModel: ObservableObject {
         print("Login Error: \(loginError)")
         print("Full error details: \(error)")
     }
+    private func hashPassword(_ password: String) -> String {
+        let inputData = Data(password.utf8)
+        let hashed = SHA256.hash(data: inputData)
+        return hashed.compactMap { String(format: "%02x", $0) }.joined()
+    }
+
     
     private func printLoginResponse() {
         let responseData = """
