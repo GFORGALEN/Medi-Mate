@@ -10,16 +10,15 @@ struct CartView: View {
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
-                VStack(spacing: 16) {
+                VStack(spacing: isOlderMode ? 24 : 16) {
                     Text("Your Cart")
-                        .font(.system(size: isOlderMode ? 32 : 28, weight: .bold))
-                        .scalableFont(size: isOlderMode ? 32 : 28)
+                        .font(.system(size: isOlderMode ? 36 : 28, weight: .bold))
+                        .scalableFont(size: isOlderMode ? 36 : 28)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal)
-                        .padding(.top,40)
+                        .padding(.top, isOlderMode ? 50 : 40)
                     
                     storeSelectionSection
-                        
                     
                     if cartManager.items.isEmpty {
                         emptyCartView
@@ -29,39 +28,38 @@ struct CartView: View {
                 }
                 .padding(.horizontal)
                 
-                Spacer(minLength: 50)
+                Spacer(minLength: isOlderMode ? 70 : 50)
             }
             
             if !cartManager.items.isEmpty {
-                VStack(spacing: 16) {
+                VStack(spacing: isOlderMode ? 24 : 16) {
                     totalSection
                     checkoutButton
                 }
                 .padding(.horizontal)
-                .padding(.bottom, 75)
+                .padding(.bottom, isOlderMode ? 90 : 75)
             }
             
-            // This is a placeholder for the tab bar
-            // Replace this with your actual tab bar if needed
             Color(.secondarySystemBackground)
-                .frame(height: 49)
-                .opacity(0.01) // Make it invisible but keep the space
+                .frame(height: isOlderMode ? 60 : 49)
+                .opacity(0.01)
         }
         .background(Color(UIColor.systemGroupedBackground))
         .navigationBarTitleDisplayMode(.inline)
     }
     
     private var storeSelectionSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: isOlderMode ? 16 : 12) {
             Text("Pickup Location")
                 .font(.headline)
-                .scalableFont(size: isOlderMode ? 24 : 20)
+                .scalableFont(size: isOlderMode ? 28 : 20)
                 .foregroundColor(.primary)
             
             HStack {
                 Text("Choose location")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
+                    .scalableFont(size: isOlderMode ? 24 : 16)
                 
                 Spacer()
                 
@@ -72,7 +70,7 @@ struct CartView: View {
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
-                .scalableFont(size: isOlderMode ? 20 : 16)
+                .scalableFont(size: isOlderMode ? 24 : 16)
                 .accentColor(.blue)
             }
             
@@ -81,43 +79,43 @@ struct CartView: View {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(.green)
                     Text("Selected: \(store.name)")
-                        .scalableFont(size: isOlderMode ? 18 : 14)
+                        .scalableFont(size: isOlderMode ? 22 : 14)
                         .foregroundColor(.secondary)
                 }
             } else {
                 Text("Please select a pickup location")
-                    .scalableFont(size: isOlderMode ? 18 : 14)
+                    .scalableFont(size: isOlderMode ? 22 : 14)
                     .foregroundColor(.red)
             }
         }
-        .padding()
+        .padding(isOlderMode ? 20 : 16)
         .background(Color(UIColor.secondarySystemGroupedBackground))
-        .cornerRadius(12)
-        .frame(maxWidth: .infinity) // Ensure it takes full width
+        .cornerRadius(isOlderMode ? 16 : 12)
+        .frame(maxWidth: .infinity)
     }
     
     private var emptyCartView: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: isOlderMode ? 30 : 20) {
             Image(systemName: "cart.badge.minus")
-                .font(.system(size: isOlderMode ? 72 : 60))
+                .font(.system(size: isOlderMode ? 84 : 60))
                 .foregroundColor(.gray)
             Text("Your cart is empty")
                 .font(.headline)
-                .scalableFont(size: isOlderMode ? 24 : 20)
+                .scalableFont(size: isOlderMode ? 28 : 20)
             Text("Add some items to get started")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-                .scalableFont(size: isOlderMode ? 18 : 16)
+                .scalableFont(size: isOlderMode ? 22 : 16)
         }
         .frame(maxWidth: .infinity)
-        .padding()
+        .padding(isOlderMode ? 24 : 16)
         .background(Color(UIColor.secondarySystemGroupedBackground))
-        .cornerRadius(12)
+        .cornerRadius(isOlderMode ? 16 : 12)
         .padding(.horizontal)
     }
     
     private var cartItemsList: some View {
-        VStack(spacing: isOlderMode ? 16 : 12) {
+        VStack(spacing: isOlderMode ? 24 : 12) {
             ForEach(cartManager.items) { item in
                 CartItemCard(item: item)
             }
@@ -129,17 +127,16 @@ struct CartView: View {
         HStack {
             Text("Total")
                 .font(.headline)
-                .scalableFont(size: isOlderMode ? 24 : 20)
+                .scalableFont(size: isOlderMode ? 28 : 20)
             Spacer()
             Text(formatPrice(cartManager.totalPrice))
                 .font(.headline)
-                .scalableFont(size: isOlderMode ? 24 : 20)
+                .scalableFont(size: isOlderMode ? 28 : 20)
         }
-        .padding()
+        .padding(isOlderMode ? 20 : 16)
         .background(Color(.secondarySystemBackground))
-        .cornerRadius(10)
+        .cornerRadius(isOlderMode ? 14 : 10)
     }
-
     
     private var checkoutButton: some View {
         Button(action: {
@@ -185,15 +182,15 @@ struct CartView: View {
         }) {
             Text(cartManager.selectedStore == nil ? "Select a Store to Checkout" : "Proceed to Checkout")
                 .font(.headline)
-                .scalableFont(size: isOlderMode ? 22 : 18)
+                .scalableFont(size: isOlderMode ? 26 : 18)
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 15) // Add more vertical padding
-                .background(cartManager.selectedStore == nil ? Color.gray.opacity(0.7) : Color.blue) // Use a more vibrant color when active
-                .cornerRadius(15) // Increase corner radius slightly
+                .padding(.vertical, isOlderMode ? 20 : 15)
+                .background(cartManager.selectedStore == nil ? Color.gray.opacity(0.7) : Color.blue)
+                .cornerRadius(isOlderMode ? 20 : 15)
         }
-        .padding(.horizontal, 20) // Add horizontal padding to make button narrower
-        .shadow(radius: 3, y: 2) // Add a subtle shadow
+        .padding(.horizontal, isOlderMode ? 10 : 20)
+        .shadow(radius: 3, y: 2)
         .disabled(cartManager.selectedStore == nil || cartManager.items.isEmpty || authViewModel.userId.isEmpty || authViewModel.token.isEmpty)
     }
     
@@ -205,8 +202,6 @@ struct CartView: View {
     }
 }
 
-
-
 struct CartItemCard: View {
     let item: CartItem
     @EnvironmentObject var cartManager: CartManager
@@ -214,21 +209,22 @@ struct CartItemCard: View {
     @AppStorage("isCareMode") private var isOlderMode = false
     
     var body: some View {
-        HStack(spacing: 12) {
-            productImage
-            
-            VStack(alignment: .leading, spacing: 8) {
-                productInfo
-                HStack {
+        VStack(alignment: .leading, spacing: isOlderMode ? 16 : 12) {
+            HStack(alignment: .top, spacing: isOlderMode ? 16 : 12) {
+                productImage
+                VStack(alignment: .leading, spacing: isOlderMode ? 8 : 4) {
+                    productInfo
                     quantityControl
-                    Spacer()
-                    removeButton
                 }
             }
+            
+            Divider()
+            
+            removeButton
         }
-        .padding()
+        .padding(isOlderMode ? 20 : 16)
         .background(Color(UIColor.secondarySystemGroupedBackground))
-        .cornerRadius(12)
+        .cornerRadius(isOlderMode ? 16 : 12)
         .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
     }
     
@@ -248,51 +244,50 @@ struct CartItemCard: View {
                 EmptyView()
             }
         }
-        .frame(width: 80, height: 80)
-        .cornerRadius(8)
+        .frame(width: isOlderMode ? 100 : 80, height: isOlderMode ? 100 : 80)
+        .cornerRadius(isOlderMode ? 12 : 8)
     }
     
     private var productInfo: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: isOlderMode ? 8 : 4) {
             Text(item.product.productName)
                 .font(.headline)
-                .scalableFont(size: isOlderMode ? 20 : 18)
+                .scalableFont(size: isOlderMode ? 24 : 18)
                 .lineLimit(2)
             Text("$\(item.product.productPrice)")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-                .scalableFont(size: isOlderMode ? 18 : 16)
+                .scalableFont(size: isOlderMode ? 22 : 16)
         }
     }
     
     private var quantityControl: some View {
-        HStack {
+        HStack(spacing: isOlderMode ? 20 : 15) {
             Text("Quantity:")
-                .scalableFont(size: isOlderMode ? 18 : 16)
-            Spacer()
-            HStack(spacing: 15) {
-                Button(action: {
-                    if item.quantity > 1 {
-                        cartManager.updateQuantity(for: item.product, quantity: item.quantity - 1)
-                    }
-                }) {
-                    Image(systemName: "minus.circle.fill")
-                        .foregroundColor(.blue)
+                .scalableFont(size: isOlderMode ? 22 : 16)
+            
+            Button(action: {
+                if item.quantity > 1 {
+                    cartManager.updateQuantity(for: item.product, quantity: item.quantity - 1)
                 }
-                .disabled(item.quantity <= 1)
-                
-                Text("\(item.quantity)")
-                    .frame(minWidth: 30)
-                    .scalableFont(size: isOlderMode ? 18 : 16)
-                
-                Button(action: {
-                    cartManager.updateQuantity(for: item.product, quantity: item.quantity + 1)
-                }) {
-                    Image(systemName: "plus.circle.fill")
-                        .foregroundColor(.blue)
-                }
+            }) {
+                Image(systemName: "minus.circle.fill")
+                    .foregroundColor(.blue)
+                    .scalableFont(size: isOlderMode ? 30 : 24)
             }
-            .scalableFont(size: isOlderMode ? 24 : 20)
+            .disabled(item.quantity <= 1)
+            
+            Text("\(item.quantity)")
+                .frame(minWidth: isOlderMode ? 40 : 30)
+                .scalableFont(size: isOlderMode ? 22 : 16)
+            
+            Button(action: {
+                cartManager.updateQuantity(for: item.product, quantity: item.quantity + 1)
+            }) {
+                Image(systemName: "plus.circle.fill")
+                    .foregroundColor(.blue)
+                    .scalableFont(size: isOlderMode ? 30 : 24)
+            }
         }
     }
     
@@ -300,10 +295,17 @@ struct CartItemCard: View {
         Button(action: {
             cartManager.removeFromCart(item.product)
         }) {
-            Image(systemName: "trash")
-                .foregroundColor(.red)
-                .scalableFont(size: isOlderMode ? 20 : 18)
+            HStack {
+                Image(systemName: "trash")
+                Text("Remove")
+            }
+            .foregroundColor(.red)
+            .scalableFont(size: isOlderMode ? 22 : 18)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 12)
+            .background(Color.red.opacity(0.1))
+            .cornerRadius(isOlderMode ? 12 : 8)
         }
-        .padding(.leading, 8)
+        .frame(maxWidth: .infinity, alignment: .trailing)
     }
 }
