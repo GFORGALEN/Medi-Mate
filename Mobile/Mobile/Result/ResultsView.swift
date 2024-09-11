@@ -9,53 +9,34 @@ struct ResultsView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .bottomTrailing) {
-                ScrollView {
-                    if HomeVM.products.isEmpty {
-                        VStack {
-                            Spacer()
-                            Text("Sorry There is no result, please re-enter the keyword or take a clearer picture of the front of the package.")
-                                .font(.system(size: 30, weight: .bold))
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .padding()
-                            Spacer()
+            ZStack(alignment: .bottom) {
+                VStack(spacing: 0) {
+                    ScrollView {
+                        if HomeVM.products.isEmpty {
+                            emptyResultsView
+                        } else {
+                            productsGrid
                         }
-                    } else {
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 170), spacing: 20)], spacing: 20) {
-                            ForEach(HomeVM.products) { product in
-                                Group {
-                                    if isSelectionMode {
-                                        ProductCard(product: product, isSelected: selectedProducts.contains(product.id))
-                                            .onTapGesture {
-                                                toggleSelection(for: product.id)
-                                            }
-                                    } else {
-                                        NavigationLink(destination: ProductDetailsView(productId: product.id)) {
-                                            ProductCard(product: product)
-                                        }
-                                    }
-                                }
-                                .onAppear {
-                                    HomeVM.loadMoreProductsIfNeeded(currentProduct: product)
-                                }
-                            }
-
-                            if HomeVM.isLoading {
-                                CustomLoadingView()
-                                    .frame(width: 150, height: 150)
-                            }
-                        }
-                        .padding()
-
-                        Spacer()
-                            .frame(height: 100)
+                    }
+                    
+                    if !HomeVM.products.isEmpty {
+                        compareButton
+                            .padding(.bottom, 80)
                     }
                 }
-                .navigationTitle("Results")
-                .navigationBarTitleDisplayMode(.inline)
-
-                if !HomeVM.products.isEmpty {
-                    compareButton
+                
+                // Placeholder for tab bar
+                Color(.secondarySystemBackground)
+                    .frame(height: 49)
+                    .opacity(0.01) // Make it invisible but keep the space
+            }
+            .navigationTitle(isSelectionMode ? "Select Products" : "Results")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if !isSelectionMode {
+                        clearButton
+                    }
                 }
             }
             .navigationDestination(for: String.self) { productId in
@@ -67,33 +48,100 @@ struct ResultsView: View {
         }
     }
 
-    private var compareButton: some View {
-        Button(action: {
-            if isSelectionMode && selectedProducts.count >= 2 {
-                navigateToComparison = true
-            } else if !isSelectionMode {
-                isSelectionMode.toggle()
-                selectedProducts.removeAll()
-            }
-        }) {
-            Text(isSelectionMode ? "Compare (\(selectedProducts.count))" : "Compare")
-                .font(.title2)
-                .bold()
-                .foregroundColor(.white)
+    private var emptyResultsView: some View {
+        VStack {
+            Spacer()
+            Text("Sorry There is no result, please re-enter the keyword or take a clearer picture of the front of the package.")
+                .font(.system(size: 30, weight: .bold))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding()
-                .frame(width: 200, height: 60)
-                .background(
-                    isSelectionMode && selectedProducts.count < 2
-                    ? Color.gray
-                    : (isSelectionMode ? Color.blue : Color.black)
-                )
-                .cornerRadius(25)
-                .shadow(color: .gray, radius: 3, x: 1, y: 1)
+            Spacer()
         }
-        .disabled(isSelectionMode && selectedProducts.count < 2)
-        .padding(.bottom, 50)
-        .padding(.trailing, 20)
     }
+
+    private var productsGrid: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 170), spacing: 20)], spacing: 20) {
+            ForEach(HomeVM.products) { product in
+                Group {
+                    if isSelectionMode {
+                        ProductCard(product: product, isSelected: selectedProducts.contains(product.id))
+                            .onTapGesture {
+                                toggleSelection(for: product.id)
+                            }
+                    } else {
+                        NavigationLink(destination: ProductDetailsView(productId: product.id)) {
+                            ProductCard(product: product)
+                        }
+                    }
+                }
+                .onAppear {
+                    HomeVM.loadMoreProductsIfNeeded(currentProduct: product)
+                }
+            }
+
+            if HomeVM.isLoading {
+                CustomLoadingView()
+                    .frame(width: 150, height: 150)
+            }
+        }
+        .padding()
+    }
+
+    private var clearButton: some View {
+        Button(action: {
+            HomeVM.clearSearchResults()
+        }) {
+            Text("Clear")
+                .foregroundColor(.blue)
+        }
+    }
+
+    private var compareButton: some View {
+            HStack {
+                Button(action: {
+                    if isSelectionMode {
+                        if selectedProducts.count >= 2 {
+                            navigateToComparison = true
+                        }
+                    } else {
+                        isSelectionMode.toggle()
+                        selectedProducts.removeAll()
+                    }
+                }) {
+                    Text(isSelectionMode ? "Compare (\(selectedProducts.count))" : "Compare")
+                        .font(.headline)
+                        
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 15) // Add more vertical padding
+                        .background(
+                            isSelectionMode && selectedProducts.count < 2
+                            ? Color.gray
+                            : (isSelectionMode ? Color.blue : Color.black)
+                        )
+                        .cornerRadius(25) // Increase corner radius slightly
+                }
+                .padding(.horizontal, 20) // Add horizontal padding to make button narrower
+                .shadow(radius: 3, y: 2) // Add a subtle shadow
+                .disabled(isSelectionMode && selectedProducts.count < 2)
+                
+                if isSelectionMode {
+                    Button(action: {
+                        isSelectionMode = false
+                        selectedProducts.removeAll()
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.red)
+                    }
+                    .padding(.leading, 8)
+                }
+            }
+            .frame(height: 60)
+            .padding(.horizontal)
+        }
+
+
 
     private func toggleSelection(for id: String) {
         if selectedProducts.contains(id) {

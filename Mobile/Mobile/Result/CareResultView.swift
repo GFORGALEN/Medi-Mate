@@ -7,70 +7,103 @@ struct CareResultView: View {
     @State private var navigateToComparison = false
 
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            ScrollView {
-                LazyVStack(spacing: 30) {
-                    ForEach(HomeVM.products) { product in
-                        Group {
-                            if isSelectionMode {
-                                OlderModeProductCard(product: product, isSelected: selectedProducts.contains(product.id))
-                                    .onTapGesture {
-                                        toggleSelection(for: product.id)
+        NavigationStack {
+            ZStack(alignment: .bottom) {
+                VStack(spacing: 0) {
+                    ScrollView {
+                        LazyVStack(spacing: 30) {
+                            ForEach(HomeVM.products) { product in
+                                Group {
+                                    if isSelectionMode {
+                                        OlderModeProductCard(product: product, isSelected: selectedProducts.contains(product.id))
+                                            .onTapGesture {
+                                                toggleSelection(for: product.id)
+                                            }
+                                    } else {
+                                        NavigationLink(destination: ProductDetailsView(productId: product.id)) {
+                                            OlderModeProductCard(product: product)
+                                        }
                                     }
-                            } else {
-                                NavigationLink(destination: ProductDetailsView(productId: product.id)) {
-                                    OlderModeProductCard(product: product)
+                                }
+                                .onAppear {
+                                    HomeVM.loadMoreProductsIfNeeded(currentProduct: product)
                                 }
                             }
-                        }
-                        .onAppear {
-                            HomeVM.loadMoreProductsIfNeeded(currentProduct: product)
-                        }
-                    }
 
-                    if HomeVM.isLoading {
-                        ProgressView()
-                            .frame(height: 100)
+                            if HomeVM.isLoading {
+                                ProgressView()
+                                    .frame(height: 10)
+                            }
+                        }
+                        .padding()
+                    }
+                    .frame(maxHeight: .infinity)
+                    
+                    if !HomeVM.products.isEmpty {
+                        VStack {
+                            Spacer()
+                            compareButton
+                                .padding(.bottom, 20)
+                        }
                     }
                 }
-                .padding()
+                
+                // Placeholder for tab bar
+                Color(.secondarySystemBackground)
+                    .frame(height: 49)
+                    .opacity(0.01)
             }
-            .navigationTitle("Results")
+            
+            .navigationTitle(isSelectionMode ? "Select Products" : "Results")
             .navigationBarTitleDisplayMode(.large)
-
-            compareButton
-        }
-        .navigationDestination(isPresented: $navigateToComparison) {
-            CompareCareMode(viewModel: ComparisonViewModel(), productIds: Array(selectedProducts))
+            .navigationDestination(isPresented: $navigateToComparison) {
+                CompareCareMode(viewModel: ComparisonViewModel(), productIds: Array(selectedProducts))
+            }
         }
     }
 
     private var compareButton: some View {
-        Button(action: {
-            if isSelectionMode && selectedProducts.count >= 2 {
-                navigateToComparison = true
-            } else if !isSelectionMode {
-                isSelectionMode.toggle()
-                selectedProducts.removeAll()
+        HStack {
+            Button(action: {
+                if isSelectionMode {
+                    if selectedProducts.count >= 2 {
+                        navigateToComparison = true
+                    }
+                } else {
+                    isSelectionMode.toggle()
+                    selectedProducts.removeAll()
+                }
+            }) {
+                Text(isSelectionMode ? "Compare (\(selectedProducts.count))" : "Compare")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical)
+                    .background(
+                        isSelectionMode && selectedProducts.count < 2
+                        ? Color.gray
+                        : (isSelectionMode ? Color.blue : Color.black)
+                    )
+                    .cornerRadius(35)
             }
-        }) {
-            Text(isSelectionMode ? "Compare (\(selectedProducts.count))" : "Compare")
-                .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.white)
-                .padding()
-                .frame(width: 220, height: 70)
-                .background(
-                    isSelectionMode && selectedProducts.count < 2
-                    ? Color.gray
-                    : (isSelectionMode ? Color.blue : Color.black)
-                )
-                .cornerRadius(35)
-                .shadow(color: .gray, radius: 3, x: 1, y: 1)
+            .shadow(radius: 3, y: 2)
+            .disabled(isSelectionMode && selectedProducts.count < 2)
+            
+            if isSelectionMode {
+                Button(action: {
+                    isSelectionMode = false
+                    selectedProducts.removeAll()
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 30))
+                        .foregroundColor(.red)
+                }
+            }
         }
-        .disabled(isSelectionMode && selectedProducts.count < 2)
-        .padding(.bottom, 50)
-        .padding(.trailing, 20)
+        .frame(height: 70)
+        .padding(.horizontal, 10) // Reduced horizontal padding
     }
+
 
     private func toggleSelection(for id: String) {
         if selectedProducts.contains(id) {
@@ -80,6 +113,7 @@ struct CareResultView: View {
         }
     }
 }
+
 struct OlderModeProductCard: View {
     let product: Medicine
     var isSelected: Bool = false

@@ -11,7 +11,7 @@ class HomeVM: ObservableObject {
     @Published var totalProducts: Int = 0
     @Published var errorMessage: String?
     @Published var navigateToResults = false
-
+    @Published var hasSearchResults = false
     private var cancellables = Set<AnyCancellable>()
     private let networkService: NetworkServiceProtocol
     
@@ -29,25 +29,34 @@ class HomeVM: ObservableObject {
     }
     
     private func search() async {
-        isLoading = true
-        errorMessage = nil
-        currentPage = 1
-        canLoadMorePages = true
-        do {
-            let result = try await networkService.textSearch(
-                page: currentPage,
-                pageSize: 10,
-                productName: searchText,
-                manufacture: ""
-            )
-            parseSearchResult(result)
-        } catch {
-            errorMessage = error.localizedDescription
-            print("Search error: \(error)")
+            isLoading = true
+            errorMessage = nil
+            currentPage = 1
+            canLoadMorePages = true
+            do {
+                let result = try await networkService.textSearch(
+                    page: currentPage,
+                    pageSize: 10,
+                    productName: searchText,
+                    manufacture: ""
+                )
+                parseSearchResult(result)
+                hasSearchResults = true
+            } catch {
+                errorMessage = error.localizedDescription
+                print("Search error: \(error)")
+            }
+            navigateToResults = true
+            isLoading = false
         }
-        navigateToResults = true
-        isLoading = false
-    }
+    
+    func clearSearchResults() {
+            products.removeAll()
+            totalProducts = 0
+            hasSearchResults = false
+            navigateToResults = false
+            searchText = ""
+        }
     
     func loadMoreProductsIfNeeded(currentProduct product: Medicine?) {
         guard let product = product else {

@@ -16,13 +16,13 @@ import SwiftUI
 struct AccountView: View {
     @ObservedObject var authViewModel: AuthenticationView
     @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
-
+    
     @State private var showingEditProfile = false
     @State private var showingChangePassword = false
     @State private var userInfo: UserInfo?
     @State private var isLoading = false
     @State private var errorMessage: String?
-
+    
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
@@ -58,7 +58,7 @@ struct AccountView: View {
             }
         }
     }
-
+    
     private var profileHeader: some View {
         HStack(spacing: 20) {
             ZStack {
@@ -80,7 +80,7 @@ struct AccountView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-
+    
     private var userInfoCards: some View {
         VStack(spacing: 16) {
             if let userInfo = userInfo {
@@ -96,7 +96,7 @@ struct AccountView: View {
             }
         }
     }
-
+    
     private func infoCard(title: String, value: String, systemImage: String) -> some View {
         HStack {
             Image(systemName: systemImage)
@@ -115,7 +115,7 @@ struct AccountView: View {
         .background(Color(.secondarySystemBackground))
         .cornerRadius(10)
     }
-
+    
     private var actionButtons: some View {
         VStack(spacing: 12) {
             Button(action: { showingEditProfile = true }) {
@@ -126,7 +126,7 @@ struct AccountView: View {
                     .foregroundColor(.white)
                     .cornerRadius(10)
             }
-
+            
             Button(action: { showingChangePassword = true }) {
                 Label("Change Password", systemImage: "lock.rotation")
                     .frame(maxWidth: .infinity)
@@ -137,7 +137,7 @@ struct AccountView: View {
             }
         }
     }
-
+    
     private var logoutButton: some View {
         Button(action: {
             Task {
@@ -156,7 +156,7 @@ struct AccountView: View {
                 .cornerRadius(10)
         }
     }
-
+    
     private var tabBar: some View {
         HStack {
             ForEach(["house", "doc.text", "map", "person.circle"], id: \.self) { imageName in
@@ -169,88 +169,20 @@ struct AccountView: View {
     }
     
     private func fetchUserInfo() {
-        guard let url = URL(string: "http://52.64.142.47:8080/api/userinfo?userId=\(authViewModel.userId)") else {
-            errorMessage = "Invalid URL"
-            return
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("Bearer \(authViewModel.token)", forHTTPHeaderField: "Authorization")
-        
-        print("Requesting URL: \(url)")
-        print("Authorization Token: \(authViewModel.token)")
-        
         isLoading = true
         errorMessage = nil
         
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        UserInfoAPI.shared.fetchUserInfo(userId: authViewModel.userId) { result in
             DispatchQueue.main.async {
                 self.isLoading = false
-                if let error = error {
-                    self.errorMessage = "Network error: \(error.localizedDescription)"
-                    print("Network error: \(error)")
-                    return
-                }
-                
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    self.errorMessage = "Invalid response"
-                    return
-                }
-                
-                print("HTTP Status Code: \(httpResponse.statusCode)")
-                print("Response Headers: \(httpResponse.allHeaderFields)")
-                
-                guard let data = data else {
-                    self.errorMessage = "No data received"
-                    print("No data received from the server")
-                    return
-                }
-                
-                if let jsonString = String(data: data, encoding: .utf8) {
-                    print("Received JSON: \(jsonString)")
-                } else {
-                    print("Received data is not UTF-8 encoded")
-                    self.errorMessage = "Received data is not UTF-8 encoded"
-                    return
-                }
-                
-                do {
-                    // First, try to decode as a dictionary to see the structure
-                    if let jsonDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                        print("JSON structure: \(jsonDict)")
-                    }
-                    
-                    let decodedResponse = try JSONDecoder().decode(UserInfoResponse.self, from: data)
-                    self.userInfo = decodedResponse.data
-                    print("Successfully decoded user info")
-                } catch {
-                    self.errorMessage = "Failed to decode response: \(error.localizedDescription)"
-                    print("Decoding error: \(error)")
-                    
-                    if let decodingError = error as? DecodingError {
-                        switch decodingError {
-                        case .dataCorrupted(let context):
-                            print("Data corrupted: \(context.debugDescription)")
-                            if let underlyingError = context.underlyingError {
-                                print("Underlying error: \(underlyingError.localizedDescription)")
-                            }
-                        case .keyNotFound(let key, let context):
-                            print("Key '\(key.stringValue)' not found: \(context.debugDescription)")
-                            print("Coding path: \(context.codingPath)")
-                        case .typeMismatch(let type, let context):
-                            print("Type mismatch for type \(type): \(context.debugDescription)")
-                            print("Coding path: \(context.codingPath)")
-                        case .valueNotFound(let type, let context):
-                            print("Value of type \(type) not found: \(context.debugDescription)")
-                            print("Coding path: \(context.codingPath)")
-                        @unknown default:
-                            print("Unknown decoding error")
-                        }
-                    }
+                switch result {
+                case .success(let userInfo):
+                    self.userInfo = userInfo
+                case .failure(let error):
+                    self.errorMessage = "Error fetching user info: \(error.localizedDescription)"
                 }
             }
-        }.resume()
+        }
     }
 }
 
