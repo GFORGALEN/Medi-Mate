@@ -37,28 +37,41 @@ struct CareResultView: View {
                         }
                         .padding()
                     }
-                    .frame(maxHeight: .infinity)
-                    
-                    if !HomeVM.products.isEmpty {
-                        VStack {
-                            Spacer()
-                            compareButton
-                                .padding(.bottom, 20)
-                        }
-                    }
                 }
                 
-                // Placeholder for tab bar
-                Color(.secondarySystemBackground)
-                    .frame(height: 49)
-                    .opacity(0.01)
+                VStack {
+                    Spacer()
+                    if !HomeVM.products.isEmpty {
+                        compareButton
+                            .padding(.bottom, 20)
+                    }
+                    // Placeholder for tab bar
+                    Color(.secondarySystemBackground)
+                        .frame(height: 49)
+                }
             }
             
             .navigationTitle(isSelectionMode ? "Select Products" : "Results")
             .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if !isSelectionMode {
+                        clearButton
+                    }
+                }
+            }
             .navigationDestination(isPresented: $navigateToComparison) {
                 CompareCareMode(viewModel: ComparisonViewModel(), productIds: Array(selectedProducts))
             }
+        }
+    }
+
+    private var clearButton: some View {
+        Button(action: {
+            HomeVM.clearSearchResults()
+        }) {
+            Text("Clear")
+                .foregroundColor(.blue)
         }
     }
 
@@ -101,9 +114,8 @@ struct CareResultView: View {
             }
         }
         .frame(height: 70)
-        .padding(.horizontal, 10) // Reduced horizontal padding
+        .padding(.horizontal, 10)
     }
-
 
     private func toggleSelection(for id: String) {
         if selectedProducts.contains(id) {
