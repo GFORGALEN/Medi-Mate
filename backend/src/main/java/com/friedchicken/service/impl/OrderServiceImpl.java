@@ -103,6 +103,7 @@ public class OrderServiceImpl implements OrderService {
         int status = updateOrderDTO.getStatus();
         if (status == OrderStatusConstant.FINISH_PICKING) {
             OrderEmail orderEmail = orderMapper.getOrderDetailByOrderId(updateOrderDTO);
+            log.info("orderEmail:{}", orderEmail);
             rabbitTemplate.convertAndSend("pick.topic", "pick.success", orderEmail);
         } else if (status == OrderStatusConstant.CANCEL_ORDER_STATUS) {
             if (updateOrderDTO.getCancelReason().isEmpty()) {

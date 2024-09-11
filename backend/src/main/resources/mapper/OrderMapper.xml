@@ -79,8 +79,10 @@
                u.email,
                u.nickname
         FROM `order` o
-                 JOIN user u ON u.user_id = o.user_id
-                 join pharmacy p on p.pharmacy_id = o.pharmacy_id
+                 JOIN
+             user u ON u.user_id = o.user_id
+                 JOIN
+             pharmacy p ON p.pharmacy_id = o.pharmacy_id
         WHERE o.order_id = #{orderId};
     </select>
 </mapper>
