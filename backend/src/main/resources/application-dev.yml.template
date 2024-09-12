@@ -1,6 +1,0 @@
-fc:
-  datasource:
-    password:
-  jwt:
-    admin-secret-key:
-    user-secret-key:
