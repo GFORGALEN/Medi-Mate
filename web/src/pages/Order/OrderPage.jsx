@@ -1,7 +1,10 @@
 import { pharmacyOrderAPI } from "@/api/orderApi.jsx";
 import { useEffect, useState, useRef } from "react";
-import { Modal, Input, message, Table } from "antd";
+import { Modal, Input, message, Table,Button} from "antd";
 import { useSelector } from "react-redux";
+import generateReceipt from './PDFReceipt';
+import generateReport from './PDFReport';
+
 
 const OrderPage = () => {
     const [orders, setOrders] = useState({
@@ -18,6 +21,7 @@ const OrderPage = () => {
     const [timers, setTimers] = useState({});
     const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false);
     const [orderDetails, setOrderDetails] = useState([]);
+    const [totalAmount, setTotalAmount] = useState(0);
 
     const currentOrderId = useSelector(state => state.message.orderId);
     const timerRef = useRef();
@@ -49,6 +53,12 @@ const OrderPage = () => {
                     startPicking: response.data.filter(order => order.status === 2),
                     finishPicking: response.data.filter(order => order.status === 3)
                 };
+                Object.keys(sortedOrders).forEach(key => {
+                    sortedOrders[key] = sortedOrders[key].map(order => ({
+                        ...order,
+                        username: order.username || 'Unknown' // 如果 API 没有返回 username，使用 'Unknown'
+                    }));
+                });
                 setOrders(sortedOrders);
 
                 const newTimers = {};
@@ -65,7 +75,13 @@ const OrderPage = () => {
     const fetchOrderDetails = (orderId) => {
         pharmacyOrderAPI.getOrderDetail(orderId).then((response) => {
             if (response.code === 1 && Array.isArray(response.data)) {
-                setOrderDetails(response.data);
+                const orderDetailsWithUsername = response.data.map(item => ({
+                    ...item,
+                    username: item.username || 'Galen' // 确保每个项目都有 username
+                }));
+                setOrderDetails(orderDetailsWithUsername);
+                const total = orderDetailsWithUsername.reduce((sum, item) => sum + item.price * item.quantity, 0);
+                setTotalAmount(total);
                 setIsDetailsModalVisible(true);
             } else {
                 message.error("Failed to fetch order details");
@@ -181,6 +197,8 @@ const OrderPage = () => {
             <p className="text-lg font-semibold mb-2">Order ID: {order.orderId}</p>
             <p className="text-gray-700 mb-2">Pharmacy ID: {order.pharmacyId}</p>
             <p className="text-gray-700 mb-2">Created At: {convertToNZTime(order.createdAt)}</p>
+            {/*<p className="text-gray-700 mb-2">Username: {order.username}</p>*/}
+            {/*<p className="text-gray-700 mb-2">Total Amount: ${order.totalAmount?.toFixed(2) }</p>*/}
             <div className="flex justify-between items-center">
                 <button
                     onClick={() => fetchOrderDetails(order.orderId)}
@@ -218,10 +236,20 @@ const OrderPage = () => {
             key: 'quantity',
         },
         {
+            title: 'Username',
+            dataIndex: 'username',
+            key: 'username',
+        },
+        {
             title: 'Price',
             dataIndex: 'price',
             key: 'price',
             render: (price) => `$${price.toFixed(2)}`,
+        },
+        {
+            title: 'Total',
+            key: 'total',
+            render: (_, record) => `$${(record.price * record.quantity).toFixed(2)}`,
         },
         {
             title: 'Manufacturer',
@@ -235,11 +263,27 @@ const OrderPage = () => {
             render: (imageSrc) => <img src={imageSrc} alt="Product" style={{ width: '50px', height: '50px' }} />,
         },
     ];
+    const handleGenerateReport = () => {
+        generateReport([...orders.finishOrder, ...orders.startPicking, ...orders.finishPicking]);
+    };
+
+    const handleGenerateReceipt = () => {
+        const currentOrderId = orderDetails[0]?.orderId;
+        if (currentOrderId) {
+            generateReceipt(currentOrderId);
+        } else {
+            message.error("No order selected for receipt generation");
+        }
+    };
 
     return (
         <div className="container mx-auto px-4 py-8 min-h-screen">
             <h1 className="text-3xl font-bold mb-6 text-gray-800">Order Management</h1>
-            <p className="text-lg mb-6 text-gray-700">Current Order ID: <span className="font-semibold">{currentOrderId}</span></p>
+            <p className="text-lg mb-6 text-gray-700">Current Order ID: <span
+                className="font-semibold">{currentOrderId}</span></p>
+            <div className="mb-6">
+                <Button type="primary" onClick={handleGenerateReport}>Generate Order Report</Button>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                     <h2 className="text-xl font-semibold mb-4 text-green-800">Finish Order</h2>
@@ -298,10 +342,18 @@ const OrderPage = () => {
                 title="Order Details"
                 visible={isDetailsModalVisible}
                 onCancel={() => setIsDetailsModalVisible(false)}
-                footer={null}
+                footer={[
+                    <Button key="close" onClick={() => setIsDetailsModalVisible(false)}>
+                        Close
+                    </Button>,
+                    <Button key="download" type="primary" onClick={handleGenerateReceipt}>
+                        Generate Receipt
+                    </Button>
+                ]}
                 width={1000}
             >
                 <Table dataSource={orderDetails} columns={columns} rowKey="productId" />
+                <p className="text-right mt-4 text-lg font-semibold">Total Amount: ${totalAmount.toFixed(2)}</p>
             </Modal>
         </div>
     );
