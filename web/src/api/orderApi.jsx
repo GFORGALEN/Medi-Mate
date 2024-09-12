@@ -13,11 +13,14 @@ export const pharmacyOrderAPI = {
             url: `/detailOrder/${orderId}`
         });
     },
-    updateOrderStatus: (orderId, newStatus, cancelReason = null) => {
-        const data = { orderId, status: newStatus };
+    updateOrderStatus: (orderId, newStatus, pharmacyId, cancelReason) => {
+        // 添加 pharmacyId 到请求体
+        const data = { orderId, status: newStatus, pharmacyId };
+
         if (cancelReason) {
             data.cancelReason = cancelReason;
         }
+
         return requestOrder({
             method: 'PATCH',
             url: `/updateOrderStatus`,
