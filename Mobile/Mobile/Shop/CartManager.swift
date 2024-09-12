@@ -22,10 +22,10 @@ class CartManager: ObservableObject {
         }
     }
     
-    func removeFromCart(_ product: ProductDetails) {
-        items.removeAll { $0.product.productId == product.productId }
-    }
-    
+//    func removeFromCart(_ product: ProductDetails) {
+//        items.removeAll { $0.product.productId == product.productId }
+//    }
+//    
     func updateQuantity(for product: ProductDetails, quantity: Int) {
         if let index = items.firstIndex(where: { $0.product.productId == product.productId }) {
             items[index].quantity = max(0, quantity)
@@ -38,6 +38,11 @@ class CartManager: ObservableObject {
     var totalItems: Int {
         items.reduce(0) { $0 + $1.quantity }
     }
+    
+    func removeFromCart(_ product: ProductDetails) {
+            items.removeAll { $0.product.productId == product.productId }
+            objectWillChange.send()
+        }
     
     var totalPrice: String {
             items.reduce("0") { result, item in
