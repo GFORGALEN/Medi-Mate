@@ -61,29 +61,33 @@ class CartManager: ObservableObject {
     
     
     func prepareOrder(userId: String) -> [String: Any]? {
-            guard let store = selectedStore, !items.isEmpty else {
-                return nil
-            }
-            
-            let orderItems = items.map { item in
-                return [
-                    "productId": item.product.productId,
-                    "quantity": item.quantity,
-                    "price": Double(item.product.productPrice) ?? 0.0
-                ]
-            }
-            
-            let totalAmount = items.reduce(0.0) { total, item in
-                total + (Double(item.product.productPrice) ?? 0.0) * Double(item.quantity)
-            }
-            
-            return [
-                "userId": userId,
-                "pharmacyId": store.id,
-                "amount": totalAmount,
-                "orderItem": orderItems
-            ]
-        }
+           guard let store = selectedStore, !items.isEmpty else {
+               return nil
+           }
+           
+           let orderItems = items.map { item in
+               return [
+                   "productId": item.product.productId,
+                   "quantity": item.quantity,
+                   "price": Double(item.product.productPrice) ?? 0.0
+               ]
+           }
+           
+           let totalAmount = items.reduce(0.0) { total, item in
+               total + (Double(item.product.productPrice) ?? 0.0) * Double(item.quantity)
+           }
+           
+           return [
+               "userId": userId,
+               "pharmacyId": store.id,
+               "amount": totalAmount,
+               "orderItem": orderItems
+           ]
+       }
+       
+       func getAuthToken() -> String? {
+           return UserDefaults.standard.string(forKey: "authToken")
+       }
     
 
 }

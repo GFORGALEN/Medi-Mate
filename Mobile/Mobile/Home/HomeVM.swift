@@ -12,6 +12,7 @@ class HomeVM: ObservableObject {
     @Published var errorMessage: String?
     @Published var navigateToResults = false
     @Published var hasSearchResults = false
+    @Published var lastViewedItemId: String?
     private var cancellables = Set<AnyCancellable>()
     private let networkService: NetworkServiceProtocol
     
@@ -29,34 +30,47 @@ class HomeVM: ObservableObject {
     }
     
     private func search() async {
-            isLoading = true
-            errorMessage = nil
-            currentPage = 1
-            canLoadMorePages = true
-            do {
-                let result = try await networkService.textSearch(
-                    page: currentPage,
-                    pageSize: 10,
-                    productName: searchText,
-                    manufacture: ""
-                )
-                parseSearchResult(result)
-                hasSearchResults = true
-            } catch {
-                errorMessage = error.localizedDescription
-                print("Search error: \(error)")
-            }
-            navigateToResults = true
-            isLoading = false
+        isLoading = true
+        errorMessage = nil
+        currentPage = 1
+        canLoadMorePages = true
+        lastViewedItemId = nil // Reset lastViewedItemId when performing a new search
+        do {
+            let result = try await networkService.textSearch(
+                page: currentPage,
+                pageSize: 10,
+                productName: searchText,
+                manufacture: ""
+            )
+            parseSearchResult(result)
+            hasSearchResults = true
+        } catch {
+            errorMessage = error.localizedDescription
+            print("Search error: \(error)")
         }
+        navigateToResults = true
+        isLoading = false
+    }
     
     func clearSearchResults() {
-            products.removeAll()
-            totalProducts = 0
-            hasSearchResults = false
-            navigateToResults = false
-            searchText = ""
-        }
+        products.removeAll()
+        totalProducts = 0
+        hasSearchResults = false
+        navigateToResults = false
+        searchText = ""
+        lastViewedItemId = nil
+    }
+    
+    func returnToHomepage() {
+        navigateToResults = false
+        searchText = ""
+        image = nil
+        // We're not clearing the products array or lastViewedItemId here to maintain the results
+    }
+    
+    func returnToResults() {
+        navigateToResults = true
+    }
     
     func loadMoreProductsIfNeeded(currentProduct product: Medicine?) {
         guard let product = product else {
