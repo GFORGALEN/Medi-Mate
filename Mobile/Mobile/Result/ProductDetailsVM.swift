@@ -14,17 +14,17 @@ class ProductDetailsVM: ObservableObject {
     private var cartManager: CartManager
     
     init(productId: String, cartManager: CartManager, networkService: NetworkServiceProtocol = NetworkService()) {
-            self.productId = productId
-            self.networkService = networkService
-            self.cartManager = cartManager
-           
-            setupAudioSession()
-        }
+        self.productId = productId
+        self.networkService = networkService
+        self.cartManager = cartManager
+        
+        setupAudioSession()
+    }
     
     func updateCartManager(_ newCartManager: CartManager) {
-            self.cartManager = newCartManager
-        }
-        
+        self.cartManager = newCartManager
+    }
+    
     
     func loadProductDetails() async {
         state = .loading
@@ -54,16 +54,24 @@ class ProductDetailsVM: ObservableObject {
         
         return response.data
     }
-    func addToCart() {
-           guard let product = productDetails else { return }
-           cartManager.addToCart(product)
-           objectWillChange.send()  // Notify observers that the view model has changed
-       }
-       
-       var isAddedToCart: Bool {
-           guard let product = productDetails else { return false }
-           return cartManager.items.contains { $0.product.productId == product.productId }
-       }
+    
+        
+        func toggleInCart() {
+            guard let product = productDetails else { return }
+            if isAddedToCart {
+                cartManager.removeFromCart(product)
+            } else {
+                cartManager.addToCart(product)
+            }
+            objectWillChange.send()
+        }
+        
+        var isAddedToCart: Bool {
+            guard let product = productDetails else { return false }
+            return cartManager.items.contains { $0.product.productId == product.productId }
+        }
+        
+    
     
     func setupAudioSession() {
         do {
@@ -151,7 +159,10 @@ class ProductDetailsVM: ObservableObject {
             return "Custom"
         }
     }
-    
-    
 }
+
+
+    
+    
+
 

@@ -74,21 +74,20 @@ struct ProductDetailsView: View {
             }
         }
         .onAppear {
-            viewModel.updateCartManager(cartManager)
-        }
-        .task {
-            await viewModel.loadProductDetails()
-        }
-        .onChange(of: authViewModel.isLoginSuccessed) { newValue in
-            if newValue {
-                isShowingLoginView = false
-                // Optionally, you can add the item to cart here if that was the initial intention
-                viewModel.addToCart()
-            }
-            
-        }
-    }
-}
+                   viewModel.updateCartManager(cartManager)
+               }
+               .task {
+                   await viewModel.loadProductDetails()
+               }
+               .onChange(of: authViewModel.isLoginSuccessed) { newValue in
+                   if newValue {
+                       isShowingLoginView = false
+                       // Optionally, you can toggle the item in cart here if that was the initial intention
+                       viewModel.toggleInCart()
+                   }
+               }
+           }
+       }
 
 struct ProductDetailsContent: View {
     let details: ProductDetails
@@ -121,30 +120,32 @@ struct ProductDetailsContent: View {
     }
     
     private var addToCartButton: some View {
-        Button(action: {
-            if isLoggedIn {
-                viewModel.addToCart()
-            } else {
-                isShowingLoginView = true
+            Button(action: {
+                if isLoggedIn {
+                    viewModel.toggleInCart()
+                } else {
+                    isShowingLoginView = true
+                }
+            }) {
+                HStack {
+                    Image(systemName: viewModel.isAddedToCart ? "minus.circle.fill" : "cart.badge.plus")
+                        .font(.system(size: isOlderMode ? 24 : 20))
+                    Text(viewModel.isAddedToCart ? "Remove from Cart" : "Add to Cart")
+                        .scalableFont(size: isOlderMode ? 24 : 20, weight: .semibold)
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .frame(height: isOlderMode ? 70 : 50)
+                .background(viewModel.isAddedToCart ? Color.red : Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(isOlderMode ? 15 : 10)
             }
-        }) {
-            HStack {
-                Image(systemName: viewModel.isAddedToCart ? "checkmark.circle.fill" : "cart.badge.plus")
-                    .font(.system(size: isOlderMode ? 24 : 20))
-                Text(viewModel.isAddedToCart ? "Update Cart" : "Add to Cart")
-                    .scalableFont(size: isOlderMode ? 24 : 20, weight: .semibold)
-            }
-            .padding()
-            .frame(maxWidth: .infinity)
-            .frame(height: isOlderMode ? 70 : 50)
-            .background(viewModel.isAddedToCart ? Color.green : Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(isOlderMode ? 15 : 10)
+            .buttonStyle(PlainButtonStyle())
+            .padding(.vertical, isOlderMode ? 15 : 10)
+            .animation(.easeInOut, value: viewModel.isAddedToCart)
         }
-        .buttonStyle(PlainButtonStyle())
-        .padding(.vertical, isOlderMode ? 15 : 10)
-        .animation(.easeInOut, value: viewModel.isAddedToCart)
-    }
+    
+
     
     
     private var headerSection: some View {

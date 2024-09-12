@@ -48,8 +48,7 @@ class LoginViewModel: ObservableObject {
             )
             
             await MainActor.run {
-                if response.code == 1 { // Assuming code 1 means success
-                    // Store response data
+                if response.code == 1 {
                     self.userId = response.data.userId
                     self.username = response.data.username
                     self.userEmail = response.data.email
@@ -62,11 +61,13 @@ class LoginViewModel: ObservableObject {
                     authViewModel.userName = self.username
                     authViewModel.userPicURL = URL(string: self.userPic)
                     authViewModel.userId = self.userId
+                    authViewModel.token = self.token  // Add this line to store the token
                     
-                    // Print response data to console
+                    // Store token in UserDefaults
+                    UserDefaults.standard.set(self.token, forKey: "authToken")
+                    
                     self.printLoginResponse()
                 } else {
-                    // Handle case where login was not successful
                     loginError = response.msg ?? "Login failed for unknown reason"
                     print("Login Error: \(loginError)")
                 }

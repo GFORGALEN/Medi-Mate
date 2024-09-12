@@ -83,6 +83,9 @@ struct Medicine: Codable, Identifiable {
     var intProductId: Int? {
         return Int(productId)
     }
+    static func == (lhs: Medicine, rhs: Medicine) -> Bool {
+            return lhs.id == rhs.id
+        }
 }
 
 struct SearchResponse: Codable {
@@ -144,8 +147,8 @@ struct Store: Identifiable, Hashable {
 }
 
 let stores: [Store] = [
-    Store(id: 1, name: "NewMarket"),
-    Store(id: 2, name: "Manakua"),
+    Store(id: 1, name: "Manakua"),
+    Store(id: 2, name: "New Market"),
     Store(id: 3, name: "Mount Albert"),
     Store(id: 4, name: "Albany"),
     Store(id: 5, name: "CBD")

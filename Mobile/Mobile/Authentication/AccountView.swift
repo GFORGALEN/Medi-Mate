@@ -38,9 +38,9 @@ struct AccountView: View {
                 
                 logoutButton
                     .padding(.horizontal)
-                    .padding(.bottom, 10)
+                    .padding(.bottom, 50)
                 
-                tabBar
+               
             }
             .background(Color(.systemBackground))
             .navigationTitle("Account")

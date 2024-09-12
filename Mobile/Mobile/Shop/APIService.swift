@@ -1,11 +1,16 @@
 import Foundation
 
-func submitOrder(_ order: [String: Any], token: String, completion: @escaping (Result<String, Error>) -> Void) {
+func submitOrder(_ order: [String: Any], cartManager: CartManager, completion: @escaping (Result<String, Error>) -> Void) {
     let baseurl = Constant.apiSting
     let urlString = "\(baseurl)/api/order/orderProduct"
     
     guard let url = URL(string: urlString) else {
         completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+        return
+    }
+    
+    guard let token = cartManager.getAuthToken() else {
+        completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No authentication token found"])))
         return
     }
     
@@ -18,7 +23,6 @@ func submitOrder(_ order: [String: Any], token: String, completion: @escaping (R
         let jsonData = try JSONSerialization.data(withJSONObject: order, options: [.prettyPrinted])
         request.httpBody = jsonData
         
-        // Print the request details
         print("Request URL: \(url)")
         print("Request Method: \(request.httpMethod ?? "Unknown")")
         print("Request Headers: \(request.allHTTPHeaderFields ?? [:])")
