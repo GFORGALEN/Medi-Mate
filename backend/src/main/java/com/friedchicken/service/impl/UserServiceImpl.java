@@ -120,7 +120,6 @@ public class UserServiceImpl implements UserService {
             BeanUtils.copyProperties(userRegisterDTO, user);
             user.setUserId(uniqueIdUtil.generateUniqueId());
             user.setUsername(RandomStringUtil.generateRandomString(6));
-            log.info("here{}", user);
             userMapper.register(user);
             userMapper.addUserInfo(user);
         }

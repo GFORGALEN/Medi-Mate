@@ -11,13 +11,13 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/medi_mate
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SPRING_DATASOURCE_PASSWORD: 123456
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: myuser
-      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
+      SPRING_RABBITMQ_PASSWORD: mypassword
       SPRING_RABBITMQ_VIRTUAL_HOST: /friedchicken
     networks:
       - backend
@@ -48,7 +48,7 @@ services:
     image: rabbitmq:3-management
     environment:
       RABBITMQ_DEFAULT_USER: myuser
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_PASS: mypassword
       RABBITMQ_DEFAULT_VHOST: /friedchicken
     ports:
       - "5672:5672"

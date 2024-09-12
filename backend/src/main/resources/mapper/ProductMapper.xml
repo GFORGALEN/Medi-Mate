@@ -46,14 +46,18 @@
     </update>
     <select id="getProducts" resultType="com.friedchicken.pojo.vo.Medicine.MedicineListVO">
         SELECT *
+        FROM (
+        SELECT *, MATCH(product_name, general_information) AGAINST(#{productName} IN NATURAL LANGUAGE MODE) AS relevance
         FROM medicine
-        WHERE MATCH(product_name, general_information) AGAINST(#{productName} IN NATURAL LANGUAGE MODE)
+        ) AS subquery
+        WHERE subquery.relevance > 0.5
         <if test="productName != null and productName != '' and manufacturerName != null and manufacturerName != ''">
             AND
         </if>
         <if test="manufacturerName != null and manufacturerName != ''">
-            manufacturer_name like concat('%',#{manufacturerName},'%')
+            AND subquery.manufacturer_name LIKE CONCAT('%', #{manufacturerName}, '%')
         </if>
+
     </select>
     <select id="getProductById" resultType="com.friedchicken.pojo.vo.Medicine.MedicineDetailVO">
         select *

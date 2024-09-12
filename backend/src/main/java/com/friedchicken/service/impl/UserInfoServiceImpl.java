@@ -24,7 +24,6 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public UserInfoVO changeUserInfo(UserInfoChangeDTO userInfoChangeDTO) {
-        log.info("here:{}", userInfoChangeDTO);
         String userId = userInfoChangeDTO.getUserId();
         userInfoMapper.updateUserInfo(userInfoChangeDTO);
         return userInfoMapper.getUserByUserId(userInfoChangeDTO.getUserId());

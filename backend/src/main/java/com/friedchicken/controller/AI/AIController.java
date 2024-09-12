@@ -87,7 +87,6 @@ public class AIController {
             throw new ImageFailedUploadException(MessageConstant.FILE_UPLOAD_ERROR);
         }
         PageResult<MedicineListVO> pageResult = aiService.analyzeImage(imageData);
-        log.info("here{}", pageResult.getRecords().toString());
         return Result.success(pageResult);
     }
 

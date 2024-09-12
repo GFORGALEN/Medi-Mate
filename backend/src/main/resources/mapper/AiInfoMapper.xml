@@ -4,10 +4,12 @@
 <mapper namespace="com.friedchicken.mapper.AiInfoMapper">
 
     <select id="findByMultipleWords" resultType="com.friedchicken.pojo.vo.Medicine.MedicineListVO">
-        SELECT *, MATCH(product_name, general_information) AGAINST(#{searchTerms} IN BOOLEAN MODE) AS relevance
-        FROM medicine
-        WHERE MATCH(product_name, general_information) AGAINST(#{searchTerms} IN BOOLEAN MODE)
-        ORDER BY relevance DESC
+        SELECT *
+        FROM (SELECT *, MATCH(product_name, general_information) AGAINST(#{searchTerms} IN BOOLEAN MODE) AS relevance
+              FROM medicine
+              WHERE MATCH(product_name, general_information) AGAINST(#{searchTerms} IN BOOLEAN MODE)) AS subquery
+        WHERE subquery.relevance > 0.5
+        ORDER BY subquery.relevance DESC
     </select>
 
     <select id="findProductByIds" resultType="com.friedchicken.pojo.entity.Medicine.Medicine">
