@@ -49,7 +49,19 @@ struct HomeView: View {
                         .allowsHitTesting(true)
                 }
             }
-        }
+            .toolbar {
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                if viewModel.navigateToResults {
+                                    Button(action: {
+                                        viewModel.returnToHomepage()
+                                    }) {
+                                        Image(systemName: "chevron.left")
+                                        Text("Home")
+                                    }
+                                }
+                            }
+                        }
+                    }
         .disabled(viewModel.isLoading)
         .animation(.easeInOut, value: isCareMode)
         .environment(\.fontSizeMultiplier, isCareMode ? 1.25 : 1.0)
@@ -138,6 +150,14 @@ struct HomeView: View {
 
     private func performSearch() {
         viewModel.performSearch()
+    }
+}
+
+struct SearchResultsContainer1: View {
+    @ObservedObject var viewModel: HomeVM
+
+    var body: some View {
+        ResultsView(HomeVM: viewModel)
     }
 }
 

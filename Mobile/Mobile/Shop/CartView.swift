@@ -6,7 +6,8 @@ struct CartView: View {
     @Environment(\.fontSizeMultiplier) private var fontSizeMultiplier
     @AppStorage("isCareMode") private var isOlderMode = false
     @State private var selectedStore: Store?
-    
+    @State private var showingAlert = false
+    @State private var alertMessage = ""
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
@@ -46,6 +47,9 @@ struct CartView: View {
         }
         .background(Color(UIColor.systemGroupedBackground))
         .navigationBarTitleDisplayMode(.inline)
+        .alert(isPresented: $showingAlert) {
+            Alert(title: Text("Order Status"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+        }
     }
     
     private var storeSelectionSection: some View {
@@ -139,60 +143,55 @@ struct CartView: View {
     }
     
     private var checkoutButton: some View {
-        Button(action: {
-            guard let store = cartManager.selectedStore else {
-                print("No store selected")
-                return
-            }
-            
-            guard !authViewModel.userId.isEmpty else {
-                print("User ID not available")
-                return
-            }
-            
-            guard !authViewModel.token.isEmpty else {
-                print("Authentication token not available")
-                return
-            }
-            
-            guard let order = cartManager.prepareOrder(userId: authViewModel.userId) else {
-                print("Failed to prepare order")
-                return
-            }
-            
-            print("Submitting order:")
-            print(order)
-            
-            submitOrder(order, token: authViewModel.token) { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success(let message):
-                        print("Order submitted successfully: \(message)")
-                        self.cartManager.clearCart()
-                    case .failure(let error):
-                        print("Failed to submit order: \(error.localizedDescription)")
-                        if let nsError = error as NSError? {
-                            print("Error Domain: \(nsError.domain)")
-                            print("Error Code: \(nsError.code)")
-                            print("Error User Info: \(nsError.userInfo)")
+            Button(action: {
+                guard let store = cartManager.selectedStore else {
+                    showingAlert = true
+                    alertMessage = "Please select a store"
+                    return
+                }
+                
+                guard !authViewModel.userId.isEmpty else {
+                    showingAlert = true
+                    alertMessage = "User ID not available. Please log in again."
+                    return
+                }
+                
+                guard let order = cartManager.prepareOrder(userId: authViewModel.userId) else {
+                    showingAlert = true
+                    alertMessage = "Failed to prepare order"
+                    return
+                }
+                
+                submitOrder(order, cartManager: cartManager) { result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(let message):
+                            print("Order submitted successfully: \(message)")
+                            self.cartManager.clearCart()
+                            showingAlert = true
+                            alertMessage = "Order submitted successfully!"
+                        case .failure(let error):
+                            print("Failed to submit order: \(error.localizedDescription)")
+                            showingAlert = true
+                            alertMessage = "Failed to submit order: \(error.localizedDescription)"
                         }
                     }
                 }
+            }) {
+                Text(cartManager.selectedStore == nil ? "Select a Store to Checkout" : "Proceed to Checkout")
+                    .font(.headline)
+                    .scalableFont(size: isOlderMode ? 26 : 18)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, isOlderMode ? 20 : 15)
+                    .background(cartManager.selectedStore == nil ? Color.gray.opacity(0.7) : Color.blue)
+                    .cornerRadius(isOlderMode ? 20 : 15)
             }
-        }) {
-            Text(cartManager.selectedStore == nil ? "Select a Store to Checkout" : "Proceed to Checkout")
-                .font(.headline)
-                .scalableFont(size: isOlderMode ? 26 : 18)
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, isOlderMode ? 20 : 15)
-                .background(cartManager.selectedStore == nil ? Color.gray.opacity(0.7) : Color.blue)
-                .cornerRadius(isOlderMode ? 20 : 15)
+            .padding(.horizontal, isOlderMode ? 10 : 20)
+            .shadow(radius: 3, y: 2)
+            .disabled(cartManager.selectedStore == nil || cartManager.items.isEmpty || authViewModel.userId.isEmpty)
         }
-        .padding(.horizontal, isOlderMode ? 10 : 20)
-        .shadow(radius: 3, y: 2)
-        .disabled(cartManager.selectedStore == nil || cartManager.items.isEmpty || authViewModel.userId.isEmpty || authViewModel.token.isEmpty)
-    }
+
     
     private func formatPrice(_ price: String) -> String {
         guard let doublePrice = Double(price) else {
