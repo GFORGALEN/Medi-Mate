@@ -1,17 +1,18 @@
 import { pharmacyOrderAPI } from "@/api/orderApi.jsx";
 import { useEffect, useState, useRef } from "react";
-import { Modal, Input, message, Table,Button} from "antd";
+import { Modal, Input, message, Table, Button, Select } from "antd";
 import { useSelector } from "react-redux";
 import generateReceipt from './PDFReceipt';
 import generateReport from './PDFReport';
 
-
+const { Option } = Select;
 const OrderPage = () => {
     const [orders, setOrders] = useState({
         finishOrder: [],
         startPicking: [],
         finishPicking: []
     });
+    const [currentPharmacy, setCurrentPharmacy] = useState(1);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [cancelReason, setCancelReason] = useState("");
     const [orderToCancel, setOrderToCancel] = useState(null);
@@ -29,7 +30,7 @@ const OrderPage = () => {
     useEffect(() => {
         fetchOrders();
         return () => clearInterval(timerRef.current);
-    }, [currentOrderId]);
+    }, [currentPharmacy,currentOrderId]);
 
     useEffect(() => {
         timerRef.current = setInterval(() => {
@@ -46,7 +47,7 @@ const OrderPage = () => {
     }, []);
 
     const fetchOrders = () => {
-        pharmacyOrderAPI.getOrderDetails(1).then((response) => {
+        pharmacyOrderAPI.getOrderDetails(currentPharmacy).then((response) => {
             if (response.code === 1 && Array.isArray(response.data)) {
                 const sortedOrders = {
                     finishOrder: response.data.filter(order => order.status === 1),
@@ -71,13 +72,15 @@ const OrderPage = () => {
             }
         });
     };
-
+    const handlePharmacyChange = (value) => {
+        setCurrentPharmacy(value);
+    }
     const fetchOrderDetails = (orderId) => {
         pharmacyOrderAPI.getOrderDetail(orderId).then((response) => {
             if (response.code === 1 && Array.isArray(response.data)) {
                 const orderDetailsWithUsername = response.data.map(item => ({
                     ...item,
-                    username: item.username || 'Galen' // 确保每个项目都有 username
+                    username: item.username || 'UnKnown' // 确保每个项目都有 username
                 }));
                 setOrderDetails(orderDetailsWithUsername);
                 const total = orderDetailsWithUsername.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -194,6 +197,7 @@ const OrderPage = () => {
 
     const renderOrderCard = (order, actionText) => (
         <div key={order.orderId} className={`${getCardColor(order.status)} shadow-lg rounded-lg p-6 mb-4 transition duration-300 hover:shadow-xl`}>
+            <p className="text-gray-700 mb-2">Username: {order.username}</p>
             <p className="text-lg font-semibold mb-2">Order ID: {order.orderId}</p>
             <p className="text-gray-700 mb-2">Pharmacy ID: {order.pharmacyId}</p>
             <p className="text-gray-700 mb-2">Created At: {convertToNZTime(order.createdAt)}</p>
@@ -281,6 +285,17 @@ const OrderPage = () => {
             <h1 className="text-3xl font-bold mb-6 text-gray-800">Order Management</h1>
             <p className="text-lg mb-6 text-gray-700">Current Order ID: <span
                 className="font-semibold">{currentOrderId}</span></p>
+            <Select
+                value={currentPharmacy}
+                onChange={handlePharmacyChange}
+                style={{ width: 200 }}
+            >
+                <Option value={1}>MANUKAU</Option>
+                <Option value={2}>New Market</Option>
+                <Option value={3}>Mount Albert</Option>
+                <Option value={4}>Albany</Option>
+                <Option value={5}>CBD</Option>
+            </Select>
             <div className="mb-6">
                 <Button type="primary" onClick={handleGenerateReport}>Generate Order Report</Button>
             </div>
@@ -339,24 +354,26 @@ const OrderPage = () => {
             </Modal>
 
             <Modal
-                title="Order Details"
+                title="Order Details "
+
                 visible={isDetailsModalVisible}
                 onCancel={() => setIsDetailsModalVisible(false)}
                 footer={[
-                    <Button key="close" onClick={() => setIsDetailsModalVisible(false)}>
-                        Close
-                    </Button>,
-                    <Button key="download" type="primary" onClick={handleGenerateReceipt}>
-                        Generate Receipt
-                    </Button>
-                ]}
+                <Button key="close" onClick={() => setIsDetailsModalVisible(false)}>
+                    Close
+                </Button>,
+                <Button key="download" type="primary" onClick={handleGenerateReceipt}>
+                    Generate Receipt
+                </Button>
+            ]}
                 width={1000}
-            >
-                <Table dataSource={orderDetails} columns={columns} rowKey="productId" />
-                <p className="text-right mt-4 text-lg font-semibold">Total Amount: ${totalAmount.toFixed(2)}</p>
-            </Modal>
-        </div>
-    );
+                >
+            <Table dataSource={orderDetails} columns={columns} rowKey="productId"/>
+            <p className="text-right mt-4 text-lg font-semibold">Total Amount: ${totalAmount.toFixed(2)}</p>
+        </Modal>
+</div>
+)
+    ;
 };
 
 export default OrderPage;
