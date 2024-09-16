@@ -146,8 +146,8 @@ struct Store: Identifiable, Hashable {
 }
 
 let stores: [Store] = [
-    Store(id: 1, name: "Manakua"),
-    Store(id: 2, name: "New Market"),
+    Store(id: 1, name: "New Market"),
+    Store(id: 2, name: "Manakua"),
     Store(id: 3, name: "Mount Albert"),
     Store(id: 4, name: "Albany"),
     Store(id: 5, name: "CBD")

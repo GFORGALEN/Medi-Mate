@@ -90,7 +90,7 @@ struct ProductDetailsView: View {
         .task {
             await viewModel.loadProductDetails()
         }
-        .onChange(of: authViewModel.isLoginSuccessed) { newValue in
+        .onChange(of: authViewModel.isLoginSuccessed) {oldValue, newValue in
             if newValue {
                 isShowingLoginView = false
                 viewModel.updateCart()

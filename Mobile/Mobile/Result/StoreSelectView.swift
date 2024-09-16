@@ -9,7 +9,7 @@ struct StoreSelectionPopup: View {
     let productId: String
     let onLocationReceived: (ProductLocationData) -> Void
     
-    let stores = ["NewMarket", "Manakua", "Mount Albert", "Albany", "CBD"]
+    let stores = ["Manakua", "NewMarket",  "Mount Albert", "Albany", "CBD"]
     
     var body: some View {
         ZStack {

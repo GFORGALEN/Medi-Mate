@@ -6,6 +6,13 @@ struct ResultsView: View {
     @State private var isSelectionMode = false
     @State private var selectedProducts: Set<String> = []
     @State private var navigateToComparison = false
+    @State private var selectedProductId: String?
+    
+    // New state variables for location feature
+    @State private var isStoreSelectionPresented = false
+    @State private var selectedStore: String?
+    @State private var locationData: ProductLocationData?
+    @State private var isShowingLocationView = false
 
     var body: some View {
         NavigationStack {
@@ -50,9 +57,32 @@ struct ResultsView: View {
             }
             .navigationTitle(isSelectionMode ? "Select Products" : "Results")
             .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $isShowingLocationView) {
+                if let data = locationData {
+                    NavigationStack {
+                        LocationView(location: StoreLocation(rawValue: data.shelfNumber) ?? .a, productLocation: data)
+                            .navigationBarItems(leading: Button("Back") {
+                                isShowingLocationView = false
+                            })
+                    }
+                }
+            }
+            .overlay(
+                Group {
+                    if isStoreSelectionPresented {
+                        StoreSelectionPopup(
+                            isPresented: $isStoreSelectionPresented,
+                            selectedStore: $selectedStore,
+                            productId: selectedProductId ?? ""
+                        ) { data in
+                            locationData = data
+                            isShowingLocationView = true
+                        }
+                    }
+                }
+            )
         }
     }
-
 
     private var emptyResultsView: some View {
         VStack(spacing: 20) {
@@ -72,19 +102,25 @@ struct ResultsView: View {
     }
 
     @ViewBuilder
-        private func productView(for product: Medicine) -> some View {
-            Group {
-                if isSelectionMode {
-                    ProductCard(product: product, isSelected: selectedProducts.contains(product.id))
-                        .onTapGesture {
-                            toggleSelection(for: product.id)
-                        }
-                } else {
-                    NavigationLink(destination: ProductDetailsView(productId: product.id)) {
-                        ProductCard(product: product)
-                    }
+    private func productView(for product: Medicine) -> some View {
+        Group {
+            if isSelectionMode {
+                ProductCard(product: product, isSelected: selectedProducts.contains(product.id), onLocationTap: {
+                    isStoreSelectionPresented = true
+                    selectedProductId = product.id  // 添加这行
+                })
+                .onTapGesture {
+                    toggleSelection(for: product.id)
+                }
+            } else {
+                NavigationLink(destination: ProductDetailsView(productId: product.id)) {
+                    ProductCard(product: product, onLocationTap: {
+                        isStoreSelectionPresented = true
+                        selectedProductId = product.id  // 添加这行
+                    })
                 }
             }
+        }
     }
 
     private var compareButton: some View {
@@ -148,6 +184,7 @@ struct ResultsView: View {
 struct ProductCard: View {
     let product: Medicine
     var isSelected: Bool = false
+    var onLocationTap: () -> Void
     
     var body: some View {
         GeometryReader { geometry in
@@ -159,9 +196,7 @@ struct ProductCard: View {
                 }
                 .padding()
                 
-                Button(action: {
-                    // 查看药品位置的动作
-                }) {
+                Button(action: onLocationTap) {
                     Image(systemName: "mappin.circle.fill")
                         .resizable()
                         .frame(width: 30, height: 30)
@@ -178,7 +213,7 @@ struct ProductCard: View {
                     .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
             )
         }
-        .frame(height: 140)
+        .frame(height: 100)
     }
     
     private var productImage: some View {
@@ -211,10 +246,14 @@ struct ProductCard: View {
             Text(product.productName)
                 .font(.headline)
                 .lineLimit(2)
-                .foregroundColor(.black)
             Text("Price: \(product.productPrice)")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
+            if let manufacturer = product.manufacturerName {
+                Text(manufacturer)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
         }
     }
 }
