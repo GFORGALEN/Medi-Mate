@@ -12,11 +12,25 @@ struct ResultsView: View {
             ZStack(alignment: .bottom) {
                 ScrollViewReader { proxy in
                     ScrollView {
-                        if HomeVM.products.isEmpty {
-                            emptyResultsView
-                        } else {
-                            productsGrid(proxy: proxy)
+                        LazyVStack(spacing: 16) {
+                            if HomeVM.products.isEmpty {
+                                emptyResultsView
+                            } else {
+                                ForEach(HomeVM.products) { product in
+                                    productView(for: product)
+                                        .id(product.id)
+                                        .onAppear {
+                                            HomeVM.lastViewedItemId = product.id
+                                            HomeVM.loadMoreProductsIfNeeded(currentProduct: product)
+                                        }
+                                }
+                                if HomeVM.isLoading {
+                                    ProgressView()
+                                        .frame(height: 50)
+                                }
+                            }
                         }
+                        .padding()
                     }
                     .onAppear {
                         if let id = HomeVM.lastViewedItemId {
@@ -30,115 +44,96 @@ struct ResultsView: View {
                         .padding(.bottom, 80)
                 }
                 
-                // Placeholder for tab bar
                 Color(.secondarySystemBackground)
                     .frame(height: 49)
                     .opacity(0.01)
             }
             .navigationTitle(isSelectionMode ? "Select Products" : "Results")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if !isSelectionMode {
-                        clearButton
-                    }
-                }
-            }
         }
     }
+
 
     private var emptyResultsView: some View {
-        VStack {
-            Spacer()
-            Text("Sorry There is no result, please re-enter the keyword or take a clearer picture of the front of the package.")
-                .font(.system(size: 30, weight: .bold))
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding()
-            Spacer()
+        VStack(spacing: 20) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 50))
+                .foregroundColor(.gray)
+            Text("No results found")
+                .font(.title2)
+                .fontWeight(.bold)
+            Text("Try adjusting your search or take a clearer picture.")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
         }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private func productsGrid(proxy: ScrollViewProxy) -> some View {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 170), spacing: 20)], spacing: 20) {
-                ForEach(HomeVM.products) { product in
-                    Group {
-                        if isSelectionMode {
-                            ProductCard(product: product, isSelected: selectedProducts.contains(product.id))
-                                .onTapGesture {
-                                    toggleSelection(for: product.id)
-                                }
-                        } else {
-                            NavigationLink(destination: ProductDetailsView(productId: product.id)) {
-                                ProductCard(product: product)
-                            }
+    @ViewBuilder
+        private func productView(for product: Medicine) -> some View {
+            Group {
+                if isSelectionMode {
+                    ProductCard(product: product, isSelected: selectedProducts.contains(product.id))
+                        .onTapGesture {
+                            toggleSelection(for: product.id)
                         }
+                } else {
+                    NavigationLink(destination: ProductDetailsView(productId: product.id)) {
+                        ProductCard(product: product)
                     }
-                    .id(product.id)
-                    .onAppear {
-                        HomeVM.lastViewedItemId = product.id
-                        HomeVM.loadMoreProductsIfNeeded(currentProduct: product)
-                    }
-                }
-
-                if HomeVM.isLoading {
-                    CustomLoadingView()
-                        .frame(width: 150, height: 150)
                 }
             }
-            .padding()
-        }
-
-    private var clearButton: some View {
-        Button(action: {
-            HomeVM.clearSearchResults()
-        }) {
-            Text("Clear")
-                .foregroundColor(.blue)
-        }
     }
 
     private var compareButton: some View {
-        HStack {
-            Button(action: {
-                if isSelectionMode {
-                    if selectedProducts.count >= 2 {
-                        navigateToComparison = true
+        VStack {
+            if isSelectionMode {
+                HStack {
+                    Button(action: {
+                        if selectedProducts.count >= 2 {
+                            navigateToComparison = true
+                        }
+                    }) {
+                        Text("Compare (\(selectedProducts.count))")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 15)
+                            .background(selectedProducts.count >= 2 ? Color.blue : Color.gray)
+                            .cornerRadius(25)
                     }
-                } else {
+                    .disabled(selectedProducts.count < 2)
+                    
+                    Button(action: {
+                        isSelectionMode = false
+                        selectedProducts.removeAll()
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.red)
+                    }
+                    .padding(.leading, 8)
+                }
+            } else {
+                Button(action: {
                     isSelectionMode.toggle()
                     selectedProducts.removeAll()
-                }
-            }) {
-                Text(isSelectionMode ? "Compare (\(selectedProducts.count))" : "Compare")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 15)
-                    .background(
-                        isSelectionMode && selectedProducts.count < 2
-                        ? Color.gray
-                        : (isSelectionMode ? Color.blue : Color.black)
-                    )
-                    .cornerRadius(25)
-            }
-            .padding(.horizontal, 20)
-            .shadow(radius: 3, y: 2)
-            .disabled(isSelectionMode && selectedProducts.count < 2)
-            
-            if isSelectionMode {
-                Button(action: {
-                    isSelectionMode = false
-                    selectedProducts.removeAll()
                 }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.title2)
-                        .foregroundColor(.red)
+                    Text("Compare")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 15)
+                        .background(Color.blue)
+                        .cornerRadius(25)
                 }
-                .padding(.leading, 8)
             }
         }
-        .frame(height: 60)
         .padding(.horizontal)
+        .frame(height: 60)
+        .background(Color.white.shadow(radius: 5))
     }
 
     private func toggleSelection(for id: String) {
@@ -155,44 +150,71 @@ struct ProductCard: View {
     var isSelected: Bool = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            AsyncImage(url: URL(string: product.imageSrc)) { phase in
-                switch phase {
-                case .empty:
-                    ProgressView()
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                case .failure(_):
-                    Image(systemName: "photo")
-                        .foregroundColor(.gray)
-                @unknown default:
-                    EmptyView()
+        GeometryReader { geometry in
+            ZStack {
+                HStack(spacing: 12) {
+                    productImage
+                    productInfo
+                    Spacer()
                 }
+                .padding()
+                
+                Button(action: {
+                    // 查看药品位置的动作
+                }) {
+                    Image(systemName: "mappin.circle.fill")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(.black)
+                }
+                .position(x: geometry.size.width - 25, y: geometry.size.height - 25)
             }
-            .frame(width: 150, height: 150)
-            .clipShape(RoundedRectangle(cornerRadius: 15))
-            
-            Text(product.productName)
-                .font(.system(size: 15, weight: .semibold))
-                .lineLimit(2)
-                .frame(height: 40)
-            
-            Text("Price: \(product.productPrice)")
-                .font(.system(size: 13, weight: .regular))
-                .foregroundColor(.gray)
+            .frame(width: geometry.size.width, height: geometry.size.height)
+            .background(Color(.systemBackground))
+            .cornerRadius(12)
+            .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
+            )
         }
-        .frame(width: 150)
-        .padding(10)
-        .background(Color.white)
-        .cornerRadius(20)
-        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
-        .overlay(
-            isSelected ?
-            RoundedRectangle(cornerRadius: 15)
-                .stroke(Color.blue, lineWidth: 3)
-            : nil
-        )
+        .frame(height: 140)
+    }
+    
+    private var productImage: some View {
+        AsyncImage(url: URL(string: product.imageSrc)) { phase in
+            switch phase {
+            case .empty:
+                ProgressView()
+                    .frame(width: 80, height: 80)
+            case .success(let image):
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 80, height: 80)
+                    .clipped()
+            case .failure:
+                Image(systemName: "photo")
+                    .font(.system(size: 40))
+                    .foregroundColor(.gray)
+                    .frame(width: 80, height: 80)
+            @unknown default:
+                EmptyView()
+            }
+        }
+        .background(Color(.systemGray6))
+        .cornerRadius(8)
+    }
+    
+    private var productInfo: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(product.productName)
+                .font(.headline)
+                .lineLimit(2)
+                .foregroundColor(.black)
+            Text("Price: \(product.productPrice)")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+        }
     }
 }
