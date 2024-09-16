@@ -44,6 +44,9 @@ struct ResultsView: View {
                     }
                 }
             }
+            .navigationDestination(isPresented: $navigateToComparison) {
+                            ComparisonView(viewModel: ComparisonViewModel(), productIds: Array(selectedProducts))
+                        }
         }
     }
 
