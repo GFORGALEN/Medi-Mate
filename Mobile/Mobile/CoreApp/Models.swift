@@ -24,7 +24,7 @@ struct Product: Codable, Identifiable{
     let imageURL: String
 }
 
-struct Location: Identifiable, Codable {
+struct Location: Identifiable, Codable,Hashable {
     let id : Int
     let name_store: String
     let name: String
@@ -39,7 +39,6 @@ struct Location: Identifiable, Codable {
 struct LocationsData: Codable {
     let locations: [Location]
 }
-
 
 enum SearchError: Error {
     case invalidURL

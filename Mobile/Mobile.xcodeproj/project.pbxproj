@@ -37,6 +37,10 @@
 		61DC84A22C6232FF0048463E /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DC84A12C6232FF0048463E /* Application.swift */; };
 		61DF39FF2C75866E0091B070 /* FontSizeMultiplierKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DF39FE2C75866E0091B070 /* FontSizeMultiplierKey.swift */; };
 		61DF3A012C75868D0091B070 /* ScalableFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DF3A002C75868D0091B070 /* ScalableFont.swift */; };
+		61EADA2B2C97EEA20023E9D2 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EADA2A2C97EEA20023E9D2 /* LocationManager.swift */; };
+		61EADA2D2C97EEF70023E9D2 /* StoreSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EADA2C2C97EEF70023E9D2 /* StoreSelectionView.swift */; };
+		61EADA2F2C97EF0F0023E9D2 /* StoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EADA2E2C97EF0F0023E9D2 /* StoreService.swift */; };
+		61EADA312C97F5AF0023E9D2 /* LocationSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EADA302C97F5AF0023E9D2 /* LocationSelectionView.swift */; };
 		D9027F3E2C8A88CC00F5E013 /* StoreSelectVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9027F3D2C8A88CC00F5E013 /* StoreSelectVM.swift */; };
 		D918E4E02C742AE90006BA70 /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D918E4DF2C742AE90006BA70 /* CustomTabBar.swift */; };
 		D93428CF2C896DA10065B161 /* StoreSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D93428CE2C896DA10065B161 /* StoreSelectView.swift */; };
@@ -93,6 +97,10 @@
 		61DC84A12C6232FF0048463E /* Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
 		61DF39FE2C75866E0091B070 /* FontSizeMultiplierKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontSizeMultiplierKey.swift; sourceTree = "<group>"; };
 		61DF3A002C75868D0091B070 /* ScalableFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalableFont.swift; sourceTree = "<group>"; };
+		61EADA2A2C97EEA20023E9D2 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		61EADA2C2C97EEF70023E9D2 /* StoreSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSelectionView.swift; sourceTree = "<group>"; };
+		61EADA2E2C97EF0F0023E9D2 /* StoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreService.swift; sourceTree = "<group>"; };
+		61EADA302C97F5AF0023E9D2 /* LocationSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSelectionView.swift; sourceTree = "<group>"; };
 		D9027F3D2C8A88CC00F5E013 /* StoreSelectVM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoreSelectVM.swift; sourceTree = "<group>"; };
 		D918E4DF2C742AE90006BA70 /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
 		D93428CE2C896DA10065B161 /* StoreSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSelectView.swift; sourceTree = "<group>"; };
@@ -155,6 +163,10 @@
 				61441D022C8A93D8009A55A9 /* CartView.swift */,
 				61441D122C8AC124009A55A9 /* APIService.swift */,
 				61441D1C2C910D02009A55A9 /* Notification.swift */,
+				61EADA2A2C97EEA20023E9D2 /* LocationManager.swift */,
+				61EADA2C2C97EEF70023E9D2 /* StoreSelectionView.swift */,
+				61EADA2E2C97EF0F0023E9D2 /* StoreService.swift */,
+				61EADA302C97F5AF0023E9D2 /* LocationSelectionView.swift */,
 			);
 			path = Shop;
 			sourceTree = "<group>";
@@ -396,6 +408,7 @@
 				6162E5FF2C7E89800015E0D8 /* ChangePassWordView.swift in Sources */,
 				D9733C7A2C6F0348003F5990 /* Service.swift in Sources */,
 				619AC2DD2C6C52940064D8F1 /* MapView.swift in Sources */,
+				61EADA312C97F5AF0023E9D2 /* LocationSelectionView.swift in Sources */,
 				61441D1D2C910D02009A55A9 /* Notification.swift in Sources */,
 				6162E6072C7ED1460015E0D8 /* CarePriceComparisonView.swift in Sources */,
 				61620A9C2C75978A00C12BEF /* CareResultView.swift in Sources */,
@@ -411,6 +424,7 @@
 				D9B82B4F2C61FDC600C5AFEB /* LoginView.swift in Sources */,
 				61441D132C8AC124009A55A9 /* APIService.swift in Sources */,
 				61DF39FF2C75866E0091B070 /* FontSizeMultiplierKey.swift in Sources */,
+				61EADA2B2C97EEA20023E9D2 /* LocationManager.swift in Sources */,
 				61441D172C8E9A28009A55A9 /* AuthManager.swift in Sources */,
 				D9A276962C7312EB006B6442 /* ProductDetailsVM.swift in Sources */,
 				D9B82B582C620D7900C5AFEB /* RegisterView.swift in Sources */,
@@ -418,6 +432,8 @@
 				619AC2C32C6B21360064D8F1 /* LoginViewModel.swift in Sources */,
 				D9A1EF902C67043A002CCE61 /* AccountView.swift in Sources */,
 				D9F8AAC92C61F84200B723A5 /* ContentView.swift in Sources */,
+				61EADA2D2C97EEF70023E9D2 /* StoreSelectionView.swift in Sources */,
+				61EADA2F2C97EF0F0023E9D2 /* StoreService.swift in Sources */,
 				D918E4E02C742AE90006BA70 /* CustomTabBar.swift in Sources */,
 				61441D012C8A91DE009A55A9 /* CartManager.swift in Sources */,
 				61DC849E2C6232660048463E /* GoogleSignInFireBase.swift in Sources */,
