@@ -123,7 +123,7 @@ const DashboardLayout = () => {
     return (
         <ConfigProvider theme={themeConfig}>
             {contextHolder}
-            <audio ref={audioRef} src="/assets/sound1.mp3" />
+            <audio ref={audioRef} src="/assets/sound.mp3" />
             <Layout className="h-screen overflow-hidden">
                 <Sider
                     collapsible
