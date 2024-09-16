@@ -19,6 +19,7 @@ func submitOrder(_ order: [String: Any], cartManager: CartManager, completion: @
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
     
+    
     do {
         let jsonData = try JSONSerialization.data(withJSONObject: order, options: [.prettyPrinted])
         request.httpBody = jsonData

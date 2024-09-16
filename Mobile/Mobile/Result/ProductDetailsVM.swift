@@ -13,10 +13,12 @@ class ProductDetailsVM: ObservableObject {
     private var synthesizer = AVSpeechSynthesizer()
     private var cartManager: CartManager
     
+    
     init(productId: String, cartManager: CartManager, networkService: NetworkServiceProtocol = NetworkService()) {
         self.productId = productId
         self.networkService = networkService
         self.cartManager = cartManager
+        self.quantity = cartManager.getQuantity(for: productId)
         
         setupAudioSession()
     }
@@ -33,6 +35,7 @@ class ProductDetailsVM: ObservableObject {
             let details = try parseProductDetails(from: jsonString)
             state = .loaded(details)
             productDetails = details
+            updateQuantityFromCart()
         } catch {
             state = .error(error)
         }
@@ -55,22 +58,45 @@ class ProductDetailsVM: ObservableObject {
         return response.data
     }
     
-        
-        func toggleInCart() {
-            guard let product = productDetails else { return }
+    @Published var quantity: Int = 1 {
+        didSet {
             if isAddedToCart {
-                cartManager.removeFromCart(product)
-            } else {
-                cartManager.addToCart(product)
+                updateCart()
             }
-            objectWillChange.send()
         }
-        
-        var isAddedToCart: Bool {
-            guard let product = productDetails else { return false }
-            return cartManager.items.contains { $0.product.productId == product.productId }
+    }
+
+    func updateQuantity(_ newQuantity: Int) {
+        quantity = max(1, newQuantity)
+    }
+
+    func updateCart() {
+        guard let product = productDetails else { return }
+        if quantity > 0 {
+            cartManager.addOrUpdateItem(product, quantity: quantity)
+        } else {
+            cartManager.removeFromCart(product)
         }
+        objectWillChange.send()
+    }
+
+    var isAddedToCart: Bool {
+        guard let product = productDetails else { return false }
+        return cartManager.items.contains { $0.product.productId == product.productId }
+    }
+
+    func updateQuantityFromCart() {
+        guard let product = productDetails else { return }
+        if let cartItem = cartManager.items.first(where: { $0.product.productId == product.productId }) {
+            quantity = cartItem.quantity
+        } else {
+            quantity = 1
+        }
+    }
+
+    
         
+   
     
     
     func setupAudioSession() {
@@ -164,5 +190,4 @@ class ProductDetailsVM: ObservableObject {
 
     
     
-
 
