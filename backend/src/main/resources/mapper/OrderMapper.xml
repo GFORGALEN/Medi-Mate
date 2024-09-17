@@ -63,8 +63,9 @@
         where user_id = #{userId};
     </select>
     <select id="getOrderByPharmacyId" resultType="com.friedchicken.pojo.vo.Order.DetailOrderVO">
-        select *
-        from `order`
+        select order_id, amount, username, pharmacy_id, status, o.created_at, o.updated_at
+        from `order` o
+                 join user u on o.user_id = u.user_id
         where pharmacy_id = #{pharmacyId};
     </select>
     <select id="getOrderDetailByOrderId" resultType="com.friedchicken.pojo.entity.Order.OrderEmail">

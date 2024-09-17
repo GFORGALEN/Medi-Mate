@@ -4,6 +4,7 @@ import com.friedchicken.listener.Exception.NoStaffException;
 import com.friedchicken.pojo.entity.Order.OrderEmail;
 import com.friedchicken.service.OrderService;
 import com.friedchicken.service.SseService;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.Exchange;
@@ -13,7 +14,10 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 
 @Component
@@ -25,6 +29,8 @@ public class OrderStatusListener {
     private SseService sseService;
     @Autowired
     private JavaMailSender mailSender;
+    @Autowired
+    private TemplateEngine templateEngine;
 
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(name = "mark.order.pay.queue", durable = "true"),
@@ -45,19 +51,25 @@ public class OrderStatusListener {
             exchange = @Exchange(name = "pick.topic", type = ExchangeTypes.TOPIC),
             key = "pick.success"
     ))
-    public void listenOrderPick(OrderEmail orderEmail) {
-        SimpleMailMessage message = new SimpleMailMessage();
+    public void listenOrderPick(OrderEmail orderEmail) throws Exception {
         log.info("Order picked: {}", orderEmail);
-        message.setTo(orderEmail.getEmail());
-        message.setSubject("Order Completion Notification");
-        message.setText("Dear " + orderEmail.getNickname() + ",\n\n" +
-                "Your order with ID " + orderEmail.getOrderId() + " has been completed successfully.\n" +
-                "Please pick your items at " + orderEmail.getPharmacyAddress() + ".\n\n" +
-                "And please show your userId" + orderEmail.getUserId() + "to the staff.\n\n" +
-                "Thank you for shopping with us!\n\n" +
-                "Best regards,\n" +
-                "Medimate\n\n")
-        ;
-        mailSender.send(message);
+
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+
+        helper.setTo(orderEmail.getEmail());
+        helper.setSubject("Order Completion Notification");
+
+        Context context = new Context();
+        context.setVariable("nickname", orderEmail.getNickname());
+        context.setVariable("orderId", orderEmail.getOrderId());
+        context.setVariable("pharmacyAddress", orderEmail.getPharmacyAddress());
+        context.setVariable("userId", orderEmail.getUserId());
+
+        String htmlContent = templateEngine.process("orderConfirmation", context);
+
+        helper.setText(htmlContent, true);
+
+        mailSender.send(mimeMessage);
     }
 }
