@@ -56,7 +56,10 @@ struct ResultsView: View {
                     .opacity(0.01)
             }
             .navigationTitle(isSelectionMode ? "Select Products" : "Results")
-            .navigationBarTitleDisplayMode(.inline)
+                        .navigationBarTitleDisplayMode(.inline)
+                        .navigationDestination(isPresented: $navigateToComparison) {
+                            ComparisonView(viewModel: comparisonViewModel, productIds: Array(selectedProducts))
+                        }
             .sheet(isPresented: $isShowingLocationView) {
                 if let data = locationData {
                     NavigationStack {
@@ -102,75 +105,78 @@ struct ResultsView: View {
     }
 
     @ViewBuilder
-    private func productView(for product: Medicine) -> some View {
-        Group {
-            if isSelectionMode {
-                ProductCard(product: product, isSelected: selectedProducts.contains(product.id), onLocationTap: {
-                    isStoreSelectionPresented = true
-                    selectedProductId = product.id  // 添加这行
-                })
-                .onTapGesture {
-                    toggleSelection(for: product.id)
-                }
-            } else {
-                NavigationLink(destination: ProductDetailsView(productId: product.id)) {
-                    ProductCard(product: product, onLocationTap: {
+        private func productView(for product: Medicine) -> some View {
+            Group {
+                if isSelectionMode {
+                    ProductCard(product: product, isSelected: selectedProducts.contains(product.id), onLocationTap: {
                         isStoreSelectionPresented = true
-                        selectedProductId = product.id  // 添加这行
+                        selectedProductId = product.id
                     })
+                    .onTapGesture {
+                        toggleSelection(for: product.id)
+                    }
+                } else {
+                    NavigationLink(destination: ProductDetailsView(productId: product.id)) {
+                        ProductCard(product: product, isSelected: false, onLocationTap: {
+                            isStoreSelectionPresented = true
+                            selectedProductId = product.id
+                        })
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
         }
-    }
-
+        
+    
     private var compareButton: some View {
-        VStack {
-            if isSelectionMode {
-                HStack {
-                    Button(action: {
-                        if selectedProducts.count >= 2 {
-                            navigateToComparison = true
+            VStack {
+                if isSelectionMode {
+                    HStack {
+                        Button(action: {
+                            if selectedProducts.count >= 2 {
+                                comparisonViewModel.fetchComparisons(productIds: Array(selectedProducts))
+                                navigateToComparison = true
+                            }
+                        }) {
+                            Text("Compare (\(selectedProducts.count))")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 15)
+                                .background(selectedProducts.count >= 2 ? Color.blue : Color.gray)
+                                .cornerRadius(25)
                         }
+                        .disabled(selectedProducts.count < 2)
+                        
+                        Button(action: {
+                            isSelectionMode = false
+                            selectedProducts.removeAll()
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(.red)
+                        }
+                        .padding(.leading, 8)
+                    }
+                } else {
+                    Button(action: {
+                        isSelectionMode.toggle()
+                        selectedProducts.removeAll()
                     }) {
-                        Text("Compare (\(selectedProducts.count))")
+                        Text("Compare")
                             .font(.headline)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 15)
-                            .background(selectedProducts.count >= 2 ? Color.blue : Color.gray)
+                            .background(Color.blue)
                             .cornerRadius(25)
                     }
-                    .disabled(selectedProducts.count < 2)
-                    
-                    Button(action: {
-                        isSelectionMode = false
-                        selectedProducts.removeAll()
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(.red)
-                    }
-                    .padding(.leading, 8)
-                }
-            } else {
-                Button(action: {
-                    isSelectionMode.toggle()
-                    selectedProducts.removeAll()
-                }) {
-                    Text("Compare")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 15)
-                        .background(Color.blue)
-                        .cornerRadius(25)
                 }
             }
+            .padding(.horizontal)
+            .frame(height: 60)
+            .background(Color.white.shadow(radius: 5))
         }
-        .padding(.horizontal)
-        .frame(height: 60)
-        .background(Color.white.shadow(radius: 5))
-    }
 
     private func toggleSelection(for id: String) {
         if selectedProducts.contains(id) {
@@ -181,6 +187,7 @@ struct ResultsView: View {
     }
 }
 
+
 struct ProductCard: View {
     let product: Medicine
     var isSelected: Bool = false
@@ -188,21 +195,26 @@ struct ProductCard: View {
     
     var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                HStack(spacing: 12) {
+            ZStack(alignment: .topLeading) {
+                HStack(alignment: .top, spacing: 12) {
                     productImage
                     productInfo
-                    Spacer()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Spacer(minLength: 0)
                 }
                 .padding()
                 
                 Button(action: onLocationTap) {
-                    Image(systemName: "mappin.circle.fill")
+                    Image(systemName: "mappin")
                         .resizable()
-                        .frame(width: 30, height: 30)
-                        .foregroundColor(.black)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 20, height: 20)
+                        .padding(8)
+                        .background(Color.black.opacity(0.7))
+                        .foregroundColor(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
-                .position(x: geometry.size.width - 25, y: geometry.size.height - 25)
+                .position(x: geometry.size.width - 25, y: geometry.size.height - 20)
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
             .background(Color(.systemBackground))
@@ -246,6 +258,7 @@ struct ProductCard: View {
             Text(product.productName)
                 .font(.headline)
                 .lineLimit(2)
+                .foregroundColor(.primary)
             Text("Price: \(product.productPrice)")
                 .font(.subheadline)
                 .foregroundColor(.secondary)

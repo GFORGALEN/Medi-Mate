@@ -20,6 +20,7 @@ class ComparisonViewModel: ObservableObject {
         isLoading = true
         Task {
             do {
+                print(productIds)
                 let jsonString = try await networkService.compareProducts(productIds: productIds)
                 let decodedData = try JSONDecoder().decode(APIResponse<ComparisonData>.self, from: Data(jsonString.utf8))
                 
