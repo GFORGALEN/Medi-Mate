@@ -47,6 +47,7 @@
 		D94F239A2C74A3AE00092D9F /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94F23992C74A3AE00092D9F /* CardView.swift */; };
 		D9698F642C758E330004204A /* ComparisonViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9698F632C758E330004204A /* ComparisonViewModel.swift */; };
 		D9698F662C758E400004204A /* ComparisonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9698F652C758E400004204A /* ComparisonView.swift */; };
+		D97122EA2C9917AC007E5018 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D97122E92C9917AC007E5018 /* Launch Screen.storyboard */; };
 		D972360C2C894EAF00F2307F /* LocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D972360B2C894EAF00F2307F /* LocationView.swift */; };
 		D9733C7A2C6F0348003F5990 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9733C792C6F0348003F5990 /* Service.swift */; };
 		D98C8B8F2C6326750022544C /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98C8B8E2C6326750022544C /* Constant.swift */; };
@@ -107,6 +108,7 @@
 		D94F23992C74A3AE00092D9F /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		D9698F632C758E330004204A /* ComparisonViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComparisonViewModel.swift; sourceTree = "<group>"; };
 		D9698F652C758E400004204A /* ComparisonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComparisonView.swift; sourceTree = "<group>"; };
+		D97122E92C9917AC007E5018 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		D972360B2C894EAF00F2307F /* LocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationView.swift; sourceTree = "<group>"; };
 		D9733C792C6F0348003F5990 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		D98C8B8E2C6326750022544C /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 				D9F8AAC62C61F84200B723A5 /* MobileApp.swift */,
 				D9A1EF912C671DC6002CCE61 /* Models.swift */,
 				61441D162C8E9A28009A55A9 /* AuthManager.swift */,
+				D97122E92C9917AC007E5018 /* Launch Screen.storyboard */,
 			);
 			path = CoreApp;
 			sourceTree = "<group>";
@@ -392,6 +395,7 @@
 				D9F8AACE2C61F84300B723A5 /* Preview Assets.xcassets in Resources */,
 				D9F8AACB2C61F84300B723A5 /* Assets.xcassets in Resources */,
 				619AC2D52C6C3E6B0064D8F1 /* location.json in Resources */,
+				D97122EA2C9917AC007E5018 /* Launch Screen.storyboard in Resources */,
 				61DC84992C6230AB0048463E /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -592,9 +596,11 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Mobile/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs access to the camera to take photos.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -623,9 +629,11 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Mobile/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs access to the camera to take photos.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
