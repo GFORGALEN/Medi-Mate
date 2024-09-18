@@ -5,7 +5,7 @@ import LeftMenuLayout from "@/layouts/LeftMenuLayout";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import HeaderLayout from "@/layouts/HeaderLayout";
 import { APP_API_URL } from "@/../config.js";
-import { setOrderId } from "@/store/features/messageSlice";
+import { setOrderInfo } from "@/store/features/messageSlice";
 
 import { useDispatch } from "react-redux";
 
@@ -66,7 +66,10 @@ const DashboardLayout = () => {
                 return;
             }
             setMessages(prevMessages => [...prevMessages, newMessage]);
-            dispatch(setOrderId(newMessage.orderId));
+            dispatch(setOrderInfo({
+                orderId: newMessage.orderId,
+                pharmacyId: newMessage.pharmacyId  // Assuming the API sends pharmacyId
+            }));
             console.log("New message:", newMessage);
         };
 
