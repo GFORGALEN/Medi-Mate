@@ -51,14 +51,16 @@ struct CartView: View {
     private var header: some View {
         HStack {
             Text("Your Cart")
-                .font(.system(size: isOlderMode ? 32 : 28, weight: .bold))
+                .font(.system(size: isOlderMode ? 32 : 32, weight: .bold))
                 .scalableFont(size: isOlderMode ? 32 : 28)
+                .ignoresSafeArea()
+                .padding(.top, 55)
             
             Spacer()
             
-            Text("\(cartManager.items.count) items")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+//            Text("\(cartManager.items.count) items")
+//                .font(.subheadline)
+//                .foregroundColor(.secondary)
         }
         .padding()
         .background(Color(UIColor.secondarySystemBackground))
@@ -121,7 +123,7 @@ struct CartView: View {
             }
             return String(format: "$%.2f", doublePrice)
         }
-    }   
+    }
 struct CartItemCard: View {
     let item: CartItem
     @EnvironmentObject var cartManager: CartManager

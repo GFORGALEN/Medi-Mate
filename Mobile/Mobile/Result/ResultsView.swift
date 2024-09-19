@@ -3,17 +3,18 @@ import SwiftUI
 struct ResultsView: View {
     @ObservedObject var HomeVM: HomeVM
     @StateObject private var comparisonViewModel = ComparisonViewModel()
-    @State private var isSelectionMode = false
     @State private var selectedProducts: Set<String> = []
     @State private var navigateToComparison = false
     @State private var selectedProductId: String?
+    @State private var isCompareMode = false
+    @State private var navigateToProductDetails: String?
     
-    // New state variables for location feature
+    // State variables for location feature
     @State private var isStoreSelectionPresented = false
     @State private var selectedStore: String?
     @State private var locationData: ProductLocationData?
     @State private var isShowingLocationView = false
-
+    
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
@@ -46,20 +47,32 @@ struct ResultsView: View {
                     }
                 }
                 
-                if !HomeVM.products.isEmpty {
-                    compareButton
-                        .padding(.bottom, 80)
+                if isCompareMode {
+                    compareButtons
+                        .padding(.bottom, 50)
                 }
                 
                 Color(.secondarySystemBackground)
                     .frame(height: 49)
                     .opacity(0.01)
             }
-            .navigationTitle(isSelectionMode ? "Select Products" : "Results")
-                        .navigationBarTitleDisplayMode(.inline)
-                        .navigationDestination(isPresented: $navigateToComparison) {
-                            ComparisonView(viewModel: comparisonViewModel, productIds: Array(selectedProducts))
-                        }
+            .navigationTitle(isCompareMode ? "Select Products" : "Results")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: String.self) { productId in
+                ProductDetailsView(productId: productId)
+            }
+            .navigationDestination(isPresented: $navigateToComparison) {
+                ComparisonView(viewModel: comparisonViewModel, productIds: Array(selectedProducts))
+            }
+//            .toolbar {
+//                if isCompareMode {
+//                    ToolbarItem(placement: .navigationBarTrailing) {
+//                        Button("Done") {
+//                            exitCompareMode()
+//                        }
+//                    }
+//                }
+//            }
             .sheet(isPresented: $isShowingLocationView) {
                 if let data = locationData {
                     NavigationStack {
@@ -86,7 +99,7 @@ struct ResultsView: View {
             )
         }
     }
-
+    
     private var emptyResultsView: some View {
         VStack(spacing: 20) {
             Image(systemName: "magnifyingglass")
@@ -103,81 +116,76 @@ struct ResultsView: View {
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-
-    @ViewBuilder
-        private func productView(for product: Medicine) -> some View {
-            Group {
-                if isSelectionMode {
-                    ProductCard(product: product, isSelected: selectedProducts.contains(product.id), onLocationTap: {
-                        isStoreSelectionPresented = true
-                        selectedProductId = product.id
-                    })
-                    .onTapGesture {
-                        toggleSelection(for: product.id)
-                    }
-                } else {
-                    NavigationLink(destination: ProductDetailsView(productId: product.id)) {
-                        ProductCard(product: product, isSelected: false, onLocationTap: {
-                            isStoreSelectionPresented = true
-                            selectedProductId = product.id
-                        })
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
-            }
-        }
-        
     
-    private var compareButton: some View {
-            VStack {
-                if isSelectionMode {
-                    HStack {
-                        Button(action: {
-                            if selectedProducts.count >= 2 {
-                                comparisonViewModel.fetchComparisons(productIds: Array(selectedProducts))
-                                navigateToComparison = true
-                            }
-                        }) {
-                            Text("Compare (\(selectedProducts.count))")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 15)
-                                .background(selectedProducts.count >= 2 ? Color.blue : Color.gray)
-                                .cornerRadius(25)
-                        }
-                        .disabled(selectedProducts.count < 2)
-                        
-                        Button(action: {
-                            isSelectionMode = false
-                            selectedProducts.removeAll()
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.title2)
-                                .foregroundColor(.red)
-                        }
-                        .padding(.leading, 8)
-                    }
-                } else {
-                    Button(action: {
-                        isSelectionMode.toggle()
-                        selectedProducts.removeAll()
-                    }) {
-                        Text("Compare")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 15)
-                            .background(Color.blue)
-                            .cornerRadius(25)
-                    }
-                }
+    @ViewBuilder
+    private func productView(for product: Medicine) -> some View {
+        ProductCard(product: product, isSelected: selectedProducts.contains(product.id), onLocationTap: {
+            isStoreSelectionPresented = true
+            selectedProductId = product.id
+        })
+        .background(
+            NavigationLink(destination: ProductDetailsView(productId: product.id), tag: product.id, selection: $navigateToProductDetails) {
+                EmptyView()
             }
-            .padding(.horizontal)
-            .frame(height: 60)
-            .background(Color.white.shadow(radius: 5))
+        )
+        .onTapGesture {
+            if isCompareMode {
+                toggleSelection(for: product.id)
+            } else {
+                navigateToProductDetails = product.id
+            }
         }
-
+        .onLongPressGesture {
+            if !isCompareMode {
+                enterCompareMode(selecting: product.id)
+            }
+        }
+    }
+    
+    private var compareButtons: some View {
+        HStack(spacing: 16) {
+            Button(action: {
+                if selectedProducts.count >= 2 {
+                    comparisonViewModel.fetchComparisons(productIds: Array(selectedProducts))
+                    navigateToComparison = true
+                }
+            }) {
+                Text("Compare (\(selectedProducts.count))")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 15)
+                    .background(selectedProducts.count >= 2 ? Color.blue : Color.gray)
+                    .cornerRadius(25)
+            }
+            .disabled(selectedProducts.count < 2)
+            
+            Button(action: {
+                exitCompareMode()
+            }) {
+                Text("Cancel")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 15)
+                    .background(Color.red)
+                    .cornerRadius(25)
+            }
+        }
+        .padding(.horizontal)
+        .frame(height: 55)
+    }
+    
+    private func enterCompareMode(selecting id: String) {
+        isCompareMode = true
+        selectedProducts = [id]
+    }
+    
+    private func exitCompareMode() {
+        isCompareMode = false
+        selectedProducts.removeAll()
+    }
+    
     private func toggleSelection(for id: String) {
         if selectedProducts.contains(id) {
             selectedProducts.remove(id)
@@ -187,10 +195,9 @@ struct ResultsView: View {
     }
 }
 
-
 struct ProductCard: View {
     let product: Medicine
-    var isSelected: Bool = false
+    var isSelected: Bool
     var onLocationTap: () -> Void
     
     var body: some View {
