@@ -7,3 +7,9 @@ spring:
       host: redis
   rabbitmq:
     host: rabbitmq
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+logging:
+  level:
+    root: warn
