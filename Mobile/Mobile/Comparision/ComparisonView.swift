@@ -66,43 +66,32 @@ struct ComparisonView: View {
 //    }
 
 
+import SwiftUI
+
 struct PriceComparisonView: View {
     let comparisons: [Comparison]
     
+    private var sortedComparisons: [Comparison] {
+        comparisons.sorted { priceValue($0.productPrice) < priceValue($1.productPrice) }
+    }
+    
+    private var lowestPrice: Double {
+        priceValue(sortedComparisons.first?.productPrice ?? "")
+    }
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 16) {
             Text("Price Comparison")
-                .font(.headline)
+                .font(.title2)
+                .fontWeight(.bold)
             
-            ForEach(comparisons, id: \.productId) { comparison in
-                HStack {
-                    Text(comparison.productName)
-                        .font(.subheadline)
-                        .frame(width: 100, alignment: .leading)
-                    
-                    GeometryReader { geometry in
-                        ZStack(alignment: .leading) {
-                            Rectangle()
-                                .fill(Color.blue.opacity(0.3))
-                                .frame(width: geometry.size.width)
-                            
-                            Rectangle()
-                                .fill(Color.blue)
-                                .frame(width: CGFloat(priceValue(comparison.productPrice)) / CGFloat(maxPrice()) * geometry.size.width)
-                        }
-                    }
-                    .frame(height: 20)
-                    .cornerRadius(10)
-                    
-                    Text(comparison.productPrice)
-                        .font(.subheadline)
-                        .frame(width: 60, alignment: .trailing)
-                }
+            ForEach(sortedComparisons, id: \.productId) { comparison in
+                PriceRow(comparison: comparison, lowestPrice: lowestPrice)
             }
         }
         .padding()
         .background(Color.white)
-        .cornerRadius(15)
+        .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
     }
     
@@ -110,9 +99,44 @@ struct PriceComparisonView: View {
         let numericString = priceString.dropFirst().replacingOccurrences(of: ",", with: "")
         return Double(numericString) ?? 0
     }
+}
+
+struct PriceRow: View {
+    let comparison: Comparison
+    let lowestPrice: Double
     
-    private func maxPrice() -> Double {
-        comparisons.map { priceValue($0.productPrice) }.max() ?? 1
+    private var price: Double {
+        let numericString = comparison.productPrice.dropFirst().replacingOccurrences(of: ",", with: "")
+        return Double(numericString) ?? 0
+    }
+    
+    private var priceDifference: Double {
+        price - lowestPrice
+    }
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(comparison.productName)
+                    .font(.headline)
+                if priceDifference > 0 {
+                    Text("+$\(priceDifference, specifier: "%.2f")")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            
+            Spacer()
+            
+            Text(comparison.productPrice)
+                .font(.title3)
+                .fontWeight(.semibold)
+                .foregroundColor(price == lowestPrice ? .green : .primary)
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(price == lowestPrice ? Color.green.opacity(0.1) : Color.clear)
+        .cornerRadius(8)
     }
 }
 
