@@ -138,7 +138,7 @@ struct ProductDetailsContent: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            storeSection
+            
             productImage
             productInfo
             priceAndQuantitySection
@@ -213,9 +213,9 @@ struct ProductDetailsContent: View {
     
     private var productInfo: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("I/N: \(details.productId)")
-                .scalableFont(size: isOlderMode ? 16 : 12)
-                .foregroundColor(.secondary)
+//            Text("I/N: \(details.productId)")
+//                .scalableFont(size: isOlderMode ? 16 : 12)
+//                .foregroundColor(.secondary)
             Text(details.productName)
                 .scalableFont(size: isOlderMode ? 28 : 22, weight: .bold)
                 .foregroundColor(.primary)

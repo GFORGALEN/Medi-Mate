@@ -4,14 +4,20 @@ import { Modal, Input, message, Table, Button, Select } from "antd";
 import { useSelector } from "react-redux";
 import generateReceipt from './PDFReceipt';
 import generateReport from './PDFReport';
-
+import OrderCard from './renderOrderCard.jsx';
+import {  Package, Truck, CheckCircle } from 'lucide-react';
 const { Option } = Select;
+
+
+
 const OrderPage = () => {
+    const { orderId: currentOrderId, username: currentUsername, pharmacyId: currentOrderPharmacyId } = useSelector(state => state.message);
     const [orders, setOrders] = useState({
         finishOrder: [],
         startPicking: [],
         finishPicking: []
     });
+
     const [currentPharmacy, setCurrentPharmacy] = useState(1);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [cancelReason, setCancelReason] = useState("");
@@ -23,14 +29,13 @@ const OrderPage = () => {
     const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false);
     const [orderDetails, setOrderDetails] = useState([]);
     const [totalAmount, setTotalAmount] = useState(0);
-
-    const currentOrderId = useSelector(state => state.message.orderId);
+    const [latestUsername, setLatestUsername] = useState('');
     const timerRef = useRef();
-
+    const orderRefs = useRef({});
     useEffect(() => {
         fetchOrders();
         return () => clearInterval(timerRef.current);
-    }, [currentPharmacy,currentOrderId]);
+    }, [currentPharmacy, currentOrderId, currentOrderPharmacyId]);
 
     useEffect(() => {
         timerRef.current = setInterval(() => {
@@ -57,10 +62,18 @@ const OrderPage = () => {
                 Object.keys(sortedOrders).forEach(key => {
                     sortedOrders[key] = sortedOrders[key].map(order => ({
                         ...order,
-                        username: order.username || 'Unknown' // 如果 API 没有返回 username，使用 'Unknown'
-                    }));
+                        username: order.username || 'Unknown'
+
+                    }))
                 });
                 setOrders(sortedOrders);
+
+                const allOrders = [...sortedOrders.finishOrder, ...sortedOrders.startPicking, ...sortedOrders.finishPicking];
+                if (allOrders.length > 0) {
+                    // Sort orders by createdAt date in descending order
+                    const sortedByDate = allOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    setLatestUsername(sortedByDate[0].username);
+                }
 
                 const newTimers = {};
                 [...sortedOrders.finishOrder, ...sortedOrders.startPicking].forEach(order => {
@@ -71,6 +84,19 @@ const OrderPage = () => {
                 setTimers(prevTimers => ({ ...prevTimers, ...newTimers }));
             }
         });
+    };
+    const scrollToOrder = (username) => {
+        const allOrders = [...orders.finishOrder, ...orders.startPicking, ...orders.finishPicking];
+        const targetOrder = allOrders.find(order => order.username === username);
+
+        if (targetOrder && orderRefs.current[targetOrder.orderId]) {
+            orderRefs.current[targetOrder.orderId].scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        } else {
+            message.info("Couldn't find the order for this user.");
+        }
     };
     const handlePharmacyChange = (value) => {
         setCurrentPharmacy(value);
@@ -95,10 +121,6 @@ const OrderPage = () => {
         });
     };
 
-    const convertToNZTime = (dateString) => {
-        const date = new Date(dateString);
-        return date.toLocaleString("en-NZ", { timeZone: "Pacific/Auckland", hour12: false });
-    };
 
 
     const showConfirmModal = (order, newStatus) => {
@@ -187,47 +209,20 @@ const OrderPage = () => {
         }
     };
 
-    const getCardColor = (status) => {
-        switch(status) {
-            case 1: return 'bg-green-200';
-            case 2: return 'bg-orange-200';
-            case 3: return 'bg-red-200';
-        }
-    };
 
     const renderOrderCard = (order, actionText) => (
-        <div key={order.orderId} className={`${getCardColor(order.status)} shadow-lg rounded-lg p-6 mb-4 transition duration-300 hover:shadow-xl`}>
-            <p className="text-gray-700 mb-2">Username: {order.username}</p>
-            <p className="text-lg font-semibold mb-2">Order ID: {order.orderId}</p>
-            <p className="text-gray-700 mb-2">Pharmacy ID: {order.pharmacyId}</p>
-            <p className="text-gray-700 mb-2">Created At: {convertToNZTime(order.createdAt)}</p>
-            {/*<p className="text-gray-700 mb-2">Username: {order.username}</p>*/}
-            {/*<p className="text-gray-700 mb-2">Total Amount: ${order.totalAmount?.toFixed(2) }</p>*/}
-            <div className="flex justify-between items-center">
-                <button
-                    onClick={() => fetchOrderDetails(order.orderId)}
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 mr-2"
-                >
-                    View
-                </button>
-                {order.status !== 3 && (
-                    <button
-                        onClick={() => showConfirmModal(order, order.status + 1)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 mr-2"
-                    >
-                        {actionText}
-                    </button>
-                )}
-                <button
-                    onClick={() => showCancelModal(order)}
-                    className="bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded transition duration-200"
-                >
-                    Cancel Order
-                </button>
-            </div>
+
+        <div ref={el => orderRefs.current[order.orderId] = el}>
+            <OrderCard
+                key={order.orderId}
+                order={order}
+                actionText={actionText}
+                onView={fetchOrderDetails}
+                onAction={(order, newStatus) => showConfirmModal(order, newStatus)}
+                onCancel={showCancelModal}
+            />
         </div>
     );
-
     const columns = [
         {
             title: 'Product Name',
@@ -238,11 +233,6 @@ const OrderPage = () => {
             title: 'Quantity',
             dataIndex: 'quantity',
             key: 'quantity',
-        },
-        {
-            title: 'Username',
-            dataIndex: 'username',
-            key: 'username',
         },
         {
             title: 'Price',
@@ -281,35 +271,60 @@ const OrderPage = () => {
     };
 
     return (
-        <div className="container mx-auto px-4 py-8 min-h-screen">
+        <div className="container mx-auto px-4 py-8 min-h-screen bg-gradient-to-r bg-slate-50">
             <h1 className="text-3xl font-bold mb-6 text-gray-800">Order Management</h1>
-            <p className="text-lg mb-6 text-gray-700">Current Order ID: <span
-                className="font-semibold">{currentOrderId}</span></p>
-            <Select
-                value={currentPharmacy}
-                onChange={handlePharmacyChange}
-                style={{ width: 200 }}
+            <p className="text-lg mb-6 text-gray-700">
+                Current User Name: <span
+                className="font-semibold cursor-pointer text-blue-600 hover:text-blue-800"
+                onClick={() => scrollToOrder(latestUsername)}
             >
-                <Option value={1}>MANUKAU</Option>
-                <Option value={2}>New Market</Option>
-                <Option value={3}>Mount Albert</Option>
-                <Option value={4}>Albany</Option>
-                <Option value={5}>CBD</Option>
-            </Select>
-            <div className="mb-6">
+                    {latestUsername || 'No recent orders'}
+                </span>
+                {currentUsername &&
+                    <span className="ml-2">for user: <span className="font-semibold">{currentUsername}</span></span>}
+                {currentOrderPharmacyId && (
+                    <span> - Pharmacy ID: <span className="font-semibold">{currentOrderPharmacyId}</span></span>
+                )}
+            </p>
+            {currentOrderPharmacyId && currentOrderPharmacyId !== currentPharmacy && (
+                <p className="text-lg mb-6 text-red-600">
+                    New order in Pharmacy {currentOrderPharmacyId}! Please switch to view.
+                </p>
+            )}
+            <div className="mb-6 flex items-center space-x-4">
+                <Select
+                    value={currentPharmacy}
+                    onChange={handlePharmacyChange}
+                    style={{width: 200}}
+                >
+                    <Option value={1}>MANUKAU</Option>
+                    <Option value={2}>New Market</Option>
+                    <Option value={3}>Mount Albert</Option>
+                    <Option value={4}>Albany</Option>
+                    <Option value={5}>CBD</Option>
+                </Select>
                 <Button type="primary" onClick={handleGenerateReport}>Generate Order Report</Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                    <h2 className="text-xl font-semibold mb-4 text-green-800">Finish Order</h2>
+                <div className="space-y-4">
+                    <h2 className="text-xl font-semibold text-green-800 flex items-center">
+                        <Package className="mr-2" size={24}/>
+                        Order
+                    </h2>
                     {orders.finishOrder.map(order => renderOrderCard(order, "Start Picking"))}
                 </div>
-                <div>
-                    <h2 className="text-xl font-semibold mb-4 text-orange-500">Start Picking</h2>
+                <div className="space-y-4">
+                    <h2 className="text-xl font-semibold text-yellow-600 flex items-center">
+                        <Truck className="mr-2" size={24}/>
+                        Picking
+                    </h2>
                     {orders.startPicking.map(order => renderOrderCard(order, "Finish Picking"))}
                 </div>
-                <div>
-                    <h2 className="text-xl font-semibold mb-4 text-red-600">Finish Picking</h2>
+                <div className="space-y-4">
+                    <h2 className="text-xl font-semibold text-gary-100 flex items-center">
+                        <CheckCircle className="mr-2" size={24}/>
+                        Finish
+                    </h2>
                     {orders.finishPicking.map(order => renderOrderCard(order, "Complete Order"))}
                 </div>
             </div>
@@ -359,21 +374,20 @@ const OrderPage = () => {
                 visible={isDetailsModalVisible}
                 onCancel={() => setIsDetailsModalVisible(false)}
                 footer={[
-                <Button key="close" onClick={() => setIsDetailsModalVisible(false)}>
-                    Close
-                </Button>,
-                <Button key="download" type="primary" onClick={handleGenerateReceipt}>
-                    Generate Receipt
-                </Button>
-            ]}
+                    <Button key="close" onClick={() => setIsDetailsModalVisible(false)}>
+                        Close
+                    </Button>,
+                    <Button key="download" type="primary" onClick={handleGenerateReceipt}>
+                        Generate Receipt
+                    </Button>
+                ]}
                 width={1000}
-                >
-            <Table dataSource={orderDetails} columns={columns} rowKey="productId"/>
-            <p className="text-right mt-4 text-lg font-semibold">Total Amount: ${totalAmount.toFixed(2)}</p>
-        </Modal>
-</div>
-)
-    ;
+            >
+                <Table dataSource={orderDetails} columns={columns} rowKey="productId"/>
+                <p className="text-right mt-4 text-lg font-semibold">Total Amount: ${totalAmount.toFixed(2)}</p>
+            </Modal>
+        </div>
+    );
 };
 
 export default OrderPage;
