@@ -87,11 +87,11 @@ Follow these instructions to set up the project on your local machine.
     <tr>
       <!-- Image on the left -->
       <td>
-        <img src="URL_TO_IMAGE" alt="alt-text" width="400"/>
+        <img src="![Screenshot 2024-09-25 at 1 17 08 PM](https://github.com/user-attachments/assets/6a6eb02f-e1ad-4a5a-bbc9-256627d59126)" alt="alt-text" width="800"/>
       </td>
       <!-- Text on the right -->
       <td>
-        Your text goes here. You can write as much as you want here, include lists, links, or any other information related to the image on the left or anything else you want to discuss. This text will be aligned next to the image.
+        Image Search: User can take photo and it will return a lst of result 
       </td>
     </tr>
   </table>
