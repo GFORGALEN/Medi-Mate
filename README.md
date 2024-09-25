@@ -83,8 +83,11 @@ Follow these instructions to set up the project on your local machine.
 
 ## Usage
 
-Image Search 
-![Screenshot 2024-09-25 at 1 04 27 PM](https://github.com/user-attachments/assets/c03fecb0-f540-4c46-8ac6-60f5fbd8443f)
+
+![Screenshot 2024-09-25 at 1 17 08 PM](https://github.com/user-attachments/assets/6a6eb02f-e1ad-4a5a-bbc9-256627d59126)
+![Screenshot 2024-09-25 at 1 15 38 PM](https://github.com/user-attachments/assets/033ad429-04e8-43e2-9416-23043f085c30)
+![Screenshot 2024-09-25 at 1 14 04 PM](https://github.com/user-attachments/assets/62732112-4792-4fa6-990c-fab6c4e9cb7e)
+
 
 ## Contributing
 
