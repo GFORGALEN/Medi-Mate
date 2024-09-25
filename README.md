@@ -17,7 +17,7 @@ Welcome to **FriedChicken**! We are a dedicated team focused on delivering cutti
 
 ## About The Project
 
-[Provide a brief description of your project here. What does it do? What problem does it solve?]
+FRW Healthcare project that aimed to transform the conventional pharmacy paradigm through the use of AI-driven picture recognition and visual search technology. This initiative focused on staff and consumers. FRW intends to provide an application to streamline product searches for consumers and enhance online inventory management for staff. 
 
 ### Built With
 
