@@ -88,10 +88,11 @@ Here are our 3 main core function
 - Second, User can compare between proudct, they must choose between 2 to 5 proudcts to be able to use this functions.
 - Third, Care Mode, a feature where all font in the app are getting larger and give user with new look design of our mobile application 
 
-
-- ![Screenshot 2024-09-25 at 1 17 08 PM](https://github.com/user-attachments/assets/6a6eb02f-e1ad-4a5a-bbc9-256627d59126)
-- ![Screenshot 2024-09-25 at 1 32 48 PM](https://github.com/user-attachments/assets/f8297c29-3793-4169-877b-31fdc36fb928)
-- ![Screenshot 2024-09-25 at 1 14 04 PM](https://github.com/user-attachments/assets/62732112-4792-4fa6-990c-fab6c4e9cb7e)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/6a6eb02f-e1ad-4a5a-bbc9-256627d59126" alt="Image description" width="300"/>
+  <img src="https://github.com/user-attachments/assets/f8297c29-3793-4169-877b-31fdc36fb928" alt="Image description" width="300"/>
+  <img src="https://github.com/user-attachments/assets/62732112-4792-4fa6-990c-fab6c4e9cb7e" alt="Image description" width="300"/>
+</p>
 
 
 
