@@ -82,6 +82,20 @@ Follow these instructions to set up the project on your local machine.
    - Click the **Run** button or press `⌘ + R` to build and run the app.
 
 ## Usage
+<p align="center">
+  <table>
+    <tr>
+      <!-- Image on the left -->
+      <td>
+        <img src="URL_TO_IMAGE" alt="alt-text" width="400"/>
+      </td>
+      <!-- Text on the right -->
+      <td>
+        Your text goes here. You can write as much as you want here, include lists, links, or any other information related to the image on the left or anything else you want to discuss. This text will be aligned next to the image.
+      </td>
+    </tr>
+  </table>
+</p>
 
 
 ![Screenshot 2024-09-25 at 1 17 08 PM](https://github.com/user-attachments/assets/6a6eb02f-e1ad-4a5a-bbc9-256627d59126)
