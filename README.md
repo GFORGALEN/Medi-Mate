@@ -83,7 +83,8 @@ Follow these instructions to set up the project on your local machine.
 
 ## Usage
 
-[Provide instructions and examples on how to use your application. Include screenshots if applicable.]
+Image Search 
+![Screenshot 2024-09-25 at 1 04 27 PM](https://github.com/user-attachments/assets/c03fecb0-f540-4c46-8ac6-60f5fbd8443f)
 
 ## Contributing
 
