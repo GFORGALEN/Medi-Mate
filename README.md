@@ -84,9 +84,9 @@ Follow these instructions to set up the project on your local machine.
 ## Usage
 Here are our 3 main core function 
 
-First, User can use image and to search for proudct with just one click 
-Second, User can compare between proudct, they must choose between 2 to 5 proudcts to be able to use this functions.
-Third, Care Mode, a feature where all font in the app are getting larger and give user with new look design of our mobile application 
+- First, User can use image and to search for proudct with just one click 
+- Second, User can compare between proudct, they must choose between 2 to 5 proudcts to be able to use this functions.
+- Third, Care Mode, a feature where all font in the app are getting larger and give user with new look design of our mobile application 
 
 
 ![Screenshot 2024-09-25 at 1 17 08 PM](https://github.com/user-attachments/assets/6a6eb02f-e1ad-4a5a-bbc9-256627d59126)
