@@ -87,7 +87,7 @@ Follow these instructions to set up the project on your local machine.
     <tr>
       <!-- Image on the left -->
       <td>
-        <img src="![Screenshot 2024-09-25 at 1 17 08 PM](https://github.com/user-attachments/assets/6a6eb02f-e1ad-4a5a-bbc9-256627d59126)" alt="alt-text" width="800"/>
+        <img src=![Screenshot 2024-09-25 at 1 17 08 PM](https://github.com/user-attachments/assets/6a6eb02f-e1ad-4a5a-bbc9-256627d59126) alt="alt-text" width="800"/>
       </td>
       <!-- Text on the right -->
       <td>
