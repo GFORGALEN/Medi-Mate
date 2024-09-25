@@ -271,7 +271,7 @@ const OrderPage = () => {
     };
 
     return (
-        <div className="container mx-auto px-4 py-8 min-h-screen bg-gradient-to-r bg-slate-50">
+        <div className="container mx-auto px-4 py-8 min-h-screen bg-gradient-to-r bg-sky-50">
             <h1 className="text-3xl font-bold mb-6 text-gray-800">Order Management</h1>
             <p className="text-lg mb-6 text-gray-700">
                 Current User Name: <span
