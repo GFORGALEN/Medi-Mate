@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef} from 'react';
 import { ConfigProvider, Layout, Button, notification } from 'antd';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+// import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import LeftMenuLayout from "@/layouts/LeftMenuLayout";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import HeaderLayout from "@/layouts/HeaderLayout";
@@ -149,26 +149,26 @@ const DashboardLayout = () => {
                             className="p-6 m-4 bg-white rounded-lg shadow-md overflow-y-auto h-[calc(100vh-112px)]">
                             <Outlet />
                         </Content>
-                        <Sider
-                            width={collapsed.right ? 80 : "20%"}
-                            className="bg-white m-4 rounded-lg shadow-md"
-                            collapsible
-                            collapsed={collapsed.right}
-                            reverseArrow
-                            collapsedWidth={80}
-                            trigger={null}
-                        >
-                            <div className="p-4 text-center">
-                                <Button
-                                    type="primary"
-                                    onClick={() => toggleCollapsed('right')}
-                                    icon={collapsed.right ? <LeftOutlined /> : <RightOutlined />}
-                                >
-                                    {collapsed.right ? '' : 'Collapse'}
-                                </Button>
-                            </div>
-                            {!collapsed.right && <div className="p-4 text-gray-600">Right Sidebar Content</div>}
-                        </Sider>
+                        {/*<Sider*/}
+                        {/*    width={collapsed.right ? 80 : "20%"}*/}
+                        {/*    className="bg-white m-4 rounded-lg shadow-md"*/}
+                        {/*    collapsible*/}
+                        {/*    collapsed={collapsed.right}*/}
+                        {/*    reverseArrow*/}
+                        {/*    collapsedWidth={80}*/}
+                        {/*    trigger={null}*/}
+                        {/*>*/}
+                        {/*    <div className="p-4 text-center">*/}
+                        {/*        <Button*/}
+                        {/*            type="primary"*/}
+                        {/*            onClick={() => toggleCollapsed('right')}*/}
+                        {/*            icon={collapsed.right ? <LeftOutlined /> : <RightOutlined />}*/}
+                        {/*        >*/}
+                        {/*            {collapsed.right ? '' : 'Collapse'}*/}
+                        {/*        </Button>*/}
+                        {/*    </div>*/}
+                        {/*    {!collapsed.right && <div className="p-4 text-gray-600">Right Sidebar Content</div>}*/}
+                        {/*</Sider>*/}
                     </Layout>
                 </Layout>
             </Layout>
